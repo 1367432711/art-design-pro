@@ -1,111 +1,4 @@
-<img  src="https://www.qiniu.lingchen.kim/github-cover-light6.webp" />
-
-<br />
-<h1 align="center">Art Design Pro</h1>
-<p align="center">A backend system template that combines design aesthetics with efficient development, helping you quickly build professional-grade applications</p>
-<div align="center">English | <a href="./README.zh-CN.md">简体中文</a></div>
-
-<br />
-<div align="center">
-
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE) [![github stars](https://img.shields.io/github/stars/Daymychen/art-design-pro)](https://github.com/Daymychen/art-design-pro/stargazers) [![github forks](https://img.shields.io/github/forks/Daymychen/art-design-pro)](https://github.com/Daymychen/art-design-pro/network/members)
-
-</div>
-<br />
-
-## What makes this project special?
-
-**Interface Design**: Modern UI design with smooth interactions, focusing on user experience and visual design
-
-**Quick Start**: Clean architecture + comprehensive documentation, easy for backend developers to use
-
-**Rich Components**: Built-in high-quality components for data display, forms, and more to meet different business scenarios
-
-**Smooth Interactions**: Button clicks, theme switching, page transitions, chart animations - experience comparable to commercial products
-
-**Efficient Development**: Built-in practical APIs like useTable and ArtForm to significantly improve development efficiency
-
-**Clean Scripts**: Built-in one-click cleanup script to quickly remove demo data and get a ready-to-develop base project
-
-## Tech Stack
-
-Development Framework: Vue3, TypeScript, Vite, Element-Plus, Tailwind CSS
-
-Code Standards: Eslint, Prettier, Stylelint, Husky, Lint-staged, cz-git
-
-## Preview
-
-<kbd><img src="https://www.qiniu.lingchen.kim/github-c1.webp" alt="Light Theme"/></kbd>
-
-<kbd><img src="https://www.qiniu.lingchen.kim/github-c2.webp" alt="Light Theme"/></kbd>
-
-<kbd><img src="https://www.qiniu.lingchen.kim/github-c4.webp" alt="Dark Theme"/></kbd>
-
-<kbd><img src="https://www.qiniu.lingchen.kim/github-c5.webp" alt="Dark Theme"/></kbd>
-
-## Quick Access
-
-[Live Demo](https://www.artd.pro) | [Official Documentation](https://www.artd.pro/docs) | [Changelog](./CHANGELOG.en.md)
-
-## Installation & Setup
-
-```bash
-# Install dependencies
-pnpm install
-
-# If pnpm install fails, try using the command below
-pnpm install --ignore-scripts
-
-# Start local development environment
-pnpm dev
-
-# Build for production
-pnpm build
-```
-
-## Clean Version
-
-The project includes a cleanup script to quickly remove demo data and provide developers with a ready-to-develop base project
-
-```bash
-pnpm clean:dev
-```
-
-## Technical Support
-
-QQ Group: <a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcAFWWXm&jump_from=webapi&authKey=YpRKVJQyFKYbGTiKw0GJ/YQXnNF+GdXNZC5beQQqnGZTvuLlXoMO7nw5fNXvmVhA">1038930070</a> (Click the link to join the group chat)
-
-## Browser Compatibility
-
-Supports modern mainstream browsers including Chrome, Safari, Firefox, and more.
-
-## Contributing
-
-We sincerely welcome and appreciate the support of every contributor! Whether you have new ideas, feature suggestions, or code optimizations, you can participate in the following ways:
-
-Submit Pull Requests: Share your code and help the project grow.
-
-Create GitHub Issues: Provide bug feedback or new feature suggestions to help us improve together.
-
-Every contribution you make takes this project one step further! Come join our open source community!
-
-## Continuous Optimization & Extension
-
-The project maintains active updates, supports the latest frontend tech stack, is compatible with mainstream frameworks, and ensures long-term stability and extensibility. Community-driven feedback mechanisms allow your needs to be quickly integrated into project iterations.
-
-## Donation
-
-If you feel this project has reduced your development costs and solved problems in your work/life, you can support us through the following ways:
-
-<img src="https://www.qiniu.lingchen.kim/%E7%BB%84%202%402x%202.png" alt="Donation QR Code"/>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Daymychen/art-design-pro&type=Date)](https://www.star-history.com/#Daymychen/art-design-pro&Date)
-
----
-
-# 开发规范指南
+# Art Design Pro 开发规范指南
 
 > 📋 本文档整理了项目的核心开发规则，帮助开发者快速上手并遵循统一的开发规范。
 
@@ -127,6 +20,9 @@ If you feel this project has reduced your development costs and solved problems 
 ```bash
 # 安装依赖
 pnpm install
+
+# 如果 pnpm install 失败，尝试
+pnpm install --ignore-scripts
 
 # 本地开发
 pnpm dev
@@ -422,8 +318,17 @@ export const HOME_PAGE_PATH = "";
 ❌ **错误示例**:
 ```html
 <template>
+  <!-- 多个根元素 -->
   <div>内容 1</div>
   <span>内容 2</span>
+</template>
+```
+
+❌ **错误示例 (注释也是根节点)**:
+```html
+<template>
+  <!-- 注释节点 -->
+  <div>内容</div>
 </template>
 ```
 
@@ -431,6 +336,7 @@ export const HOME_PAGE_PATH = "";
 ```html
 <template>
   <div>
+    <!-- 注释放在根元素内部 -->
     <div>内容 1</div>
     <span>内容 2</span>
   </div>
@@ -459,7 +365,7 @@ export default defineConfig({
 });
 ```
 
-添加配置后需要重启开发服务器。
+添加配置后需要重启开发服务器。此问题只在开发环境出现，生产环境不受影响。
 
 ---
 
@@ -491,16 +397,110 @@ const {
 });
 ```
 
+### 刷新策略
+
+| 方法 | 说明 | 使用场景 |
+|------|------|----------|
+| `refreshData()` | 全量刷新，清空所有缓存 | 手动刷新按钮 |
+| `refreshSoft()` | 轻量刷新，保持分页状态 | 定时刷新 |
+| `refreshCreate()` | 回到第一页，清空分页缓存 | 新增数据后 |
+| `refreshUpdate()` | 保持当前页，清空搜索缓存 | 更新数据后 |
+| `refreshRemove()` | 智能处理页码，避免空页面 | 删除数据后 |
+
 ---
 
-## 技术支持
+## 项目结构
+
+```
+src/
+├── api/                    # API 接口
+│   ├── auth.ts             # 认证 API
+│   └── system-manage.ts    # 系统管理 API
+├── components/             # 组件
+│   ├── business/           # 业务组件
+│   └── core/               # 通用组件
+├── hooks/                  # Composable 函数
+│   └── core/               # 核心 Hooks (useTable, useTheme...)
+├── router/                 # 路由
+│   ├── routes/             # 路由配置
+│   │   ├── staticRoutes.ts # 静态路由
+│   │   └── asyncRoutes.ts  # 动态路由
+│   ├── guards/             # 路由守卫
+│   └── modules/            # 路由模块
+├── store/                  # Pinia 状态管理
+│   └── modules/            # 状态模块 (user/menu/setting)
+├── utils/                  # 工具函数
+│   ├── http/               # HTTP 请求封装
+│   ├── table/              # 表格工具
+│   └── storage/            # 存储工具
+├── views/                  # 页面视图
+└── types/                  # TypeScript 类型定义
+```
+
+---
+
+## 环境配置文件
+
+项目使用 `.env` 系列文件管理环境变量：
+
+| 文件 | 用途 |
+|------|------|
+| `.env` | 通用环境配置 |
+| `.env.development` | 开发环境配置 |
+| `.env.production` | 生产环境配置 |
+
+**重要配置项**:
+
+```env
+# API 接口地址
+VITE_API_URL = /api
+
+# 代理目标地址
+VITE_API_PROXY_URL = http://localhost:8080
+
+# 权限模式
+VITE_ACCESS_MODE = backend
+
+# 应用版本
+VITE_VERSION = 1.0.0
+
+# 开发端口
+VITE_PORT = 3006
+
+# 基础路径
+VITE_BASE_URL = /
+```
+
+---
+
+## 开发建议
+
+1. **多设备同步开发**:
+   - 将 `.env` 文件添加到版本控制（不要提交敏感信息）
+   - 使用 `.env.local` 存储本地私有配置（需手动在另一台电脑创建）
+   - 保持 `DEVELOPMENT.md` 与项目同步提交
+
+2. **代码提交前检查**:
+   ```bash
+   pnpm lint        # 检查代码规范
+   pnpm fix         # 自动修复可修复的问题
+   pnpm lint:prettier  # 格式化代码
+   ```
+
+3. **新页面开发流程**:
+   - 创建页面组件 → 注册路由 → 测试访问 → 提交代码
+
+---
+
+## 官方资源
 
 - **官方文档**: https://www.artd.pro/docs
 - **演示地址**: https://www.artd.pro
-- **QQ 群**: 1038930070
+- **技术支持 QQ 群**: 1038930070
 
 ---
 
 <div align="center">
-  <p>🤖 Generated with <a href="https://claude.com/claude-code">Claude Code</a></p>
+  <p>📝 本文档会随项目更新，请保持同步</p>
+  <p>Last Updated: 2026-03-24</p>
 </div>
