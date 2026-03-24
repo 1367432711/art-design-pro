@@ -59,6 +59,20 @@ pnpm clean:dev
 
 ## 代码规范
 
+### 自动化工具
+
+项目使用以下工具实现代码提交时的自动校验与格式化：
+
+| 工具 | 说明 |
+|------|------|
+| **ESLint** | JS/TS 代码检查 |
+| **Prettier** | 代码格式化 |
+| **Stylelint** | CSS/SCSS 代码检查 |
+| **CommitLint** | Git 提交信息检查 |
+| **Husky** | Git 钩子工具 |
+| **Lint-staged** | 提交前自动校验暂存文件 |
+| **cz-git** | 可视化 Git 提交工具 |
+
 ### ESLint 规则
 
 ```javascript
@@ -68,19 +82,92 @@ no-var: 'error'                       // 禁止 var，使用 let/const
 no-multiple-empty-lines: ['warn', { max: 1 }]  // 不允许多个空行
 ```
 
+### Lint-staged 配置
+
+提交代码时自动执行校验与格式化 (`package.json`):
+
+```json
+"lint-staged": {
+  "*.{js,ts}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "*.{cjs,json}": [
+    "prettier --write"
+  ],
+  "*.{vue,html}": [
+    "eslint --fix",
+    "prettier --write",
+    "stylelint --fix"
+  ],
+  "*.{scss,css}": [
+    "stylelint --fix",
+    "prettier --write"
+  ],
+  "*.md": [
+    "prettier --write"
+  ]
+}
+```
+
+### 常用命令
+
+```bash
+# 检查项目中的 JS/TS 语法
+pnpm lint
+
+# 自动修复 JS/TS 语法错误
+pnpm fix
+
+# 使用 Prettier 格式化所有指定类型的文件
+pnpm lint:prettier
+
+# 使用 Stylelint 检查和自动修复 CSS/SCSS/Vue 样式问题
+pnpm lint:stylelint
+
+# 仅检查暂存文件，确保提交前代码质量
+pnpm lint:lint-staged
+
+# 设置 Husky Git 钩子（项目初始化时执行）
+pnpm prepare
+
+# 使用 Commitizen 规范化提交消息
+pnpm commit
+```
+
 ### Git 提交规范
 
 使用 `pnpm commit` 调用 cz-git，遵循 conventional commits:
 
-| 类型 | 说明 |
-|------|------|
-| `feat:` | 新功能 |
-| `fix:` | 修复 bug |
-| `docs:` | 文档变更 |
-| `refactor:` | 重构 |
-| `style:` | 代码格式 |
-| `test:` | 测试相关 |
-| `chore:` | 构建/工具链 |
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| `feat` | 新增功能 | `feat: 添加用户管理页面` |
+| `fix` | 修复缺陷 | `fix: 修复表单提交失败问题` |
+| `docs` | 文档变更 | `docs: 更新 README 说明` |
+| `style` | 代码格式（不影响功能） | `style: 修复缩进格式` |
+| `refactor` | 代码重构（不包括 bug 修复、功能新增） | `refactor: 重构用户模块` |
+| `perf` | 性能优化 | `perf: 优化列表渲染性能` |
+| `test` | 测试相关 | `test: 添加登录功能测试` |
+| `build` | 构建流程、外部依赖变更 | `build: 升级 webpack 版本` |
+| `ci` | 修改 CI 配置、脚本 | `ci: 更新 GitHub Actions 配置` |
+| `revert` | 回滚 commit | `revert: 回滚上一个提交` |
+| `chore` | 对构建过程或辅助工具的更改 | `chore: 更新依赖版本` |
+| `wip` | 开发中 | `wip: 完善功能开发中` |
+
+### 完整提交流程
+
+```bash
+# 1. 添加文件到暂存区
+git add .
+
+# 2. 使用可视化工具提交（推荐）
+pnpm commit
+
+# 3. 推送到远程仓库
+git push
+```
+
+> **提示**: 代码提交会自动触发 Husky 钩子，执行 lint-staged 进行代码校验和格式化，确保提交代码质量。
 
 ### 路径别名
 
@@ -91,6 +178,9 @@ no-multiple-empty-lines: ['warn', { max: 1 }]  // 不允许多个空行
 | `@utils/` | `src/utils/` |
 | `@stores/` | `src/store/` |
 | `@styles/` | `src/assets/styles/` |
+| `@imgs/` | `src/assets/images/` |
+| `@icons/` | `src/assets/icons/` |
+| `@plugins/` | `src/plugins/` |
 
 ---
 
