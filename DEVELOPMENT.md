@@ -11,6 +11,7 @@
 - [路由与菜单](#路由与菜单)
 - [表格分页配置](#表格分页配置)
 - [新建页面步骤](#新建页面步骤)
+- [样式与主题](#样式与主题)
 - [常见问题](#常见问题)
 
 ---
@@ -43,13 +44,15 @@ pnpm clean:dev
 | 类别 | 技术 |
 |------|------|
 | **核心框架** | Vue 3.5 + TypeScript 5.6 + Vite 7.1 |
-| **UI 组件库** | Element Plus 2.11 |
+| **UI 组件库** | Element Plus 2.11 (覆盖 80% 常用组件) |
 | **状态管理** | Pinia 3.0 (+ 持久化插件) |
 | **路由** | Vue Router 4.5 |
 | **样式** | Tailwind CSS 4.1 + SCSS |
 | **HTTP** | Axios 1.12 |
 | **图表** | ECharts 6.0 |
 | **工具库** | VueUse 13.9 |
+
+> **注**: 项目对 Element Plus 部分组件 UI 进行了调优，详见 [样式与主题](#样式与主题) 章节。
 
 ---
 
@@ -366,6 +369,429 @@ export default defineConfig({
 ```
 
 添加配置后需要重启开发服务器。此问题只在开发环境出现，生产环境不受影响。
+
+---
+
+## 样式与主题
+
+### 主题系统
+
+项目基于 **Tailwind CSS v4** 构建，提供高度灵活的主题定制系统。
+
+**配置文件**: `src/assets/styles/core/tailwind.css`
+
+### CSS 主题变量
+
+#### 基础颜色变量
+
+```css
+/* 文字颜色 */
+color: var(--art-gray-100);  /* 最浅 */
+color: var(--art-gray-500);  /* 中等 */
+color: var(--art-gray-900);  /* 最深 */
+
+/* 边框 */
+border: 1px solid var(--default-border);
+border: 1px solid var(--default-border-dashed);
+
+/* 背景颜色 */
+background-color: var(--default-bg-color);   /* 页面底色 */
+background-color: var(--default-box-color);  /* 卡片/容器背景 */
+
+/* 交互状态 */
+background-color: var(--art-hover-color);    /* 悬停状态 */
+background-color: var(--art-active-color);   /* 激活状态 */
+```
+
+#### 使用 Tailwind 工具类
+
+```html
+<!-- 文字颜色 -->
+<div class="text-g-900">深色文字</div>
+<div class="text-g-500">中等文字</div>
+<div class="text-g-100">浅色文字</div>
+
+<!-- 背景颜色 -->
+<div class="bg-box">卡片背景</div>
+<div class="bg-hover-color">悬停背景</div>
+
+<!-- 边框 -->
+<div class="border-full-d">完整边框</div>
+<div class="border-b-d">底部边框</div>
+
+<!-- 主题色 -->
+<div class="bg-primary text-white">主题色背景</div>
+<div class="text-primary">主题色文字</div>
+```
+
+### 主题色系统
+
+项目使用 **OKLCH 色彩空间** 定义主题色，提供更准确的色彩表现：
+
+```css
+/* 主题色 */
+color: var(--art-primary);   /* 主色 */
+color: var(--art-secondary); /* 次要色 */
+color: var(--art-success);   /* 成功色 */
+color: var(--art-warning);   /* 警告色 */
+color: var(--art-error);     /* 错误色 */
+color: var(--art-info);      /* 信息色 */
+color: var(--art-danger);    /* 危险色 */
+```
+
+#### Element Plus 主题色变体
+
+系统自动生成 9 个不同深浅的主题色变体：
+
+```css
+/* 主题色变浅（数字越大越浅） */
+background-color: var(--el-color-primary-light-1);  /* 最深 */
+background-color: var(--el-color-primary-light-5);  /* 中等 */
+background-color: var(--el-color-primary-light-9);  /* 最浅 */
+
+/* 主题色变深（数字越大越深） */
+background-color: var(--el-color-primary-dark-1);
+background-color: var(--el-color-primary-dark-5);
+background-color: var(--el-color-primary-dark-9);
+```
+
+### 灰度色系统
+
+提供 9 个层级的灰度色，自动适配 Light/Dark 模式：
+
+```css
+/* CSS 变量方式 */
+color: var(--art-gray-100);  /* 最浅 */
+color: var(--art-gray-500);  /* 中等 */
+color: var(--art-gray-900);  /* 最深 */
+
+/* Tailwind 工具类方式 */
+<div class="text-g-100">最浅文字</div>
+<div class="text-g-500">中等文字</div>
+<div class="text-g-900">最深文字</div>
+```
+
+### 布局工具类
+
+项目扩展了 Tailwind CSS，提供实用的工具类组合：
+
+```html
+<!-- Flexbox 快捷类 -->
+<div class="flex-c">     <!-- flex + items-center -->
+  <div class="flex-b">   <!-- flex + justify-between -->
+    <div class="flex-cc"><!-- flex + items-center + justify-center -->
+      <div class="flex-cb"><!-- flex + items-center + justify-between -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 过渡动画 -->
+<div class="tad-200">  <!-- transition-all duration-200 -->
+  <div class="tad-300"><!-- transition-all duration-300 -->
+  </div>
+</div>
+
+<!-- 边框工具类 -->
+<div class="border-full-d">  <!-- 完整边框 -->
+  <div class="border-b-d">   <!-- 底部边框 -->
+    <div class="border-t-d"> <!-- 顶部边框 -->
+      <div class="border-l-d"><!-- 左侧边框 -->
+        <div class="border-r-d"><!-- 右侧边框 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 其他工具类 -->
+<div class="c-p">        <!-- cursor-pointer -->
+<div class="rounded-custom-xs">  <!-- 小圆角 -->
+<div class="rounded-custom-sm">  <!-- 中等圆角 -->
+```
+
+### 主题切换
+
+#### 使用 useTheme Hook
+
+```typescript
+import { useTheme } from "@/hooks/core/useTheme";
+import { SystemThemeEnum } from "@/enums/appEnum";
+
+const { switchThemeStyles } = useTheme();
+
+// 切换到暗色主题
+switchThemeStyles(SystemThemeEnum.DARK);
+
+// 切换到亮色主题
+switchThemeStyles(SystemThemeEnum.LIGHT);
+
+// 切换到自动模式（跟随系统）
+switchThemeStyles(SystemThemeEnum.AUTO);
+```
+
+#### 自定义主题色
+
+**修改预设主题色** (`src/config/index.ts`):
+
+```typescript
+systemMainColor: [
+  "#5D87FF", // 默认蓝色
+  "#B48DF3", // 紫色
+  "#1D84FF", // 天蓝色
+  "#60C041", // 绿色
+  "#38C0FC", // 青色
+  "#F9901F", // 橙色
+  "#FF80C8", // 粉色
+];
+```
+
+**动态设置主题色**:
+
+```typescript
+import { setElementThemeColor } from "@/utils/ui/colors";
+
+// 设置自定义主题色
+setElementThemeColor("#5D87FF");
+```
+
+### 主题色工具函数
+
+完整的颜色处理工具位于 `src/utils/ui/colors.ts`：
+
+```typescript
+import {
+  hexToRgba,      // Hex 转 RGBA
+  hexToRgb,       // Hex 转 RGB
+  rgbToHex,       // RGB 转 Hex
+  getLightColor,  // 生成变浅的颜色
+  getDarkColor,   // 生成变深的颜色
+  colourBlend,    // 颜色混合
+} from "@/utils/ui/colors";
+
+// 生成变浅的颜色
+const lightColor = getLightColor("#5D87FF", 0.3);
+
+// 生成变深的颜色
+const darkColor = getDarkColor("#5D87FF", 0.3);
+
+// 颜色混合
+const blendedColor = colourBlend("#5D87FF", "#FFFFFF", 0.5);
+```
+
+---
+
+### Element Plus 样式调优
+
+项目对 Element Plus 部分组件 UI 进行了调优，以获得更好的视觉效果。
+
+**配置文件**: `src/assets/styles/core/el-ui.scss`
+
+#### 主要调优内容
+
+**1. 组件高度统一**
+
+```scss
+:root {
+  --el-component-custom-height: 36px !important;
+  --el-component-size: var(--el-component-custom-height) !important;
+}
+
+// 按钮、表单、选择器等默认大小统一为 36px
+.el-button--default {
+  height: var(--el-component-custom-height) !important;
+}
+.el-select--default .el-select__wrapper {
+  min-height: var(--el-component-custom-height) !important;
+}
+```
+
+**2. 圆角优化**
+
+```scss
+:root {
+  --el-border-radius-base: calc(var(--custom-radius) / 3 + 2px) !important;
+  --el-border-radius-small: calc(var(--custom-radius) / 3 + 4px) !important;
+  --el-messagebox-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
+}
+
+.el-pagination.is-background .btn-next,
+.el-pagination.is-background .btn-prev,
+.el-pager li {
+  border-radius: 6px;
+}
+```
+
+**3. Dialog 弹窗优化**
+
+```scss
+.el-dialog {
+  border-radius: calc(var(--custom-radius) / 1.2 + 2px) !important;
+  overflow: hidden;
+}
+
+.el-dialog__body {
+  padding: 25px 0 !important;
+  position: relative;
+}
+
+// 弹窗动画
+@keyframes dialog-open {
+  0% { opacity: 0; transform: scale(0.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+```
+
+**4. Dropdown 和 Select 下拉优化**
+
+```scss
+.el-dropdown-menu {
+  padding: 6px !important;
+  border-radius: 10px !important;
+  border: none !important;
+
+  .el-dropdown-menu__item {
+    padding: 6px 16px !important;
+    border-radius: 6px !important;
+
+    &:hover:not(.is-disabled) {
+      background-color: var(--art-el-active-color) !important;
+    }
+  }
+}
+
+// 隐藏下拉三角
+.el-select__popper,
+.el-dropdown__popper {
+  .el-popper__arrow {
+    display: none;
+  }
+}
+```
+
+**5. 复选框/单选按钮优化**
+
+```scss
+// 复选框
+.el-checkbox--default .el-checkbox__inner {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 4px !important;
+}
+
+// 单选按钮
+.el-radio--default .el-radio__input .el-radio__inner {
+  width: 16px;
+  height: 16px;
+}
+```
+
+**6. Message 消息提示优化**
+
+```scss
+.el-message {
+  background-color: var(--default-box-color) !important;
+  border: 0 !important;
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+}
+```
+
+**7. 菜单动画优化**
+
+```scss
+// 折叠展开动画（提升流畅度）
+.el-menu.el-menu--inline {
+  transition: max-height 0.26s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+// hover 动画（提升跟手感）
+.el-sub-menu__title,
+.el-menu-item {
+  transition: background-color 0s !important;
+}
+```
+
+---
+
+### 最佳实践
+
+**1. 优先使用 Tailwind 工具类**
+
+```html
+<!-- ✅ 推荐 -->
+<div class="flex items-center gap-4 p-4 bg-box rounded-lg"></div>
+
+<!-- ❌ 不推荐 -->
+<div style="display: flex; align-items: center; gap: 1rem;"></div>
+```
+
+**2. 使用 CSS 变量保持一致性**
+
+```css
+/* ✅ 推荐 - 自动适配主题 */
+.my-component {
+  color: var(--art-gray-900);
+  background: var(--default-box-color);
+}
+
+/* ❌ 不推荐 - 硬编码颜色 */
+.my-component {
+  color: #323251;
+  background: #ffffff;
+}
+```
+
+**3. 使用语义化的颜色变量**
+
+```css
+/* ✅ 推荐 */
+border-color: var(--default-border);
+background: var(--art-hover-color);
+
+/* ❌ 不推荐 */
+border-color: #e2e8ee;
+background: #f2f4f5;
+```
+
+**4. 利用工具类组合**
+
+```html
+<!-- ✅ 推荐 - 使用预定义的组合类 -->
+<div class="flex-cb tad-300"></div>
+
+<!-- ❌ 不推荐 - 重复写完整的类 -->
+<div class="flex items-center justify-between transition-all duration-300"></div>
+```
+
+### 响应式设计
+
+使用 Tailwind 的响应式前缀：
+
+```html
+<!-- 移动端优先 -->
+<div class="text-sm md:text-base lg:text-lg">响应式文字大小</div>
+
+<!-- 不同屏幕下的布局 -->
+<div class="flex-col md:flex-row">响应式布局</div>
+```
+
+### 内置全局组件
+
+项目内置了丰富的全局组件，可在任何地方直接使用：
+
+**配置文件**: `src/config/modules/component.ts`
+
+| 组件 | 说明 |
+|------|------|
+| `settings-panel` | 设置面板 |
+| `global-search` | 全局搜索 |
+| `screen-lock` | 锁屏功能 |
+| `chat-window` | 聊天窗口 |
+| `fireworks-effect` | 礼花效果 |
+| `watermark` | 水印效果 |
 
 ---
 
