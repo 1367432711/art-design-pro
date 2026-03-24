@@ -302,6 +302,10 @@
       "menu32": "Menu 3-2",
       "menu321": "Menu 3-2-1"
     },
+    "trade": {
+      "title": "Trade Manage",
+      "customer": "Customer Manage"
+    },
     "safeguard": {
       "title": "Safeguard",
       "server": "Server"

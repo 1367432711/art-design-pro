@@ -135,4 +135,35 @@ declare namespace Api {
         }
     >
   }
+
+  /** 外贸管理类型 */
+  namespace Trade {
+    /** 客户列表 */
+    type CustomerList = Api.Common.PaginatedResponse<CustomerListItem>
+
+    /** 客户列表项 */
+    interface CustomerListItem {
+      id: string
+      customerName: string // 客户名称
+      contactPerson: string // 联系人
+      contactPhone: string // 联系电话
+      contactEmail: string // 联系邮箱
+      country: string // 国家
+      products: string // 主要产品
+      status: string // 状态：1-活跃 2-潜在 3-流失
+      source: string // 客户来源
+      createTime: string // 创建时间
+      updateBy: string
+      updateTime: string
+    }
+
+    /** 客户搜索参数 */
+    type CustomerSearchParams = Partial<
+      Pick<
+        CustomerListItem,
+        'customerName' | 'contactPerson' | 'contactPhone' | 'contactEmail' | 'country' | 'status'
+      > &
+        Api.Common.CommonSearchParams
+    >
+  }
 }
