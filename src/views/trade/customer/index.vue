@@ -38,8 +38,17 @@
       <CustomerDialog
         v-model:visible="dialogVisible"
         :type="dialogType"
-        :customer-data="currentCustomerData"
+        :customer-data="currentCustomerData || {}"
         @submit="handleDialogSubmit"
+      />
+
+      <!-- 客户详情侧边栏 -->
+      <CustomerDetail
+        v-model:visible="detailVisible"
+        :customer-data="currentCustomerData"
+        @edit="handleEditFromDetail"
+        @add-quotation="handleAddQuotation"
+        @view-quotation="handleViewQuotation"
       />
     </ElCard>
   </div>
@@ -51,20 +60,29 @@
   import { fetchGetCustomerList } from '@/api/trade-manage'
   import CustomerSearch from './modules/customer-search.vue'
   import CustomerDialog from './modules/customer-dialog.vue'
+  import CustomerDetail from './modules/customer-detail.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import { DialogType } from '@/types'
+  import { useRouter } from 'vue-router'
 
   defineOptions({ name: 'Customer' })
+
+  const router = useRouter()
 
   type CustomerListItem = Api.Trade.CustomerListItem
 
   // 弹窗相关
   const dialogType = ref<DialogType>('add')
   const dialogVisible = ref(false)
-  const currentCustomerData = ref<Partial<CustomerListItem>>({})
+
+  // 详情侧边栏
+  const detailVisible = ref(false)
 
   // 选中行
   const selectedRows = ref<CustomerListItem[]>([])
+
+  // 当前查看的客户详情（弹窗和侧边栏共用）
+  const currentCustomerData = ref<Partial<CustomerListItem> | null>(null)
 
   // 搜索表单
   const searchForm = ref({
@@ -73,7 +91,7 @@
     contactPhone: undefined,
     contactEmail: undefined,
     country: undefined,
-    status: '1'
+    status: undefined
   })
 
   // 客户状态配置
@@ -118,65 +136,81 @@
         size: 20,
         ...searchForm.value
       },
-      columnsFactory: () => [
-        { type: 'selection' }, // 勾选列
-        { type: 'index', width: 60, label: '序号' }, // 序号
-        {
-          prop: 'customerName',
-          label: '客户名称',
-          width: 200,
-          formatter: (row) => {
-            return h('div', { class: 'font-medium' }, row.customerName)
+      columnsFactory: () => {
+        return [
+          { type: 'selection' }, // 勾选列
+          { type: 'index', width: 60, label: '序号' }, // 序号
+          {
+            prop: 'customerName',
+            label: '客户名称',
+            width: 200,
+            formatter: (row: CustomerListItem) => {
+              return h('div', { class: 'font-medium' }, row.customerName)
+            }
+          },
+          { prop: 'contactPerson', label: '联系人', width: 120 },
+          {
+            prop: 'contactPhone',
+            label: '联系电话',
+            width: 130,
+            formatter: (row: CustomerListItem) =>
+              h('span', { class: 'text-g-500' }, row.contactPhone)
+          },
+          {
+            prop: 'contactEmail',
+            label: '联系邮箱',
+            width: 180,
+            formatter: (row: CustomerListItem) =>
+              h('span', { class: 'text-g-500' }, row.contactEmail)
+          },
+          { prop: 'country', label: '国家', width: 120 },
+          {
+            prop: 'status',
+            label: '状态',
+            width: 100,
+            formatter: (row: CustomerListItem) => {
+              const statusConfig = getCustomerStatusConfig(row.status)
+              return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
+            }
+          },
+          { prop: 'products', label: '主要产品', minWidth: 150 },
+          {
+            prop: 'quotationCount',
+            label: '报价数',
+            width: 80,
+            align: 'center',
+            formatter: (row: CustomerListItem) =>
+              h('span', { class: 'text-g-500' }, row.quotationCount || 0)
+          },
+          {
+            prop: 'createTime',
+            label: '创建日期',
+            width: 160,
+            sortable: true
+          },
+          {
+            prop: 'operation',
+            label: '操作',
+            width: 200,
+            fixed: 'right', // 固定列
+            formatter: (row: CustomerListItem) =>
+              h('div', [
+                h(ArtButtonTable, {
+                  type: 'view',
+                  onClick: () => showDetail(row)
+                }),
+                h(ArtButtonTable, {
+                  type: 'edit',
+                  onClick: () => showDialog('edit', row)
+                }),
+                h(ArtButtonTable, {
+                  type: 'delete',
+                  onClick: () => deleteCustomer(row)
+                })
+              ])
           }
-        },
-        { prop: 'contactPerson', label: '联系人', width: 120 },
-        {
-          prop: 'contactPhone',
-          label: '联系电话',
-          width: 130,
-          formatter: (row) => h('span', { class: 'text-g-500' }, row.contactPhone)
-        },
-        {
-          prop: 'contactEmail',
-          label: '联系邮箱',
-          width: 180,
-          formatter: (row) => h('span', { class: 'text-g-500' }, row.contactEmail)
-        },
-        { prop: 'country', label: '国家', width: 120 },
-        {
-          prop: 'status',
-          label: '状态',
-          width: 100,
-          formatter: (row) => {
-            const statusConfig = getCustomerStatusConfig(row.status)
-            return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
-          }
-        },
-        { prop: 'products', label: '主要产品', minWidth: 150 },
-        {
-          prop: 'createTime',
-          label: '创建日期',
-          width: 160,
-          sortable: true
-        },
-        {
-          prop: 'operation',
-          label: '操作',
-          width: 150,
-          fixed: 'right', // 固定列
-          formatter: (row) =>
-            h('div', [
-              h(ArtButtonTable, {
-                type: 'edit',
-                onClick: () => showDialog('edit', row)
-              }),
-              h(ArtButtonTable, {
-                type: 'delete',
-                onClick: () => deleteCustomer(row)
-              })
-            ])
-        }
-      ]
+        ]
+      }
     }
   })
 
@@ -198,6 +232,52 @@
     currentCustomerData.value = row || {}
     nextTick(() => {
       dialogVisible.value = true
+    })
+  }
+
+  /**
+   * 显示客户详情侧边栏
+   */
+  const showDetail = (row: CustomerListItem): void => {
+    currentCustomerData.value = row
+    nextTick(() => {
+      detailVisible.value = true
+    })
+  }
+
+  /**
+   * 从详情页编辑客户
+   */
+  const handleEditFromDetail = (customer: Partial<CustomerListItem>) => {
+    currentCustomerData.value = customer
+    detailVisible.value = false
+    nextTick(() => {
+      showDialog('edit', customer as CustomerListItem)
+    })
+  }
+
+  /**
+   * 新增报价
+   */
+  const handleAddQuotation = (customerId: string, customerName: string) => {
+    // 关闭详情页，跳转到报价页面并打开新增弹窗
+    detailVisible.value = false
+    // 通过路由传递参数
+    router.push({
+      path: '/trade/quotation',
+      query: { customerId, customerName, action: 'add' }
+    })
+  }
+
+  /**
+   * 查看报价详情
+   */
+  const handleViewQuotation = (quotation: Api.Trade.QuotationListItem) => {
+    // 关闭详情页，跳转到报价页面并打开编辑弹窗
+    detailVisible.value = false
+    router.push({
+      path: '/trade/quotation',
+      query: { quotationId: quotation.id, action: 'view' }
     })
   }
 

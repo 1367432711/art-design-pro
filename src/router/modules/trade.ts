@@ -19,6 +19,16 @@ export const tradeRoutes: AppRouteRecord = {
         icon: 'ri:user-business-line',
         keepAlive: true
       }
+    },
+    {
+      path: 'quotation',
+      name: 'Quotation',
+      component: '/trade/quotation',
+      meta: {
+        title: 'menus.trade.quotation',
+        icon: 'ri:file-list-3-line',
+        keepAlive: true
+      }
     }
   ]
 }

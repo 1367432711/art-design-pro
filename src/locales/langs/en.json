@@ -304,7 +304,8 @@
     },
     "trade": {
       "title": "Trade Manage",
-      "customer": "Customer Manage"
+      "customer": "Customer Manage",
+      "quotation": "Quotation Manage"
     },
     "safeguard": {
       "title": "Safeguard",

@@ -149,9 +149,13 @@ declare namespace Api {
       contactPhone: string // 联系电话
       contactEmail: string // 联系邮箱
       country: string // 国家
-      products: string // 主要产品
-      status: string // 状态：1-活跃 2-潜在 3-流失
+      address: string // 详细地址
+      products: string // 主要产品/需求
       source: string // 客户来源
+      status: string // 状态：1-活跃 2-潜在 3-流失
+      salesPerson: string // 负责业务员
+      remarks: string // 备注
+      quotationCount: number // 报价记录数
       createTime: string // 创建时间
       updateBy: string
       updateTime: string
@@ -161,9 +165,53 @@ declare namespace Api {
     type CustomerSearchParams = Partial<
       Pick<
         CustomerListItem,
-        'customerName' | 'contactPerson' | 'contactPhone' | 'contactEmail' | 'country' | 'status'
+        | 'customerName'
+        | 'contactPerson'
+        | 'contactPhone'
+        | 'contactEmail'
+        | 'country'
+        | 'status'
+        | 'salesPerson'
       > &
         Api.Common.CommonSearchParams
+    >
+
+    /** 报价列表 */
+    type QuotationList = Api.Common.PaginatedResponse<QuotationListItem>
+
+    /** 报价列表项 */
+    interface QuotationListItem {
+      id: string
+      customerId: string // 关联客户 ID
+      customerName: string // 客户名称（冗余字段，方便列表展示）
+      quotationNo: string // 报价单号
+      productName: string // 产品名称
+      specification: string // 规格型号
+      quantity: number // 数量
+      unit: string // 单位
+      unitPrice: number // 单价
+      currency: string // 币种
+      totalPrice: number // 总金额
+      tradeTerm: string // 贸易条款 (FOB/CIF/EXW)
+      paymentTerm: string // 付款方式
+      validity: string // 报价有效期
+      remarks: string // 备注
+      status: string // 状态：待确认/已接受/已拒绝/已过期
+      quotationDate: string // 报价日期
+      createTime: string
+      updateBy: string
+      updateTime: string
+    }
+
+    /** 报价搜索参数 */
+    type QuotationSearchParams = Partial<
+      Pick<
+        QuotationListItem,
+        'customerId' | 'customerName' | 'quotationNo' | 'productName' | 'status' | 'currency'
+      > & {
+        startTime?: string // 开始日期
+        endTime?: string // 结束日期
+      } & Api.Common.CommonSearchParams
     >
   }
 }
