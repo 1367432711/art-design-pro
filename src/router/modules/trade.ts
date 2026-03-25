@@ -21,6 +21,16 @@ export const tradeRoutes: AppRouteRecord = {
       }
     },
     {
+      path: 'customer/detail/:id',
+      name: 'CustomerDetail',
+      component: '/trade/customer/customer-detail',
+      meta: {
+        title: '客户详情',
+        hidden: true,
+        keepAlive: true
+      }
+    },
+    {
       path: 'quotation',
       name: 'Quotation',
       component: '/trade/quotation',

@@ -41,15 +41,6 @@
         :customer-data="currentCustomerData || {}"
         @submit="handleDialogSubmit"
       />
-
-      <!-- 客户详情侧边栏 -->
-      <CustomerDetail
-        v-model:visible="detailVisible"
-        :customer-data="currentCustomerData"
-        @edit="handleEditFromDetail"
-        @add-quotation="handleAddQuotation"
-        @view-quotation="handleViewQuotation"
-      />
     </ElCard>
   </div>
 </template>
@@ -60,7 +51,6 @@
   import { fetchGetCustomerList } from '@/api/trade-manage'
   import CustomerSearch from './modules/customer-search.vue'
   import CustomerDialog from './modules/customer-dialog.vue'
-  import CustomerDetail from './modules/customer-detail.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import { DialogType } from '@/types'
   import { useRouter } from 'vue-router'
@@ -75,13 +65,10 @@
   const dialogType = ref<DialogType>('add')
   const dialogVisible = ref(false)
 
-  // 详情侧边栏
-  const detailVisible = ref(false)
-
   // 选中行
   const selectedRows = ref<CustomerListItem[]>([])
 
-  // 当前查看的客户详情（弹窗和侧边栏共用）
+  // 当前查看的客户详情
   const currentCustomerData = ref<Partial<CustomerListItem> | null>(null)
 
   // 搜索表单
@@ -236,49 +223,10 @@
   }
 
   /**
-   * 显示客户详情侧边栏
+   * 显示客户详情（跳转到详情页）
    */
   const showDetail = (row: CustomerListItem): void => {
-    currentCustomerData.value = row
-    nextTick(() => {
-      detailVisible.value = true
-    })
-  }
-
-  /**
-   * 从详情页编辑客户
-   */
-  const handleEditFromDetail = (customer: Partial<CustomerListItem>) => {
-    currentCustomerData.value = customer
-    detailVisible.value = false
-    nextTick(() => {
-      showDialog('edit', customer as CustomerListItem)
-    })
-  }
-
-  /**
-   * 新增报价
-   */
-  const handleAddQuotation = (customerId: string, customerName: string) => {
-    // 关闭详情页，跳转到报价页面并打开新增弹窗
-    detailVisible.value = false
-    // 通过路由传递参数
-    router.push({
-      path: '/trade/quotation',
-      query: { customerId, customerName, action: 'add' }
-    })
-  }
-
-  /**
-   * 查看报价详情
-   */
-  const handleViewQuotation = (quotation: Api.Trade.QuotationListItem) => {
-    // 关闭详情页，跳转到报价页面并打开编辑弹窗
-    detailVisible.value = false
-    router.push({
-      path: '/trade/quotation',
-      query: { quotationId: quotation.id, action: 'view' }
-    })
+    router.push(`/trade/customer/detail/${row.id}`)
   }
 
   /**
