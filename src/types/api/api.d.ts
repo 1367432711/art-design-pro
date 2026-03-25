@@ -213,5 +213,50 @@ declare namespace Api {
         endTime?: string // 结束日期
       } & Api.Common.CommonSearchParams
     >
+
+    /** 产品列表 */
+    type ProductList = Api.Common.PaginatedResponse<ProductListItem>
+
+    /** 产品列表项 */
+    interface ProductListItem {
+      id: string
+      name: string // 产品名称
+      sku: string // 产品编号
+      type: string // 产品类型：切割片/百叶片/磨光片/其他
+      grade: string // 产品等级：A 级/B 级/C 级
+      spec: string // 规格型号
+      material: string // 材质
+      unit: string // 单位
+      costPrice: number // 成本价
+      salePrice: number // 销售价
+      currency: string // 币种
+      moq: number // 最小起订量
+      stock: number // 库存数量
+      leadTime: string // 交货期
+      mainImage: string // 主图
+      imageCount: number // 图片数量
+      status: string // 状态：on_sale-上架 off_sale-下架
+      description: string // 产品描述
+      notes: string // 内部备注
+      // 包装信息
+      singleWeight: string // 单片重量
+      blisterQuantity: number // 吸塑数量
+      innerBoxQuantity: number // 内盒数量
+      cartonQuantity: number // 每箱数量
+      cartonSize: string // 外箱尺寸
+      grossWeight: number // 每箱毛重
+      netWeight: number // 每箱净重
+      createTime: string
+      updateBy: string
+      updateTime: string
+    }
+
+    /** 产品搜索参数 */
+    type ProductSearchParams = {
+      keyword?: string // 关键词：产品名称/SKU/规格型号
+      type?: string // 产品类型
+      grade?: string // 产品等级
+      material?: string // 材质
+    } & Api.Common.CommonSearchParams
   }
 }

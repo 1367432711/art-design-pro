@@ -408,3 +408,17 @@ export function getCustomerListData(
     total
   }
 }
+
+/**
+ * 根据 ID 获取客户详情
+ * @param id 客户 ID
+ */
+export function getCustomerDetailById(id: string): Api.Trade.CustomerListItem | null {
+  const customer = CUSTOMER_LIST_DATA.find((item) => item.id === id)
+  if (!customer) return null
+
+  return {
+    ...customer,
+    quotationCount: getQuotationCountByCustomer(id)
+  }
+}

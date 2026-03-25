@@ -533,3 +533,67 @@ export function getQuotationListData(
 export function getQuotationCountByCustomer(customerId: string): number {
   return QUOTATION_LIST_DATA.filter((item) => item.customerId === customerId).length
 }
+
+/**
+ * 根据 ID 获取报价详情
+ * @param id 报价 ID
+ */
+export function getQuotationDetailById(id: string): Api.Trade.QuotationListItem | null {
+  const quotation = QUOTATION_LIST_DATA.find((item) => item.id === id)
+  if (!quotation) return null
+  return { ...quotation }
+}
+
+/**
+ * 创建新报价
+ * @param quotation 报价数据
+ */
+export function createQuotation(
+  quotation: Partial<Api.Trade.QuotationListItem>
+): Api.Trade.QuotationListItem {
+  const newQuotation = {
+    ...quotation,
+    id: String(Date.now()),
+    createTime: new Date().toLocaleString('zh-CN'),
+    updateTime: new Date().toLocaleString('zh-CN'),
+    updateBy: 'admin'
+  } as Api.Trade.QuotationListItem
+
+  QUOTATION_LIST_DATA.unshift(newQuotation)
+  return newQuotation
+}
+
+/**
+ * 更新报价
+ * @param id 报价 ID
+ * @param quotation 报价数据
+ */
+export function updateQuotation(
+  id: string,
+  quotation: Partial<Api.Trade.QuotationListItem>
+): Api.Trade.QuotationListItem | null {
+  const index = QUOTATION_LIST_DATA.findIndex((item) => item.id === id)
+  if (index === -1) return null
+
+  const updatedQuotation = {
+    ...QUOTATION_LIST_DATA[index],
+    ...quotation,
+    updateTime: new Date().toLocaleString('zh-CN'),
+    updateBy: 'admin'
+  }
+
+  QUOTATION_LIST_DATA[index] = updatedQuotation
+  return updatedQuotation
+}
+
+/**
+ * 删除报价
+ * @param id 报价 ID
+ */
+export function deleteQuotation(id: string): boolean {
+  const index = QUOTATION_LIST_DATA.findIndex((item) => item.id === id)
+  if (index === -1) return false
+
+  QUOTATION_LIST_DATA.splice(index, 1)
+  return true
+}

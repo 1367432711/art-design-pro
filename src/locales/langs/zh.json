@@ -305,7 +305,8 @@
     "trade": {
       "title": "外贸管理",
       "customer": "客户管理",
-      "quotation": "报价管理"
+      "quotation": "报价管理",
+      "product": "产品管理"
     },
     "safeguard": {
       "title": "运维管理",

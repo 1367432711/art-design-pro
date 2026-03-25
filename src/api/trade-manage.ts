@@ -1,6 +1,20 @@
 import request from '@/utils/http'
-import { getCustomerListData } from '@/mock/temp/customerList'
-import { getQuotationListData, getQuotationCountByCustomer } from '@/mock/temp/quotationList'
+import { getCustomerListData, getCustomerDetailById } from '@/mock/temp/customerList'
+import {
+  getQuotationListData,
+  getQuotationCountByCustomer,
+  getQuotationDetailById,
+  createQuotation,
+  updateQuotation,
+  deleteQuotation
+} from '@/mock/temp/quotationList'
+import {
+  getProductListData,
+  getProductDetailById,
+  createProduct,
+  updateProduct,
+  deleteProduct
+} from '@/mock/temp/productList'
 
 // ==================== 客户管理 ====================
 
@@ -37,9 +51,21 @@ export function fetchGetCustomerList(params: Api.Trade.CustomerSearchParams) {
  * @param id 客户 ID
  */
 export function fetchGetCustomerDetail(id: string) {
-  return request.get<Api.Trade.CustomerListItem>({
-    url: `/api/trade/customer/${id}`
+  // 使用模拟数据（开发环境）
+  const data = getCustomerDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('客户不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.get<Api.Trade.CustomerListItem>({
+  //   url: `/api/trade/customer/${id}`
+  // })
 }
 
 /**
@@ -121,14 +147,45 @@ export function fetchGetCustomerQuotations(
 }
 
 /**
+ * 获取报价详情
+ * @param id 报价 ID
+ */
+export function fetchGetQuotationDetail(id: string) {
+  // 使用模拟数据（开发环境）
+  const data = getQuotationDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('报价不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.get<Api.Trade.QuotationListItem>({
+  //   url: `/api/trade/quotation/${id}`
+  // })
+}
+
+/**
  * 创建报价
  * @param data 报价信息
  */
 export function fetchCreateQuotation(data: Partial<Api.Trade.QuotationListItem>) {
-  return request.post({
-    url: '/api/trade/quotation',
-    data
+  // 使用模拟数据（开发环境）
+  const newQuotation = createQuotation(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newQuotation
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.post({
+  //   url: '/api/trade/quotation',
+  //   data
+  // })
 }
 
 /**
@@ -136,10 +193,23 @@ export function fetchCreateQuotation(data: Partial<Api.Trade.QuotationListItem>)
  * @param data 报价信息
  */
 export function fetchUpdateQuotation(data: Partial<Api.Trade.QuotationListItem>) {
-  return request.put({
-    url: '/api/trade/quotation',
-    data
+  // 使用模拟数据（开发环境）
+  const id = data.id || ''
+  const updatedQuotation = updateQuotation(id, data)
+  if (!updatedQuotation) {
+    return Promise.reject(new Error('报价不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedQuotation
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.put({
+  //   url: '/api/trade/quotation',
+  //   data
+  // })
 }
 
 /**
@@ -147,7 +217,129 @@ export function fetchUpdateQuotation(data: Partial<Api.Trade.QuotationListItem>)
  * @param id 报价 ID
  */
 export function fetchDeleteQuotation(id: string) {
-  return request.del({
-    url: `/api/trade/quotation/${id}`
+  // 使用模拟数据（开发环境）
+  const deleted = deleteQuotation(id)
+  if (!deleted) {
+    return Promise.reject(new Error('报价不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: null
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.del({
+  //   url: `/api/trade/quotation/${id}`
+  // })
+}
+
+// ==================== 产品管理 ====================
+
+/**
+ * 获取产品列表
+ * @param params 搜索参数
+ */
+export function fetchGetProductList(params: Api.Trade.ProductSearchParams) {
+  // 使用模拟数据（开发环境）
+  const data = getProductListData(params)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.get<Api.Trade.ProductList>({
+  //   url: '/api/trade/product/list',
+  //   params
+  // })
+}
+
+/**
+ * 获取产品详情
+ * @param id 产品 ID
+ */
+export function fetchGetProductDetail(id: string) {
+  // 使用模拟数据（开发环境）
+  const data = getProductDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('产品不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.get<Api.Trade.ProductListItem>({
+  //   url: `/api/trade/product/${id}`
+  // })
+}
+
+/**
+ * 创建产品
+ * @param data 产品信息
+ */
+export function fetchCreateProduct(data: Partial<Api.Trade.ProductListItem>) {
+  // 使用模拟数据（开发环境）
+  const newProduct = createProduct(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newProduct
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.post({
+  //   url: '/api/trade/product',
+  //   data
+  // })
+}
+
+/**
+ * 更新产品
+ * @param data 产品信息
+ */
+export function fetchUpdateProduct(data: Partial<Api.Trade.ProductListItem>) {
+  // 使用模拟数据（开发环境）
+  const id = data.id || ''
+  const updatedProduct = updateProduct(id, data)
+  if (!updatedProduct) {
+    return Promise.reject(new Error('产品不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedProduct
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.put({
+  //   url: '/api/trade/product',
+  //   data
+  // })
+}
+
+/**
+ * 删除产品
+ * @param id 产品 ID
+ */
+export function fetchDeleteProduct(id: string) {
+  // 使用模拟数据（开发环境）
+  const deleted = deleteProduct(id)
+  if (!deleted) {
+    return Promise.reject(new Error('产品不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: null
+  })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.del({
+  //   url: `/api/trade/product/${id}`
+  // })
 }

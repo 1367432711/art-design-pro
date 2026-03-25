@@ -13,7 +13,7 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton type="primary" @click="showDialog('add')" v-ripple>新增报价</ElButton>
+            <ElButton type="primary" @click="goToForm('add')" v-ripple>新增报价</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -29,14 +29,6 @@
         @pagination:current-change="handleCurrentChange"
       >
       </ArtTable>
-
-      <!-- 报价弹窗 -->
-      <QuotationDialog
-        v-model:visible="dialogVisible"
-        :type="dialogType"
-        :quotation-data="currentQuotationData"
-        @submit="handleDialogSubmit"
-      />
     </ElCard>
   </div>
 </template>
@@ -44,25 +36,18 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetQuotationList } from '@/api/trade-manage'
+  import { fetchGetQuotationList, fetchDeleteQuotation } from '@/api/trade-manage'
   import QuotationSearch from './modules/quotation-search.vue'
-  import QuotationDialog from './modules/quotation-dialog.vue'
-  import { ElTag, ElMessageBox, ElLink } from 'element-plus'
-  import { DialogType } from '@/types'
+  import { ElTag, ElMessageBox, ElMessage, ElLink } from 'element-plus'
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
+  import { h } from 'vue'
 
   defineOptions({ name: 'Quotation' })
 
-  const route = useRoute()
   const router = useRouter()
 
   type QuotationListItem = Api.Trade.QuotationListItem
-
-  // 弹窗相关
-  const dialogType = ref<DialogType>('add')
-  const dialogVisible = ref(false)
-  const currentQuotationData = ref<Partial<QuotationListItem>>({})
 
   // 选中行
   const selectedRows = ref<QuotationListItem[]>([])
@@ -111,7 +96,6 @@
     handleSizeChange,
     handleCurrentChange,
     refreshData,
-    refreshCreate,
     refreshRemove
   } = useTable({
     core: {
@@ -192,13 +176,17 @@
           {
             prop: 'operation',
             label: '操作',
-            width: 150,
+            width: 200,
             fixed: 'right',
             formatter: (row: QuotationListItem) =>
               h('div', [
                 h(ArtButtonTable, {
+                  type: 'view',
+                  onClick: () => showDetail(row)
+                }),
+                h(ArtButtonTable, {
                   type: 'edit',
-                  onClick: () => showDialog('edit', row)
+                  onClick: () => goToForm('edit', row)
                 }),
                 h(ArtButtonTable, {
                   type: 'delete',
@@ -217,13 +205,18 @@
     getData()
   }
 
-  // 显示弹窗
-  const showDialog = (type: DialogType, row?: QuotationListItem): void => {
-    dialogType.value = type
-    currentQuotationData.value = row || {}
-    nextTick(() => {
-      dialogVisible.value = true
-    })
+  // 跳转到表单页
+  const goToForm = (type: 'add' | 'edit', row?: QuotationListItem): void => {
+    if (type === 'edit' && row) {
+      router.push(`/trade/quotation/form/${row.id}`)
+    } else {
+      router.push('/trade/quotation/form')
+    }
+  }
+
+  // 显示报价详情
+  const showDetail = (row: QuotationListItem): void => {
+    router.push(`/trade/quotation/detail/${row.id}`)
   }
 
   // 删除报价
@@ -232,21 +225,16 @@
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
-    }).then(() => {
-      ElMessage.success('删除成功')
-      refreshRemove()
+    }).then(async () => {
+      try {
+        await fetchDeleteQuotation(row.id)
+        ElMessage.success('删除成功')
+        refreshRemove()
+      } catch (error) {
+        console.error('删除失败:', error)
+        ElMessage.error('删除失败')
+      }
     })
-  }
-
-  // 处理弹窗提交
-  const handleDialogSubmit = async () => {
-    try {
-      dialogVisible.value = false
-      currentQuotationData.value = {}
-      refreshCreate()
-    } catch (error) {
-      console.error('提交失败:', error)
-    }
   }
 
   // 处理选中行变化
@@ -254,22 +242,8 @@
     selectedRows.value = selection
   }
 
-  // 监听路由参数，处理从客户详情页跳转过来的情况
-  watch(
-    () => route.query,
-    (query) => {
-      if (query.action === 'add' && query.customerId && query.customerName) {
-        // 新增报价，预填充客户信息
-        currentQuotationData.value = {
-          customerId: query.customerId as string,
-          customerName: query.customerName as string
-        }
-        dialogType.value = 'add'
-        dialogVisible.value = true
-        // 清除路由参数
-        router.replace({ query: {} })
-      }
-    },
-    { immediate: true }
-  )
+  // 监听页面激活事件（keepAlive 场景）
+  onActivated(() => {
+    refreshData()
+  })
 </script>
