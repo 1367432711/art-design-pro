@@ -1,686 +1,509 @@
-<!-- 报价新增/编辑页面 -->
+<!-- 报价表单 - 扁平化设计 -->
 <template>
   <div class="quotation-form-page">
-    <!-- 页头 -->
-    <ElPageHeader class="mb-3" @back="handleBack">
-      <template #content>
-        <span class="text-lg font-medium text-g-800">{{ isEdit ? '编辑报价' : '新增报价' }}</span>
-      </template>
-    </ElPageHeader>
-
-    <ElCard class="art-card-xs">
-      <ElForm ref="formRef" :model="formData" label-width="120px" size="default">
-        <!-- 1. 公司信息 -->
-        <ElDivider content-position="left">
-          <span class="text-sm font-medium text-g-500">
-            <ArtSvgIcon icon="ri:building-line" class="mr-1" />
-            公司信息 / Company Information
-          </span>
-        </ElDivider>
-
-        <ElRow :gutter="20">
-          <ElCol :span="6">
-            <ElFormItem label="公司 Logo">
-              <ElUpload
-                :file-list="companyLogoFileList"
-                :limit="1"
-                accept="image/*"
-                :before-upload="handleLogoBeforeUpload"
-                :on-change="handleLogoChange"
-                :on-remove="handleLogoRemove"
-                :show-file-list="false"
-              >
-                <div
-                  v-if="!formData.companyInfo?.companyLogo"
-                  class="logo-upload-area w-[120px] h-[120px] border-2 border-dashed border-g-200 rounded-xl flex items-center justify-center cursor-pointer relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 hover:border-primary hover:shadow-md tad-200"
-                >
-                  <ArtSvgIcon icon="ri:upload-line" class="text-3xl mb-2 block text-g-300" />
-                  <span class="text-sm text-g-400">点击上传</span>
-                </div>
-                <img
-                  v-else
-                  :src="formData.companyInfo.companyLogo"
-                  class="w-[120px] h-[120px] object-contain rounded-xl"
-                />
-              </ElUpload>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="18">
-            <ElRow :gutter="16">
-              <ElCol :span="8">
-                <ElFormItem label="公司名称" prop="companyInfo.companyName">
-                  <ElInput
-                    v-model="formData.companyInfo!.companyName"
-                    placeholder="YOUR COMPANY LLC"
-                  />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="8">
-                <ElFormItem label="联系人" prop="companyInfo.contactName">
-                  <ElInput v-model="formData.companyInfo!.contactName" placeholder="JOHN DOE" />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="8">
-                <ElFormItem label="WhatsApp" prop="companyInfo.companyWhatsapp">
-                  <ElInput
-                    v-model="formData.companyInfo!.companyWhatsapp"
-                    placeholder="+1 (234) 567-8900"
-                  />
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-            <ElRow :gutter="16">
-              <ElCol :span="8">
-                <ElFormItem label="邮箱" prop="companyInfo.companyEmail">
-                  <ElInput
-                    v-model="formData.companyInfo!.companyEmail"
-                    placeholder="contact@yourcompany.com"
-                  />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="16">
-                <ElFormItem label="地址" prop="companyInfo.companyAddress">
-                  <ElInput
-                    v-model="formData.companyInfo!.companyAddress"
-                    placeholder="123 Business Avenue, City, Country"
-                  />
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-          </ElCol>
-        </ElRow>
-
-        <!-- 2. 报价单信息 -->
-        <ElDivider content-position="left">
-          <span class="text-sm font-medium text-g-500">
-            <ArtSvgIcon icon="ri:file-text-line" class="mr-1" />
+    <!-- 报价单头部信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="flex-b items-center">
+          <span class="font-semibold text-lg">
+            <ArtSvgIcon icon="ri:file-list-3-line" class="mr-2 text-primary" />
             报价单信息 / Quotation Information
           </span>
-        </ElDivider>
+        </div>
+      </template>
 
+      <ElForm :model="formData" label-width="120px" class="quotation-info-form">
         <ElRow :gutter="20">
-          <ElCol :span="6">
-            <ElFormItem label="报价单号" prop="quotationNo">
-              <ElInput v-model="formData.quotationNo" disabled placeholder="系统自动生成" />
+          <ElCol :span="8">
+            <ElFormItem label="报价单号">
+              <ElInput v-model="formData.quotationNo" placeholder="QT20260326123" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="报价日期" prop="quotationDate">
-              <ElDatePicker
-                v-model="formData.quotationDate"
-                type="date"
-                placeholder="请选择"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-              />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="有效期至" prop="validity">
-              <ElDatePicker
-                v-model="formData.validity"
-                type="date"
-                placeholder="请选择"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
-              />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="币种" prop="currency">
-              <ElSelect v-model="formData.currency" placeholder="请选择" style="width: 100%">
-                <ElOption label="USD - 美元" value="USD" />
-                <ElOption label="EUR - 欧元" value="EUR" />
-                <ElOption label="CNY - 人民币" value="CNY" />
-                <ElOption label="GBP - 英镑" value="GBP" />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="20">
-          <ElCol :span="6">
-            <ElFormItem label="贸易条款" prop="tradeTerm">
-              <ElSelect v-model="formData.tradeTerm" placeholder="请选择" style="width: 100%">
-                <ElOption label="FOB - 装运港船上交货" value="FOB" />
-                <ElOption label="CIF - 成本加保险费加运费" value="CIF" />
-                <ElOption label="EXW - 工厂交货" value="EXW" />
-                <ElOption label="CNF - 成本加运费" value="CNF" />
-                <ElOption label="DDP - 完税后交货" value="DDP" />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="装运港/目的地" prop="shipmentPort">
-              <ElInput v-model="formData.shipmentPort" placeholder="Shanghai, China" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="付款方式" prop="paymentTerm">
-              <ElSelect v-model="formData.paymentTerm" placeholder="请选择" style="width: 100%">
-                <ElOption label="T/T - 电汇" value="T/T" />
-                <ElOption label="L/C - 信用证" value="L/C" />
-                <ElOption label="PayPal" value="PayPal" />
-                <ElOption label="Western Union - 西联汇款" value="Western Union" />
-                <ElOption
-                  label="30% 定金，70% 发货前付清"
-                  value="30% Deposit, 70% before shipment"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="交货期" prop="leadTime">
-              <ElInput v-model="formData.leadTime" placeholder="15-20 days" />
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="20">
-          <ElCol :span="6">
-            <ElFormItem label="客户名称" prop="customerName">
+          <ElCol :span="8">
+            <ElFormItem label="客户">
               <ElSelect
-                v-model="formData.customerName"
-                placeholder="请选择客户"
+                v-model="formData.customerId"
+                placeholder="选择客户"
                 filterable
-                @change="handleCustomerChange"
                 style="width: 100%"
+                @change="handleCustomerChange"
               >
                 <ElOption
-                  v-for="customer in customerOptions"
-                  :key="customer.id"
-                  :label="customer.customerName"
-                  :value="customer.customerName"
+                  v-for="opt in customerOptions"
+                  :key="opt.id"
+                  :value="opt.id"
+                  :label="opt.customerName"
                 />
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="客户 WhatsApp" prop="clientWhatsapp">
-              <ElInput v-model="formData.clientWhatsapp" placeholder="+1 (234) 567-8901" />
+          <ElCol :span="8">
+            <ElFormItem label="报价日期">
+              <ElDatePicker v-model="formData.quotationDate" type="date" style="width: 100%" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="客户邮箱" prop="clientEmail">
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="8">
+            <ElFormItem label="有效期">
+              <ElInput v-model="formData.validity" placeholder="如：30 天" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="贸易条款">
+              <ElSelect v-model="formData.tradeTerm" placeholder="选择条款" style="width: 100%">
+                <ElOption label="FOB" value="FOB" />
+                <ElOption label="CIF" value="CIF" />
+                <ElOption label="EXW" value="EXW" />
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="付款方式">
+              <ElInput v-model="formData.paymentTerm" placeholder="如：T/T 30% deposit" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="8">
+            <ElFormItem label="装运港口">
+              <ElInput v-model="formData.shipmentPort" placeholder="如：Shanghai" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="交货期">
+              <ElInput v-model="formData.leadTime" placeholder="如：30 days" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="币种">
+              <ElSelect v-model="formData.currency" style="width: 100%">
+                <ElOption label="USD" value="USD" />
+                <ElOption label="EUR" value="EUR" />
+                <ElOption label="CNY" value="CNY" />
+                <ElOption label="GBP" value="GBP" />
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="8">
+            <ElFormItem label="客户 WhatsApp">
+              <ElInput v-model="formData.clientWhatsapp" placeholder="+86 138 0000 0000" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="客户邮箱">
               <ElInput v-model="formData.clientEmail" placeholder="client@example.com" />
             </ElFormItem>
           </ElCol>
         </ElRow>
+      </ElForm>
+    </ElCard>
 
-        <!-- 3. 产品列表 -->
-        <ElDivider content-position="left">
-          <span class="text-sm font-medium text-g-500">
-            <ArtSvgIcon icon="ri:package-line" class="mr-1" />
+    <!-- 产品列表 - 表格形式 -->
+    <ElCard class="art-card">
+      <template #header>
+        <div class="flex-b items-center">
+          <span class="font-semibold text-lg">
+            <ArtSvgIcon icon="ri:package-line" class="mr-2 text-primary" />
             产品列表 / Products
           </span>
-        </ElDivider>
-
-        <div class="products-container">
-          <div
-            v-for="(product, pIndex) in formData.products"
-            :key="product.id"
-            class="product-card"
-          >
-            <div class="product-header">
-              <div class="flex-c gap-3">
-                <span class="px-3 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-xl">{{
-                  pIndex + 1
-                }}</span>
-                <span class="font-bold text-g-700">产品</span>
-              </div>
-              <ElSpace>
-                <!-- 从产品库选择 -->
-                <ElSelect
-                  v-model="product.selectedProductId"
-                  placeholder="从产品库选择..."
-                  filterable
-                  clearable
-                  @change="(val) => handleProductSelect(val, pIndex)"
-                  style="width: 200px"
-                >
-                  <ElOption
-                    v-for="opt in productOptions"
-                    :key="opt.id"
-                    :label="opt.name + ' - ' + opt.spec"
-                    :value="opt.id"
-                  >
-                    <span class="font-medium">{{ opt.name }}</span>
-                    <span class="text-g-400 ml-2">{{ opt.spec }}</span>
-                    <span class="text-primary ml-2">{{
-                      formatPrice(opt.salePrice, opt.currency)
-                    }}</span>
-                  </ElOption>
-                </ElSelect>
-                <ElButton
-                  type="danger"
-                  link
-                  @click="removeProduct(pIndex)"
-                  v-if="formData.products.length > 1"
-                >
-                  <ArtSvgIcon icon="ri:delete-bin-line" class="mr-1" />
-                  删除产品
-                </ElButton>
-              </ElSpace>
-            </div>
-
-            <!-- 产品变体列表 -->
-            <div class="product-variants">
-              <div
-                v-for="(variant, vIndex) in product.variants"
-                :key="variant.id"
-                class="variant-card"
-              >
-                <div class="variant-header">
-                  <div class="flex-c gap-2">
-                    <span
-                      class="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full"
-                    >
-                      变体 {{ vIndex + 1 }}
-                    </span>
-                    <span v-if="variant.sku" class="text-xs text-g-400">|</span>
-                    <span v-if="variant.sku" class="text-sm font-medium text-g-600">{{
-                      variant.sku
-                    }}</span>
-                  </div>
-                  <ElButton
-                    v-if="product.variants.length > 1"
-                    type="danger"
-                    link
-                    @click="removeVariant(pIndex, vIndex)"
-                  >
-                    <ArtSvgIcon icon="ri:delete-bin-line" />
-                  </ElButton>
-                </div>
-
-                <div class="variant-content">
-                  <!-- 图片上传 -->
-                  <ElUpload
-                    :file-list="variantImageFileLists[getVariantKey(pIndex, vIndex)] || []"
-                    :limit="1"
-                    accept="image/*"
-                    :show-file-list="false"
-                    :before-upload="handleVariantBeforeUpload"
-                    :on-change="(uploadFile) => handleVariantChange(uploadFile, pIndex, vIndex)"
-                    :on-remove="() => handleVariantRemove(pIndex, vIndex)"
-                  >
-                    <div
-                      v-if="!variant.image"
-                      class="variant-image-upload w-[160px] h-[160px] border-2 border-dashed border-g-200 rounded-xl flex items-center justify-center cursor-pointer relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 hover:border-primary hover:shadow-md tad-200 flex-shrink-0"
-                    >
-                      <ArtSvgIcon icon="ri:upload-2-line" class="text-3xl mb-2 block text-g-300" />
-                      <span class="text-sm text-g-400">上传图片</span>
-                    </div>
-                    <img
-                      v-else
-                      :src="variant.image"
-                      class="w-[160px] h-[160px] object-cover rounded-xl"
-                    />
-                  </ElUpload>
-
-                  <!-- 变体信息 -->
-                  <div class="variant-info flex-1">
-                    <ElRow :gutter="12">
-                      <ElCol :span="12">
-                        <ElFormItem label="SKU / 型号">
-                          <ElInput
-                            v-model="variant.sku"
-                            placeholder="ABC-123"
-                            @input="updateVariantTotal(pIndex, vIndex)"
-                          />
-                        </ElFormItem>
-                      </ElCol>
-                      <ElCol :span="12">
-                        <ElFormItem label="单位">
-                          <ElSelect
-                            v-model="variant.unit"
-                            placeholder="请选择"
-                            style="width: 100%"
-                            @change="updateVariantTotal(pIndex, vIndex)"
-                          >
-                            <ElOption label="PCS - 个/件" value="PCS" />
-                            <ElOption label="SET - 套" value="SET" />
-                            <ElOption label="KG - 千克" value="KG" />
-                            <ElOption label="BOX - 箱" value="BOX" />
-                            <ElOption label="CTN - 箱" value="CTN" />
-                            <ElOption label="PAIR - 双/对" value="PAIR" />
-                            <ElOption label="DOZEN - 打" value="DOZEN" />
-                          </ElSelect>
-                        </ElFormItem>
-                      </ElCol>
-                    </ElRow>
-                    <ElFormItem label="产品描述">
-                      <ElInput
-                        v-model="variant.desc"
-                        type="textarea"
-                        :rows="2"
-                        placeholder="输入产品规格、颜色、材质等详细描述..."
-                        @input="updateVariantTotal(pIndex, vIndex)"
-                      />
-                    </ElFormItem>
-                    <ElRow :gutter="12">
-                      <ElCol :span="12">
-                        <ElFormItem label="数量">
-                          <ElInputNumber
-                            v-model="variant.qty"
-                            :min="0"
-                            :precision="0"
-                            placeholder="0"
-                            controls-position="right"
-                            style="width: 100%"
-                            @change="updateVariantTotal(pIndex, vIndex)"
-                          />
-                        </ElFormItem>
-                      </ElCol>
-                      <ElCol :span="12">
-                        <ElFormItem label="单价">
-                          <ElInputNumber
-                            v-model="variant.price"
-                            :min="0"
-                            :precision="2"
-                            placeholder="0.00"
-                            controls-position="right"
-                            style="width: 100%"
-                            @change="updateVariantTotal(pIndex, vIndex)"
-                          />
-                        </ElFormItem>
-                      </ElCol>
-                    </ElRow>
-                    <div class="variant-total">
-                      <span class="text-sm text-g-500">小计：</span>
-                      <strong class="text-lg font-bold text-g-800">{{
-                        formatAmount(variant.total || 0, formData.currency)
-                      }}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 添加变体按钮 -->
-              <ElButton type="primary" plain @click="addVariant(pIndex)" class="mt-3">
-                <ArtSvgIcon icon="ri:add-line" class="mr-1" />
-                添加变体
-              </ElButton>
-            </div>
-          </div>
-
-          <!-- 添加产品按钮 -->
-          <ElButton type="primary" @click="addProduct" class="mt-4">
-            <ArtSvgIcon icon="ri:add-circle-line" class="mr-1" />
+          <ElButton type="primary" @click="addProduct">
+            <ArtSvgIcon icon="ri:add-line" class="mr-1" />
             添加产品
           </ElButton>
         </div>
+      </template>
 
-        <!-- 4. 费用汇总 -->
-        <ElDivider content-position="left">
-          <span class="text-sm font-medium text-g-500">
-            <ArtSvgIcon icon="ri:calculator-line" class="mr-1" />
+      <ElTable :data="formData.products" border class="products-table">
+        <!-- 序号 -->
+        <ElTableColumn type="index" width="50" align="center" label="序号" />
+
+        <!-- 产品图片 -->
+        <ElTableColumn width="100" align="center" label="产品图">
+          <template #default="{ row, $index }">
+            <ElUpload
+              :file-list="row.image ? [{ url: row.image }] : []"
+              :limit="1"
+              accept="image/*"
+              :show-file-list="false"
+              :before-upload="handleImageBeforeUpload"
+              :on-change="(file) => handleImageChange(file, $index)"
+            >
+              <div v-if="!row.image" class="image-upload-btn">
+                <ArtSvgIcon icon="ri:image-add-line" class="text-2xl text-g-300" />
+              </div>
+              <img v-else :src="row.image" class="product-image" />
+            </ElUpload>
+          </template>
+        </ElTableColumn>
+
+        <!-- 产品名称（从产品库选择） -->
+        <ElTableColumn min-width="180" label="产品名称">
+          <template #default="{ row, $index }">
+            <ElSelect
+              v-model="row.selectedProductId"
+              placeholder="选择产品或手动输入"
+              filterable
+              clearable
+              @change="(val) => handleProductSelect(val, $index)"
+              style="width: 100%"
+            >
+              <ElOption
+                v-for="opt in productOptions"
+                :key="opt.id"
+                :value="opt.id"
+                :label="opt.name"
+              >
+                <div class="flex items-center gap-2">
+                  <img
+                    v-if="opt.mainImage"
+                    :src="opt.mainImage"
+                    class="w-8 h-8 rounded object-cover"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium truncate">{{ opt.name }}</div>
+                    <div class="text-xs text-g-400">
+                      {{ opt.spec }} | {{ opt.grade }} | MOQ: {{ opt.moq }}
+                    </div>
+                  </div>
+                  <div class="text-primary font-semibold">
+                    {{ formatPrice(opt.salePrice, opt.currency) }}
+                  </div>
+                </div>
+              </ElOption>
+            </ElSelect>
+          </template>
+        </ElTableColumn>
+
+        <!-- 产品型号 -->
+        <ElTableColumn width="120" label="型号/SKU">
+          <template #default="{ row }">
+            <ElInput v-model="row.sku" placeholder="型号" />
+          </template>
+        </ElTableColumn>
+
+        <!-- 产品等级 -->
+        <ElTableColumn width="80" label="等级">
+          <template #default="{ row }">
+            <ElSelect v-model="row.grade" placeholder="等级" style="width: 100%">
+              <ElOption label="A 级" value="A 级" />
+              <ElOption label="B 级" value="B 级" />
+              <ElOption label="C 级" value="C 级" />
+            </ElSelect>
+          </template>
+        </ElTableColumn>
+
+        <!-- 产品类型 -->
+        <ElTableColumn width="100" label="产品类型">
+          <template #default="{ row }">
+            <ElSelect v-model="row.type" placeholder="类型" style="width: 100%">
+              <ElOption label="切割片" value="切割片" />
+              <ElOption label="百叶片" value="百叶片" />
+              <ElOption label="磨光片" value="磨光片" />
+              <ElOption label="其他" value="其他" />
+            </ElSelect>
+          </template>
+        </ElTableColumn>
+
+        <!-- 数量 -->
+        <ElTableColumn width="100" align="right" label="数量">
+          <template #default="{ row, $index }">
+            <ElInputNumber
+              v-model="row.qty"
+              :min="0"
+              :precision="0"
+              placeholder="0"
+              controls-position="right"
+              style="width: 100%"
+              @change="updateTotal($index)"
+            />
+          </template>
+        </ElTableColumn>
+
+        <!-- 单位 -->
+        <ElTableColumn width="80" label="单位">
+          <template #default="{ row }">
+            <ElInput v-model="row.unit" placeholder="单位" style="width: 100%" />
+          </template>
+        </ElTableColumn>
+
+        <!-- 单价 -->
+        <ElTableColumn width="110" align="right" label="单价">
+          <template #default="{ row, $index }">
+            <ElInputNumber
+              v-model="row.price"
+              :min="0"
+              :precision="2"
+              placeholder="0.00"
+              controls-position="right"
+              style="width: 100%"
+              @change="updateTotal($index)"
+            />
+          </template>
+        </ElTableColumn>
+
+        <!-- 币种 -->
+        <ElTableColumn width="90" label="币种">
+          <template #default="{ row }">
+            <ElSelect v-model="row.currency" style="width: 100%">
+              <ElOption label="USD" value="USD" />
+              <ElOption label="EUR" value="EUR" />
+              <ElOption label="CNY" value="CNY" />
+              <ElOption label="GBP" value="GBP" />
+            </ElSelect>
+          </template>
+        </ElTableColumn>
+
+        <!-- 小计 -->
+        <ElTableColumn width="120" align="right" label="小计">
+          <template #default="{ row }">
+            <span class="font-bold text-primary text-base">
+              {{ formatAmount(row.total || 0, row.currency || 'USD') }}
+            </span>
+          </template>
+        </ElTableColumn>
+
+        <!-- 产品备注（展开显示） -->
+        <ElTableColumn min-width="150" label="备注">
+          <template #default="{ row }">
+            <ElInput
+              v-model="row.remark"
+              type="textarea"
+              :rows="1"
+              placeholder="可选备注"
+              autosize
+            />
+          </template>
+        </ElTableColumn>
+
+        <!-- 操作 -->
+        <ElTableColumn width="80" align="center" label="操作" fixed="right">
+          <template #default="{ $index }">
+            <ElButton type="danger" link @click="removeProduct($index)">
+              <ArtSvgIcon icon="ri:delete-bin-line" class="text-lg" />
+            </ElButton>
+          </template>
+        </ElTableColumn>
+      </ElTable>
+
+      <!-- 汇总 -->
+      <div
+        class="products-summary mt-4 p-4 bg-gradient-to-r from-primary/5 to-primaryDark/5 rounded-xl border border-primary/20"
+      >
+        <div class="flex-b items-center">
+          <div class="flex items-center gap-6">
+            <div>
+              <span class="text-g-500 mr-2">产品总数:</span>
+              <span class="text-lg font-bold text-g-800">{{ totalQuantity }} {{ totalUnit }}</span>
+            </div>
+          </div>
+          <div>
+            <span class="text-g-500 mr-2">总计:</span>
+            <span
+              class="text-2xl font-bold bg-gradient-to-r from-primary to-primaryDark bg-clip-text text-transparent"
+            >
+              {{ formatAmount(grandTotal, formData.currency || 'USD') }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ElCard>
+
+    <!-- 费用汇总 -->
+    <ElCard class="art-card mt-4">
+      <template #header>
+        <div class="flex-b items-center">
+          <span class="font-semibold text-lg">
+            <ArtSvgIcon icon="ri:calculator-line" class="mr-2 text-primary" />
             费用汇总 / Cost Summary
           </span>
-        </ElDivider>
+        </div>
+      </template>
 
+      <ElForm :model="formData.costSummary" label-width="120px">
         <ElRow :gutter="20">
           <ElCol :span="6">
             <ElFormItem label="运费">
               <ElInputNumber
-                v-model="formData.costSummary!.freightCharges"
+                v-model="formData.costSummary.freightCharges"
                 :min="0"
                 :precision="2"
                 placeholder="0.00"
                 controls-position="right"
                 style="width: 100%"
-                @change="calculateGrandTotal"
+                @change="calculateTotals"
               />
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
             <ElFormItem label="折扣">
-              <div class="flex gap-2">
-                <ElInputNumber
-                  v-model="formData.costSummary!.discountValue"
-                  :min="0"
-                  :precision="2"
-                  placeholder="0"
-                  controls-position="right"
-                  style="width: 100%"
-                  @change="calculateGrandTotal"
-                />
-                <ElSelect
-                  v-model="formData.costSummary!.discountType"
-                  style="width: 80px"
-                  @change="calculateGrandTotal"
-                >
-                  <ElOption label="%" value="percent" />
-                  <ElOption label="固定" value="fixed" />
-                </ElSelect>
-              </div>
+              <ElInputNumber
+                v-model="formData.costSummary.discountValue"
+                :min="0"
+                :precision="2"
+                placeholder="0.00"
+                controls-position="right"
+                style="width: 100%"
+                @change="calculateTotals"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="折扣类型">
+              <ElSelect v-model="formData.costSummary.discountType" style="width: 100%">
+                <ElOption label="百分比" value="percent" />
+                <ElOption label="固定金额" value="fixed" />
+              </ElSelect>
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
             <ElFormItem label="税费">
               <ElInputNumber
-                v-model="formData.costSummary!.taxValue"
+                v-model="formData.costSummary.taxValue"
                 :min="0"
                 :precision="2"
                 placeholder="0.00"
                 controls-position="right"
                 style="width: 100%"
-                @change="calculateGrandTotal"
-              />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="其他费用">
-              <ElInputNumber
-                v-model="formData.costSummary!.otherCharges"
-                :min="0"
-                :precision="2"
-                placeholder="0.00"
-                controls-position="right"
-                style="width: 100%"
-                @change="calculateGrandTotal"
+                @change="calculateTotals"
               />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
-        <!-- 总计显示 -->
-        <div class="cost-summary-display mt-4 p-3 bg-g-50 rounded-lg border border-g-100">
-          <div class="flex-b items-center">
-            <div class="flex gap-4">
-              <div class="bg-primary-light/50 rounded-lg px-4 py-2">
-                <span class="text-xs text-g-500">产品小计：</span>
-                <span class="text-base font-bold text-g-800">{{
-                  formatAmount(formData.costSummary!.subtotal, formData.currency)
-                }}</span>
-              </div>
-              <div class="bg-red-50 rounded-lg px-4 py-2">
-                <span class="text-xs text-g-500">折扣金额：</span>
-                <span class="text-base font-bold text-red-500"
-                  >-{{ formatAmount(getDiscountAmount(), formData.currency) }}</span
-                >
-              </div>
-            </div>
-            <div
-              class="text-right bg-gradient-to-r from-primary/10 to-primaryDark/10 rounded-lg px-5 py-2"
-            >
-              <span class="text-xs text-g-500">总计：</span>
-              <span
-                class="text-lg font-bold bg-gradient-to-r from-primary to-primaryDark bg-clip-text text-transparent"
-                >{{ formatAmount(formData.costSummary!.grandTotal, formData.currency) }}</span
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- 5. 其他信息 -->
-        <ElDivider content-position="left">
-          <span class="text-sm font-medium text-g-500">
-            <ArtSvgIcon icon="ri:information-line" class="mr-1" />
-            其他信息 / Other Information
-          </span>
-        </ElDivider>
-
-        <div class="other-info-container">
-          <div
-            v-for="(field, index) in formData.otherInfoFields"
-            :key="field.id"
-            class="info-field"
-          >
-            <div class="flex-b items-center mb-2">
-              <ElInput
-                v-model="field.label"
-                placeholder="字段名称"
-                class="w-[180px]"
-                @input="saveDraft"
+        <ElRow :gutter="20">
+          <ElCol :span="6">
+            <ElFormItem label="其他费用">
+              <ElInputNumber
+                v-model="formData.costSummary.otherCharges"
+                :min="0"
+                :precision="2"
+                placeholder="0.00"
+                controls-position="right"
+                style="width: 100%"
+                @change="calculateTotals"
               />
-              <ElButton
-                v-if="formData.otherInfoFields!.length > 1"
-                type="danger"
-                link
-                @click="removeInfoField(index)"
-              >
-                <ArtSvgIcon icon="ri:delete-bin-line" />
-              </ElButton>
-            </div>
-            <ElInput
-              v-model="field.value"
-              type="textarea"
-              :rows="2"
-              placeholder="输入内容..."
-              @input="saveDraft"
-            />
-          </div>
-          <ElButton @click="addInfoField" class="mt-3">
-            <ArtSvgIcon icon="ri:add-line" class="mr-1" />
-            添加字段
-          </ElButton>
-        </div>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="产品小计">
+              <ElInput
+                :model-value="
+                  formatAmount(formData.costSummary.subtotal, formData.currency || 'USD')
+                "
+                disabled
+                style="width: 100%"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="总计">
+              <ElInput
+                :model-value="formatAmount(grandTotal, formData.currency || 'USD')"
+                disabled
+                class="grand-total-input"
+                style="width: 100%"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
       </ElForm>
     </ElCard>
 
-    <!-- 悬浮操作栏 -->
-    <div class="floating-action-bar">
-      <ElSpace>
-        <ElButton @click="saveDraft">
-          <ArtSvgIcon icon="ri:file-save-line" class="mr-1" />
-          保存草稿
-        </ElButton>
-        <ElButton type="primary" @click="submitQuotation">
-          <ArtSvgIcon icon="ri:send-plane-fill" class="mr-1" />
-          提交报价
-        </ElButton>
-        <ElButton @click="openPreview">
-          <ArtSvgIcon icon="ri:eye-line" class="mr-1" />
-          预览
-        </ElButton>
-      </ElSpace>
+    <!-- 操作按钮 -->
+    <div class="form-actions mt-4 flex gap-4">
+      <ElButton type="primary" @click="handleSubmit">
+        <ArtSvgIcon icon="ri:save-line" class="mr-1" />
+        保存报价
+      </ElButton>
+      <ElButton @click="handleCancel">取消</ElButton>
     </div>
-
-    <!-- 预览弹窗 -->
-    <QuotationPreview v-model="previewVisible" :data="previewData" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { FormInstance } from 'element-plus'
   import { ElMessage } from 'element-plus'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useRouter, useRoute } from 'vue-router'
   import { fetchGetCustomerList, fetchGetProductList } from '@/api/trade-manage'
-  import { fetchGetQuotationDetail } from '@/api/trade-manage'
-  import QuotationPreview from './modules/quotation-preview.vue'
 
   defineOptions({ name: 'QuotationForm' })
 
   const router = useRouter()
   const route = useRoute()
-
   const isEdit = computed(() => !!route.params.id)
-
-  // 表单实例
-  const formRef = ref<FormInstance>()
-
-  // 预览弹窗
-  const previewVisible = ref(false)
-
-  // 公司 Logo 文件列表
-  const companyLogoFileList = ref<any[]>([])
-
-  // 变体图片文件列表 (按 productIndex-variantIndex 映射)
-  const variantImageFileLists = ref<Record<string, any[]>>({})
 
   // 客户列表
   const customerOptions = ref<Api.Trade.CustomerListItem[]>([])
-
   // 产品列表
   const productOptions = ref<Api.Trade.ProductListItem[]>([])
 
-  // 表单数据
-  const formData = ref<Api.Trade.QuotationDetail>({
-    id: '',
+  // 表单数据 - 扁平化结构
+  const formData = ref({
+    quotationNo: '',
     customerId: '',
     customerName: '',
-    quotationNo: '',
-    productName: '',
-    specification: '',
-    quantity: 0,
-    unit: 'PCS',
-    unitPrice: 0,
+    quotationDate: new Date().toISOString().slice(0, 10),
+    validity: '',
     currency: 'USD',
-    totalPrice: 0,
     tradeTerm: '',
     paymentTerm: '',
-    validity: '',
-    remarks: '',
-    status: '1',
-    quotationDate: '',
-    createTime: '',
-    updateBy: '',
-    updateTime: '',
-    // 公司信息
-    companyInfo: {
-      companyName: 'YOUR COMPANY LLC',
-      contactName: 'JOHN DOE',
-      companyAddress: '123 Business Avenue, City, Country',
-      companyEmail: 'contact@yourcompany.com',
-      companyWhatsapp: '+1 (234) 567-8900',
-      companyLogo: ''
-    },
-    // 客户信息
+    shipmentPort: '',
+    leadTime: '',
     clientWhatsapp: '',
     clientEmail: '',
-    // 产品列表
-    products: [],
-    // 费用汇总
+    // 产品列表（扁平化）
+    products: [] as Array<{
+      id: string
+      selectedProductId?: string // 关联的产品库 ID
+      image?: string // 产品图片
+      sku: string // 型号
+      name: string // 产品名称
+      type: string // 产品类型
+      grade: string // 产品等级
+      qty: number // 数量
+      unit: string // 单位
+      price: number // 单价
+      currency: string // 币种
+      total: number // 小计
+      remark?: string // 备注
+    }>,
     costSummary: {
       freightCharges: 0,
       discountValue: 0,
-      discountType: 'percent',
+      discountType: 'percent' as const,
       taxValue: 0,
       otherCharges: 0,
       subtotal: 0,
       grandTotal: 0
-    },
-    // 其他信息字段
-    otherInfoFields: [
-      {
-        id: 'paymentTerms',
-        label: '付款条款',
-        value:
-          'We accept payments via bank transfer, PayPal, or credit card. 50% deposit required before production.'
-      },
-      {
-        id: 'warrantyInfo',
-        label: '质保信息',
-        value: 'All products come with 12-month warranty. Quality assurance guaranteed.'
-      }
-    ]
+    }
   })
 
-  // 预览数据（计算属性）
-  const previewData = computed(() => formData.value)
+  // 总数量
+  const totalQuantity = computed(() => {
+    return formData.value.products.reduce((sum, p) => sum + (p.qty || 0), 0)
+  })
 
-  // 货币符号映射
+  // 总单位（简化显示）
+  const totalUnit = computed(() => {
+    const units = [...new Set(formData.value.products.map((p) => p.unit))]
+    return units.length === 1 ? units[0] : 'PCS'
+  })
+
+  // 总计
+  const grandTotal = computed(() => {
+    const { subtotal, freightCharges, taxValue, otherCharges, discountValue, discountType } =
+      formData.value.costSummary
+    const discount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue
+    return subtotal - discount + freightCharges + taxValue + otherCharges
+  })
+
+  // 货币符号
   const currencySymbols: Record<string, string> = {
     USD: '$',
     EUR: '€',
@@ -697,46 +520,13 @@
     })}`
   }
 
-  // 格式化价格（用于产品选择下拉框）
+  // 格式化价格
   const formatPrice = (price: number, currency: string = 'USD') => {
     const symbol = currencySymbols[currency] || currency
     return `${symbol}${price.toFixed(2)}`
   }
 
-  // 处理产品选择（从产品库）
-  const handleProductSelect = (productId: string, productIndex: number) => {
-    if (!productId) return
-    const product = productOptions.value.find((p) => p.id === productId)
-    if (!product) return
-
-    const quotationProduct = formData.value.products[productIndex]
-    // 填充产品信息到变体
-    quotationProduct.variants = [
-      {
-        id: Date.now().toString(),
-        sku: product.sku || '',
-        desc: `${product.name} - ${product.spec}${product.material ? ' - ' + product.material : ''}`,
-        qty: product.moq || 1,
-        unit: product.unit || 'PCS',
-        price: product.salePrice || 0,
-        total: (product.moq || 1) * (product.salePrice || 0),
-        image: product.mainImage || ''
-      }
-    ]
-    calculateGrandTotal()
-    saveDraft()
-  }
-
-  // 获取折扣金额
-  const getDiscountAmount = () => {
-    const { discountValue, discountType, subtotal } = formData.value.costSummary!
-    if (discountType === 'percent') {
-      return subtotal * (discountValue / 100)
-    }
-    return discountValue
-  }
-
-  // 生成报价单号（用于显示）
+  // 生成报价单号
   const generateQuotationNo = () => {
     const date = new Date()
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '')
@@ -744,420 +534,219 @@
     return `QT${dateStr}${random}`
   }
 
-  // 加载客户列表
-  const loadCustomers = async () => {
-    try {
-      const res = await fetchGetCustomerList({ current: 1, size: 100 })
-      customerOptions.value = (res.data as any)?.records || []
-      // 如果是新增模式，生成报价单号
-      if (!isEdit.value && !formData.value.quotationNo) {
-        formData.value.quotationNo = generateQuotationNo()
-      }
-    } catch (error) {
-      console.error('加载客户列表失败:', error)
-    }
-  }
-
-  // 加载产品列表
-  const loadProducts = async () => {
-    try {
-      const res = await fetchGetProductList({ current: 1, size: 100 })
-      productOptions.value = (res.data as any)?.records || []
-    } catch (error) {
-      console.error('加载产品列表失败:', error)
-    }
-  }
-
-  // 获取变体键值
-  const getVariantKey = (productIndex: number, variantIndex: number) => {
-    return `${productIndex}-${variantIndex}`
-  }
-
-  // 处理 Logo 上传前
-  const handleLogoBeforeUpload = (file: File) => {
+  // 上传图片前验证
+  const handleImageBeforeUpload = (file: File) => {
     const isImage = file.type.startsWith('image/')
-    if (!isImage) {
-      ElMessage.error('只能上传图片文件')
-      return false
-    }
-    return true
+    if (!isImage) ElMessage.error('只能上传图片')
+    return isImage
   }
 
-  // 处理 Logo 上传
-  const handleLogoChange = (uploadFile: any) => {
+  // 图片上传
+  const handleImageChange = (file: any, index: number) => {
     const reader = new FileReader()
-    reader.onload = (event) => {
-      if (formData.value.companyInfo) {
-        formData.value.companyInfo.companyLogo = event.target?.result as string
-      }
-      saveDraft()
+    reader.onload = (e) => {
+      formData.value.products[index].image = e.target?.result as string
     }
-    reader.readAsDataURL(uploadFile.raw)
+    reader.readAsDataURL(file.raw)
   }
 
-  // 处理 Logo 移除
-  const handleLogoRemove = () => {
-    if (formData.value.companyInfo) {
-      formData.value.companyInfo.companyLogo = ''
+  // 选择产品（从产品库）
+  const handleProductSelect = (productId: string | undefined, index: number) => {
+    if (!productId) {
+      // 清空选择，保留手动输入
+      formData.value.products[index].selectedProductId = ''
+      return
     }
-    companyLogoFileList.value = []
-    saveDraft()
-  }
 
-  // 处理变体图片上传前
-  const handleVariantBeforeUpload = (file: File) => {
-    const isImage = file.type.startsWith('image/')
-    if (!isImage) {
-      ElMessage.error('只能上传图片文件')
-      return false
+    const product = productOptions.value.find((p) => p.id === productId)
+    if (!product) return
+
+    // 自动填充产品信息
+    formData.value.products[index] = {
+      ...formData.value.products[index],
+      selectedProductId: product.id,
+      image: product.mainImage || '',
+      sku: product.sku || '',
+      name: product.name,
+      type: product.type,
+      grade: product.grade,
+      unit: product.unit || 'PCS',
+      price: product.salePrice || 0,
+      currency: product.currency || 'USD',
+      remark: product.description || ''
     }
-    return true
+    updateTotal(index)
   }
 
-  // 处理变体图片上传
-  const handleVariantChange = (uploadFile: any, productIndex: number, variantIndex: number) => {
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const product = formData.value.products[productIndex]
-      const variant = product.variants[variantIndex]
-      variant.image = event.target?.result as string
-      saveDraft()
-    }
-    reader.readAsDataURL(uploadFile.raw)
-  }
-
-  // 处理变体图片移除
-  const handleVariantRemove = (productIndex: number, variantIndex: number) => {
-    const product = formData.value.products[productIndex]
-    const variant = product.variants[variantIndex]
-    variant.image = ''
-    const key = getVariantKey(productIndex, variantIndex)
-    variantImageFileLists.value[key] = []
-    saveDraft()
-  }
-
-  // 处理客户选择
-  const handleCustomerChange = (customerName: string) => {
-    const customer = customerOptions.value.find((c) => c.customerName === customerName)
+  // 选择客户
+  const handleCustomerChange = (customerId: string) => {
+    const customer = customerOptions.value.find((c) => c.id === customerId)
     if (customer) {
-      formData.value.customerId = customer.id
-      // 自动填充客户联系方式
-      formData.value.clientWhatsapp = customer.contactPhone || ''
-      formData.value.clientEmail = customer.contactEmail || ''
+      formData.value.customerName = customer.customerName
     }
   }
 
   // 添加产品
   const addProduct = () => {
-    const id = Date.now().toString()
     formData.value.products.push({
-      id,
-      selectedProductId: '', // 用于从产品库选择
-      variants: [
-        {
-          id: Date.now().toString() + '1',
-          sku: '',
-          desc: '',
-          qty: 0,
-          unit: 'PCS',
-          price: 0,
-          total: 0
-        }
-      ]
-    })
-    saveDraft()
-  }
-
-  // 添加变体
-  const addVariant = (productIndex: number) => {
-    const product = formData.value.products[productIndex]
-    product.variants.push({
       id: Date.now().toString(),
+      selectedProductId: '',
+      image: '',
       sku: '',
-      desc: '',
-      qty: 0,
+      name: '',
+      type: '',
+      grade: '',
+      qty: 1,
       unit: 'PCS',
       price: 0,
-      total: 0
+      currency: 'USD',
+      total: 0,
+      remark: ''
     })
-    saveDraft()
   }
 
   // 删除产品
   const removeProduct = (index: number) => {
+    if (formData.value.products.length === 1) {
+      ElMessage.warning('至少保留一行产品')
+      return
+    }
     formData.value.products.splice(index, 1)
-    calculateGrandTotal()
-    saveDraft()
+    calculateTotals()
   }
 
-  // 删除变体
-  const removeVariant = (productIndex: number, variantIndex: number) => {
-    formData.value.products[productIndex].variants.splice(variantIndex, 1)
-    calculateGrandTotal()
-    saveDraft()
-  }
-
-  // 更新变体小计
-  const updateVariantTotal = (productIndex: number, variantIndex: number) => {
-    const product = formData.value.products[productIndex]
-    const variant = product.variants[variantIndex]
-    variant.total = variant.qty * variant.price
-    calculateGrandTotal()
-    saveDraft()
+  // 更新小计
+  const updateTotal = (index: number) => {
+    const product = formData.value.products[index]
+    product.total = (product.qty || 0) * (product.price || 0)
+    calculateTotals()
   }
 
   // 计算总计
-  const calculateGrandTotal = () => {
-    // 计算产品小计
-    let subtotal = 0
-    formData.value.products.forEach((product) => {
-      product.variants.forEach((variant) => {
-        subtotal += variant.total || 0
-      })
-    })
-    formData.value.costSummary!.subtotal = subtotal
+  const calculateTotals = () => {
+    // 更新所有产品的小计
+    formData.value.products.forEach((p, i) => updateTotal(i))
 
-    // 计算折扣
-    const discountAmount = getDiscountAmount()
+    // 计算 subtotal
+    formData.value.costSummary.subtotal = formData.value.products.reduce(
+      (sum, p) => sum + (p.total || 0),
+      0
+    )
 
-    // 计算总计
-    const { freightCharges, taxValue, otherCharges } = formData.value.costSummary!
-    formData.value.costSummary!.grandTotal =
-      subtotal - discountAmount + freightCharges + taxValue + otherCharges
-
-    saveDraft()
+    // 计算 grandTotal
+    const { subtotal, freightCharges, taxValue, otherCharges, discountValue, discountType } =
+      formData.value.costSummary
+    const discount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue
+    formData.value.costSummary.grandTotal =
+      subtotal - discount + freightCharges + taxValue + otherCharges
   }
 
-  // 添加信息字段
-  const addInfoField = () => {
-    formData.value.otherInfoFields!.push({
-      id: 'custom_' + Date.now(),
-      label: '自定义字段',
-      value: ''
-    })
-    saveDraft()
+  // 提交保存
+  const handleSubmit = () => {
+    ElMessage.success('报价单已保存（演示版）')
+    // TODO: 实现保存逻辑
+    console.log('Form data:', formData.value)
   }
 
-  // 删除信息字段
-  const removeInfoField = (index: number) => {
-    formData.value.otherInfoFields!.splice(index, 1)
-    saveDraft()
-  }
-
-  // 保存草稿
-  const saveDraft = () => {
-    localStorage.setItem('quotation_form_draft', JSON.stringify(formData.value))
-    ElMessage.success('草稿已保存')
-  }
-
-  // 提交报价
-  const submitQuotation = async () => {
-    // TODO: 实现报价提交逻辑
-    ElMessage.success('报价单已提交')
-  }
-
-  // 加载草稿
-  const loadDraft = () => {
-    const draft = localStorage.getItem('quotation_form_draft')
-    if (draft) {
-      try {
-        const data = JSON.parse(draft)
-        formData.value = { ...formData.value, ...data }
-      } catch (error) {
-        console.error('加载草稿失败:', error)
-      }
-    }
-  }
-
-  // 打开预览
-  const openPreview = () => {
-    previewVisible.value = true
-  }
-
-  // 加载报价详情（编辑模式）
-  const loadQuotationData = async () => {
-    if (!isEdit.value) return
-
-    try {
-      const res = await fetchGetQuotationDetail(route.params.id as string)
-      const data = res.data as Api.Trade.QuotationDetail
-
-      // 填充基础数据
-      formData.value = {
-        ...formData.value,
-        ...data,
-        companyInfo: data.companyInfo || formData.value.companyInfo,
-        costSummary: data.costSummary || formData.value.costSummary,
-        otherInfoFields: data.otherInfoFields || formData.value.otherInfoFields,
-        products: data.products || [],
-        clientWhatsapp: data.clientWhatsapp || '',
-        clientEmail: data.clientEmail || ''
-      }
-    } catch (error) {
-      console.error('加载报价详情失败:', error)
-      ElMessage.error('加载报价详情失败')
-    }
-  }
-
-  // 初始化表单
-  const initForm = () => {
-    // 检查路由参数（从客户详情页跳转）
-    const customerId = route.query.customerId as string
-    const customerName = route.query.customerName as string
-
-    if (customerId && customerName) {
-      formData.value.customerId = customerId
-      formData.value.customerName = decodeURIComponent(customerName)
-    }
-
-    // 检查是否有草稿
-    if (!isEdit.value) {
-      loadDraft()
-    }
-
-    // 添加默认产品
-    if (!isEdit.value && formData.value.products.length === 0) {
-      addProduct()
-    }
-  }
-
-  // 返回上一页
-  const handleBack = () => {
+  // 取消
+  const handleCancel = () => {
     router.back()
   }
 
+  // 加载数据
+  const loadData = async () => {
+    try {
+      const customerRes = await fetchGetCustomerList({ current: 1, size: 100 })
+      customerOptions.value = (customerRes.data as any)?.records || []
+
+      const productRes = await fetchGetProductList({ current: 1, size: 100 })
+      productOptions.value = (productRes.data as any)?.records || []
+
+      if (!isEdit.value && !formData.value.quotationNo) {
+        formData.value.quotationNo = generateQuotationNo()
+      }
+    } catch (error) {
+      console.error('加载数据失败:', error)
+    }
+  }
+
   onMounted(() => {
-    loadCustomers()
-    loadProducts()
-    initForm()
-    loadQuotationData()
-    calculateGrandTotal()
+    loadData()
+    addProduct() // 添加第一行
   })
 </script>
 
 <style lang="scss" scoped>
-  .quotation-form-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    padding-bottom: 80px;
-
-    // 卡片内容区域允许滚动
-    :deep(.art-card.el-card) {
-      flex: 1;
-      overflow: visible;
+  .quotation-info-form {
+    :deep(.el-form-item) {
+      margin-bottom: 16px;
     }
 
-    :deep(.el-card__body) {
-      overflow: visible;
+    :deep(.el-input-number) {
+      width: 100%;
+    }
+  }
+
+  .products-table {
+    :deep(.el-table__header th) {
+      font-weight: 600;
+      background: var(--el-fill-color);
     }
 
-    // 悬浮操作栏
-    .floating-action-bar {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      z-index: 100;
-      padding: 12px 20px;
-      background: var(--default-box-color);
-      border: 1px solid var(--default-border);
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgb(0 0 0 / 12%);
-    }
-
-    // 表单布局优化
-    :deep(.el-form) {
-      max-width: 100%;
-    }
-
-    :deep(.el-form-item__label) {
-      font-size: 13px;
-      color: var(--el-text-color-regular);
-    }
-
-    // 统一输入框宽度
-    :deep(.el-input__inner),
-    :deep(.el-select),
-    :deep(.el-date-editor),
     :deep(.el-input-number) {
       width: 100%;
     }
 
-    .logo-upload-area {
+    .image-upload-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      border: 2px dashed var(--el-border-color);
+      border-radius: 8px;
+      transition: all 0.2s;
+
       &:hover {
-        background: rgba(var(--el-color-primary-rgb), 0.05);
+        background: var(--el-color-primary-light-9);
         border-color: var(--el-color-primary);
       }
     }
 
-    .products-container {
-      .product-card {
-        padding: 20px;
-        margin-bottom: 24px;
-        background: var(--default-box-color);
-        border: 1px solid var(--el-border-color-light);
-        border-radius: 12px;
+    .product-image {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
 
-        .product-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding-bottom: 12px;
-          margin-bottom: 16px;
-          border-bottom: 1px solid var(--el-border-color-lighter);
-        }
+  .products-summary {
+    box-shadow: 0 2px 12px rgb(0 0 0 / 5%);
+  }
 
-        .product-variants {
-          .variant-card {
-            padding: 16px;
-            margin-top: 12px;
-            background: var(--default-bg-color);
-            border: 1px solid var(--el-border-color-light);
-            border-radius: 10px;
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+  }
 
-            .variant-header {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 12px;
-            }
-
-            .variant-content {
-              display: flex;
-              gap: 16px;
-
-              .variant-info {
-                flex: 1;
-
-                .variant-total {
-                  padding-top: 12px;
-                  text-align: right;
-                  border-top: 1px solid var(--el-border-color-lighter);
-                }
-              }
-            }
-          }
-        }
-      }
+  .grand-total-input {
+    :deep(.el-input__wrapper) {
+      background: linear-gradient(
+        to right,
+        var(--el-color-primary-light-9),
+        var(--el-color-primary-light-7)
+      );
+      border-color: var(--el-color-primary);
     }
 
-    // 费用汇总显示优化
-    .cost-summary-display {
-      border: 1px solid var(--el-border-color-light);
-    }
-
-    .other-info-container {
-      .info-field {
-        padding: 16px;
-        margin-bottom: 16px;
-        background: var(--default-bg-color);
-        border: 1px solid var(--el-border-color-light);
-        border-radius: 8px;
-      }
-    }
-
-    :deep(.el-input-number) {
-      width: 100%;
+    :deep(.el-input__inner) {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: var(--el-color-primary);
     }
   }
 </style>
