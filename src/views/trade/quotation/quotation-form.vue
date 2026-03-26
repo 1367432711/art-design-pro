@@ -200,6 +200,7 @@
               :type="getGradeTagType(row.grade)"
               size="small"
               class="grade-tag"
+              @click="editGrade(row)"
             >
               {{ row.grade }}
             </ElTag>
@@ -214,7 +215,13 @@
         <!-- 产品类型 -->
         <ElTableColumn width="100" label="产品类型" align="center">
           <template #default="{ row }">
-            <ElTag v-if="row.type" :type="getTypeTagType(row.type)" size="small" class="type-tag">
+            <ElTag
+              v-if="row.type"
+              :type="getTypeTagType(row.type)"
+              size="small"
+              class="type-tag"
+              @click="editType(row)"
+            >
               {{ row.type }}
             </ElTag>
             <ElSelect v-else v-model="row.type" placeholder="类型" style="width: 100%">
@@ -591,6 +598,16 @@
       其他: 'info'
     }
     return types[type] || 'info'
+  }
+
+  // 编辑等级（点击标签清空，显示下拉框）
+  const editGrade = (row: any) => {
+    row.grade = ''
+  }
+
+  // 编辑类型（点击标签清空，显示下拉框）
+  const editType = (row: any) => {
+    row.type = ''
   }
 
   // 添加产品
