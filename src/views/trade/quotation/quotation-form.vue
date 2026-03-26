@@ -289,9 +289,11 @@
         class="products-summary mt-4 p-4 bg-gradient-to-r from-primary/5 to-primaryDark/5 rounded-xl border border-primary/20"
       >
         <div class="flex-b items-center">
-          <div>
-            <span class="text-g-500 mr-2">产品总数:</span>
-            <span class="text-lg font-bold text-g-800">{{ totalQuantity }} 片</span>
+          <div class="flex-1">
+            <span class="text-g-500 mr-2">产品小计:</span>
+            <span class="text-lg font-bold text-g-800">{{
+              formatAmount(productsSubtotal, formData.currency || 'USD')
+            }}</span>
           </div>
           <div>
             <span class="text-g-500 mr-2">总计:</span>
@@ -475,17 +477,18 @@
     }
   })
 
-  // 总数量
-  const totalQuantity = computed(() => {
-    return formData.value.products.reduce((sum, p) => sum + (p.qty || 0), 0)
+  // 产品小计
+  const productsSubtotal = computed(() => {
+    return formData.value.products.reduce((sum, p) => sum + (p.total || 0), 0)
   })
 
-  // 总计
+  // 总计（实时计算：产品小计 + 运费 - 折扣 + 税费 + 其他费用）
   const grandTotal = computed(() => {
-    const { subtotal, freightCharges, taxValue, otherCharges, discountValue, discountType } =
+    const { freightCharges, taxValue, otherCharges, discountValue, discountType } =
       formData.value.costSummary
-    const discount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue
-    return subtotal - discount + freightCharges + taxValue + otherCharges
+    const discount =
+      discountType === 'percent' ? productsSubtotal.value * (discountValue / 100) : discountValue
+    return productsSubtotal.value - discount + freightCharges + taxValue + otherCharges
   })
 
   // 货币符号
@@ -610,15 +613,17 @@
   // 计算总计
   const calculateTotals = () => {
     // 更新所有产品的小计
-    formData.value.products.forEach((p, i) => updateTotal(i))
+    formData.value.products.forEach((p) => {
+      p.total = (p.qty || 0) * (p.price || 0)
+    })
 
-    // 计算 subtotal
+    // 计算产品小计
     formData.value.costSummary.subtotal = formData.value.products.reduce(
       (sum, p) => sum + (p.total || 0),
       0
     )
 
-    // 计算 grandTotal
+    // 计算总计
     const { subtotal, freightCharges, taxValue, otherCharges, discountValue, discountType } =
       formData.value.costSummary
     const discount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue
