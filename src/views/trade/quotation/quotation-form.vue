@@ -288,14 +288,8 @@
       <div
         class="products-summary mt-4 p-4 bg-gradient-to-r from-primary/5 to-primaryDark/5 rounded-xl border border-primary/20"
       >
-        <div class="flex-b items-center">
-          <div class="flex-1">
-            <span class="text-g-500 mr-2">产品小计:</span>
-            <span class="text-lg font-bold text-g-800">{{
-              formatAmount(productsSubtotal, formData.currency || 'USD')
-            }}</span>
-          </div>
-          <div>
+        <div class="flex-b items-center w-full">
+          <div class="flex-1 text-right">
             <span class="text-g-500 mr-2">总计:</span>
             <span
               class="text-2xl font-bold bg-gradient-to-r from-primary to-primaryDark bg-clip-text text-transparent"
@@ -384,10 +378,25 @@
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
-            <ElFormItem label="产品小计">
+            <ElFormItem label="产品总计">
+              <ElInput
+                :model-value="formatAmount(productsSubtotal, formData.currency || 'USD')"
+                disabled
+                style="width: 100%"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="折扣后合计">
               <ElInput
                 :model-value="
-                  formatAmount(formData.costSummary.subtotal, formData.currency || 'USD')
+                  formatAmount(
+                    formData.costSummary.subtotal -
+                      (formData.costSummary.discountType === 'percent'
+                        ? formData.costSummary.subtotal * (formData.costSummary.discountValue / 100)
+                        : formData.costSummary.discountValue),
+                    formData.currency || 'USD'
+                  )
                 "
                 disabled
                 style="width: 100%"
@@ -617,18 +626,11 @@
       p.total = (p.qty || 0) * (p.price || 0)
     })
 
-    // 计算产品小计
+    // 更新产品总计
     formData.value.costSummary.subtotal = formData.value.products.reduce(
       (sum, p) => sum + (p.total || 0),
       0
     )
-
-    // 计算总计
-    const { subtotal, freightCharges, taxValue, otherCharges, discountValue, discountType } =
-      formData.value.costSummary
-    const discount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue
-    formData.value.costSummary.grandTotal =
-      subtotal - discount + freightCharges + taxValue + otherCharges
   }
 
   // 提交保存
