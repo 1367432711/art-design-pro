@@ -225,13 +225,6 @@
           </template>
         </ElTableColumn>
 
-        <!-- 单位 -->
-        <ElTableColumn width="80" label="单位">
-          <template #default="{ row }">
-            <ElInput v-model="row.unit" placeholder="单位" style="width: 100%" />
-          </template>
-        </ElTableColumn>
-
         <!-- 单价 -->
         <ElTableColumn width="110" align="right" label="单价">
           <template #default="{ row, $index }">
@@ -570,7 +563,7 @@
       name: product.name,
       type: product.type,
       grade: product.grade,
-      unit: product.unit || 'PCS',
+      unit: product.unit || '片',
       price: product.salePrice || 0,
       currency: product.currency || 'USD',
       remark: product.description || ''
@@ -597,7 +590,7 @@
       type: '',
       grade: '',
       qty: 1,
-      unit: 'PCS',
+      unit: '片',
       price: 0,
       currency: 'USD',
       total: 0,
