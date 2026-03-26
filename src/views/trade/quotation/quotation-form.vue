@@ -119,7 +119,12 @@
         </div>
       </template>
 
-      <ElTable :data="formData.products" border class="products-table">
+      <ElTable
+        :data="formData.products"
+        border
+        class="products-table"
+        header-cell-class-name="table-header-center"
+      >
         <!-- 序号 -->
         <ElTableColumn type="index" width="50" align="center" label="序号" />
 
@@ -143,7 +148,7 @@
         </ElTableColumn>
 
         <!-- 产品名称（从产品库选择） -->
-        <ElTableColumn min-width="180" label="产品名称">
+        <ElTableColumn min-width="180" label="产品名称" align="center">
           <template #default="{ row, $index }">
             <ElSelect
               v-model="row.selectedProductId"
@@ -181,14 +186,14 @@
         </ElTableColumn>
 
         <!-- 产品型号 -->
-        <ElTableColumn width="120" label="型号/SKU">
+        <ElTableColumn width="120" label="型号/SKU" align="center">
           <template #default="{ row }">
             <ElInput v-model="row.sku" placeholder="型号" class="compact-input" />
           </template>
         </ElTableColumn>
 
         <!-- 产品等级 -->
-        <ElTableColumn width="80" label="等级">
+        <ElTableColumn width="80" label="等级" align="center">
           <template #default="{ row }">
             <ElTag
               v-if="row.grade"
@@ -207,7 +212,7 @@
         </ElTableColumn>
 
         <!-- 产品类型 -->
-        <ElTableColumn width="100" label="产品类型">
+        <ElTableColumn width="100" label="产品类型" align="center">
           <template #default="{ row }">
             <ElTag v-if="row.type" :type="getTypeTagType(row.type)" size="small" class="type-tag">
               {{ row.type }}
@@ -222,7 +227,7 @@
         </ElTableColumn>
 
         <!-- 数量 -->
-        <ElTableColumn width="100" align="right" label="数量">
+        <ElTableColumn width="100" label="数量" align="center">
           <template #default="{ row, $index }">
             <ElInputNumber
               v-model="row.qty"
@@ -238,7 +243,7 @@
         </ElTableColumn>
 
         <!-- 单价 -->
-        <ElTableColumn width="110" align="right" label="单价">
+        <ElTableColumn width="110" label="单价" align="center">
           <template #default="{ row, $index }">
             <ElInputNumber
               v-model="row.price"
@@ -253,29 +258,17 @@
           </template>
         </ElTableColumn>
 
-        <!-- 币种 -->
-        <ElTableColumn width="90" label="币种">
-          <template #default="{ row }">
-            <ElSelect v-model="row.currency" style="width: 100%">
-              <ElOption label="USD" value="USD" />
-              <ElOption label="EUR" value="EUR" />
-              <ElOption label="CNY" value="CNY" />
-              <ElOption label="GBP" value="GBP" />
-            </ElSelect>
-          </template>
-        </ElTableColumn>
-
         <!-- 小计 -->
-        <ElTableColumn width="120" align="right" label="小计">
+        <ElTableColumn width="120" label="小计" align="center">
           <template #default="{ row }">
             <span class="font-bold text-primary text-base">
-              {{ formatAmount(row.total || 0, row.currency || 'USD') }}
+              {{ formatAmount(row.total || 0, formData.currency || 'USD') }}
             </span>
           </template>
         </ElTableColumn>
 
         <!-- 产品备注（展开显示） -->
-        <ElTableColumn min-width="150" label="备注">
+        <ElTableColumn min-width="150" label="备注" align="center">
           <template #default="{ row }">
             <ElInput
               v-model="row.remark"
@@ -705,10 +698,19 @@
       background: linear-gradient(to bottom, var(--el-fill-color), var(--el-fill-color-light));
     }
 
+    // 表头居中
+    :deep(.table-header-center) {
+      text-align: center !important;
+    }
+
     // 表格行样式
     :deep(.el-table__row) {
       &:hover {
         background-color: var(--el-fill-color-lighter);
+      }
+
+      .el-table__cell {
+        text-align: center;
       }
     }
 
@@ -728,6 +730,12 @@
         border-color: var(--el-color-primary);
         box-shadow: 0 0 0 1px var(--el-color-primary-light-9) inset;
       }
+    }
+
+    // 居中输入框内容
+    :deep(.el-input__inner),
+    :deep(.el-textarea__inner) {
+      text-align: center;
     }
 
     // 数字输入框
