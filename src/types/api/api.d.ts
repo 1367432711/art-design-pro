@@ -179,7 +179,7 @@ declare namespace Api {
     /** 报价列表 */
     type QuotationList = Api.Common.PaginatedResponse<QuotationListItem>
 
-    /** 报价列表项 */
+    /** 报价列表项（简化版，用于列表展示） */
     interface QuotationListItem {
       id: string
       customerId: string // 关联客户 ID
@@ -201,6 +201,70 @@ declare namespace Api {
       createTime: string
       updateBy: string
       updateTime: string
+    }
+
+    /** 产品变体/型号 */
+    interface ProductVariant {
+      id: string // 变体 ID
+      sku: string // SKU / 型号
+      desc: string // 产品描述
+      qty: number // 数量
+      unit: string // 单位：PCS/SET/KG/BOX 等
+      price: number // 单价
+      image?: string // 产品图片 (Base64)
+      total?: number // 小计 (qty * price)
+    }
+
+    /** 报价产品（支持多型号/变体） */
+    interface QuotationProduct {
+      id: string // 产品 ID
+      image?: string // 产品主图 (Base64)
+      variants: ProductVariant[] // 产品变体列表
+    }
+
+    /** 公司信息（报价单头部） */
+    interface QuotationCompanyInfo {
+      companyName: string // 公司名称
+      contactName: string // 联系人
+      companyAddress: string // 公司地址
+      companyEmail: string // 公司邮箱
+      companyWhatsapp: string // 公司 WhatsApp
+      companyLogo?: string // 公司 Logo (Base64)
+    }
+
+    /** 费用汇总 */
+    interface QuotationCostSummary {
+      freightCharges: number // 运费
+      discountValue: number // 折扣值
+      discountType: 'percent' | 'fixed' // 折扣类型：百分比/固定金额
+      taxValue: number // 税费
+      otherCharges: number // 其他费用
+      subtotal: number // 产品小计
+      grandTotal: number // 总计
+    }
+
+    /** 其他信息字段（付款条款、质保等） */
+    interface QuotationInfoField {
+      id: string // 字段 ID
+      label: string // 字段名称
+      value: string // 字段值
+    }
+
+    /** 报价单详情（完整版，用于表单和详情） */
+    interface QuotationDetail extends QuotationListItem {
+      // 公司信息
+      companyInfo?: QuotationCompanyInfo
+      // 客户信息
+      clientWhatsapp?: string // 客户 WhatsApp
+      clientEmail?: string // 客户邮箱
+      // 产品列表（支持多产品多型号）
+      products: QuotationProduct[]
+      // 费用汇总
+      costSummary?: QuotationCostSummary
+      // 其他信息字段
+      otherInfoFields?: QuotationInfoField[]
+      // 货币符号
+      currencySymbol?: string
     }
 
     /** 报价搜索参数 */
