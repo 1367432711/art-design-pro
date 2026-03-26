@@ -228,15 +228,39 @@
                 }}</span>
                 <span class="font-bold text-g-700">产品</span>
               </div>
-              <ElButton
-                type="danger"
-                link
-                @click="removeProduct(pIndex)"
-                v-if="formData.products.length > 1"
-              >
-                <ArtSvgIcon icon="ri:delete-bin-line" class="mr-1" />
-                删除产品
-              </ElButton>
+              <ElSpace>
+                <!-- 从产品库选择 -->
+                <ElSelect
+                  v-model="product.selectedProductId"
+                  placeholder="从产品库选择..."
+                  filterable
+                  clearable
+                  @change="(val) => handleProductSelect(val, pIndex)"
+                  style="width: 200px"
+                >
+                  <ElOption
+                    v-for="opt in productOptions"
+                    :key="opt.id"
+                    :label="opt.name + ' - ' + opt.spec"
+                    :value="opt.id"
+                  >
+                    <span class="font-medium">{{ opt.name }}</span>
+                    <span class="text-g-400 ml-2">{{ opt.spec }}</span>
+                    <span class="text-primary ml-2">{{
+                      formatPrice(opt.salePrice, opt.currency)
+                    }}</span>
+                  </ElOption>
+                </ElSelect>
+                <ElButton
+                  type="danger"
+                  link
+                  @click="removeProduct(pIndex)"
+                  v-if="formData.products.length > 1"
+                >
+                  <ArtSvgIcon icon="ri:delete-bin-line" class="mr-1" />
+                  删除产品
+                </ElButton>
+              </ElSpace>
             </div>
 
             <!-- 产品变体列表 -->
@@ -673,6 +697,36 @@
     })}`
   }
 
+  // 格式化价格（用于产品选择下拉框）
+  const formatPrice = (price: number, currency: string = 'USD') => {
+    const symbol = currencySymbols[currency] || currency
+    return `${symbol}${price.toFixed(2)}`
+  }
+
+  // 处理产品选择（从产品库）
+  const handleProductSelect = (productId: string, productIndex: number) => {
+    if (!productId) return
+    const product = productOptions.value.find((p) => p.id === productId)
+    if (!product) return
+
+    const quotationProduct = formData.value.products[productIndex]
+    // 填充产品信息到变体
+    quotationProduct.variants = [
+      {
+        id: Date.now().toString(),
+        sku: product.sku || '',
+        desc: `${product.name} - ${product.spec}${product.material ? ' - ' + product.material : ''}`,
+        qty: product.moq || 1,
+        unit: product.unit || 'PCS',
+        price: product.salePrice || 0,
+        total: (product.moq || 1) * (product.salePrice || 0),
+        image: product.mainImage || ''
+      }
+    ]
+    calculateGrandTotal()
+    saveDraft()
+  }
+
   // 获取折扣金额
   const getDiscountAmount = () => {
     const { discountValue, discountType, subtotal } = formData.value.costSummary!
@@ -798,6 +852,7 @@
     const id = Date.now().toString()
     formData.value.products.push({
       id,
+      selectedProductId: '', // 用于从产品库选择
       variants: [
         {
           id: Date.now().toString() + '1',

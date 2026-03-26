@@ -218,7 +218,7 @@ declare namespace Api {
     /** 报价产品（支持多型号/变体） */
     interface QuotationProduct {
       id: string // 产品 ID
-      image?: string // 产品主图 (Base64)
+      selectedProductId?: string // 从产品库选择的产品 ID
       variants: ProductVariant[] // 产品变体列表
     }
 
