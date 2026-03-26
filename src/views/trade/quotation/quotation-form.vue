@@ -283,22 +283,6 @@
           </template>
         </ElTableColumn>
       </ElTable>
-
-      <!-- 汇总 -->
-      <div
-        class="products-summary mt-4 p-4 bg-gradient-to-r from-primary/5 to-primaryDark/5 rounded-xl border border-primary/20"
-      >
-        <div class="flex-b items-center w-full">
-          <div class="flex-1 text-right">
-            <span class="text-g-500 mr-2">总计:</span>
-            <span
-              class="text-2xl font-bold bg-gradient-to-r from-primary to-primaryDark bg-clip-text text-transparent"
-            >
-              {{ formatAmount(grandTotal, formData.currency || 'USD') }}
-            </span>
-          </div>
-        </div>
-      </div>
     </ElCard>
 
     <!-- 费用汇总 -->
@@ -312,8 +296,10 @@
         </div>
       </template>
 
-      <ElForm :model="formData.costSummary" label-width="120px">
-        <ElRow :gutter="20">
+      <ElForm :model="formData.costSummary" label-width="100px">
+        <!-- 费用明细 -->
+        <div class="cost-section-title">费用明细 / Charges</div>
+        <ElRow :gutter="20" class="costs-row">
           <ElCol :span="6">
             <ElFormItem label="运费">
               <ElInputNumber
@@ -340,7 +326,7 @@
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
+          <ElCol :span="5">
             <ElFormItem label="折扣类型">
               <ElSelect v-model="formData.costSummary.discountType" style="width: 100%">
                 <ElOption label="百分比" value="percent" />
@@ -361,9 +347,6 @@
               />
             </ElFormItem>
           </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="20">
           <ElCol :span="6">
             <ElFormItem label="其他费用">
               <ElInputNumber
@@ -377,41 +360,40 @@
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="产品总计">
-              <ElInput
-                :model-value="formatAmount(productsSubtotal, formData.currency || 'USD')"
-                disabled
-                style="width: 100%"
-              />
-            </ElFormItem>
+        </ElRow>
+
+        <!-- 合计区域 -->
+        <div class="cost-section-title">金额汇总 / Summary</div>
+        <ElRow :gutter="20" class="summary-row">
+          <ElCol :span="8">
+            <div class="summary-item">
+              <span class="summary-label">产品总计</span>
+              <span class="summary-value">{{
+                formatAmount(productsSubtotal, formData.currency || 'USD')
+              }}</span>
+            </div>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="折扣后合计">
-              <ElInput
-                :model-value="
-                  formatAmount(
-                    formData.costSummary.subtotal -
-                      (formData.costSummary.discountType === 'percent'
-                        ? formData.costSummary.subtotal * (formData.costSummary.discountValue / 100)
-                        : formData.costSummary.discountValue),
-                    formData.currency || 'USD'
-                  )
-                "
-                disabled
-                style="width: 100%"
-              />
-            </ElFormItem>
+          <ElCol :span="8">
+            <div class="summary-item">
+              <span class="summary-label">折扣后合计</span>
+              <span class="summary-value discount">{{
+                formatAmount(
+                  formData.costSummary.subtotal -
+                    (formData.costSummary.discountType === 'percent'
+                      ? formData.costSummary.subtotal * (formData.costSummary.discountValue / 100)
+                      : formData.costSummary.discountValue),
+                  formData.currency || 'USD'
+                )
+              }}</span>
+            </div>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="总计">
-              <ElInput
-                :model-value="formatAmount(grandTotal, formData.currency || 'USD')"
-                disabled
-                class="grand-total-input"
-                style="width: 100%"
-              />
-            </ElFormItem>
+          <ElCol :span="8">
+            <div class="summary-item grand-total">
+              <span class="summary-label">总计</span>
+              <span class="summary-value">{{
+                formatAmount(grandTotal, formData.currency || 'USD')
+              }}</span>
+            </div>
           </ElCol>
         </ElRow>
       </ElForm>
@@ -725,18 +707,73 @@
     padding: 20px 0;
   }
 
-  .grand-total-input {
-    :deep(.el-input__wrapper) {
-      background: linear-gradient(
-        to right,
-        var(--el-color-primary-light-9),
-        var(--el-color-primary-light-7)
-      );
-      border-color: var(--el-color-primary);
+  // 费用汇总区域样式
+  .cost-section-title {
+    padding-left: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    border-left: 3px solid var(--el-color-primary);
+  }
+
+  .costs-row {
+    margin-bottom: 20px;
+  }
+
+  .summary-row {
+    padding: 20px 16px;
+    background: linear-gradient(to right, var(--el-fill-color-light), var(--el-fill-color-lighter));
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 8px;
+  }
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: var(--el-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 5%);
+    transition: all 0.2s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+    }
+  }
+
+  .summary-label {
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--el-text-color-secondary);
+  }
+
+  .summary-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+
+    &.discount {
+      color: var(--el-color-warning);
+    }
+  }
+
+  .grand-total {
+    background: linear-gradient(
+      to right,
+      var(--el-color-primary-light-9),
+      var(--el-color-primary-light-7)
+    );
+    border: 1px solid var(--el-color-primary-light-5);
+
+    .summary-label {
+      color: var(--el-color-primary-dark-2);
     }
 
-    :deep(.el-input__inner) {
-      font-size: 1.1em;
+    .summary-value {
+      font-size: 24px;
       font-weight: bold;
       color: var(--el-color-primary);
     }
