@@ -289,11 +289,9 @@
         class="products-summary mt-4 p-4 bg-gradient-to-r from-primary/5 to-primaryDark/5 rounded-xl border border-primary/20"
       >
         <div class="flex-b items-center">
-          <div class="flex items-center gap-6">
-            <div>
-              <span class="text-g-500 mr-2">产品总数:</span>
-              <span class="text-lg font-bold text-g-800">{{ totalQuantity }} {{ totalUnit }}</span>
-            </div>
+          <div>
+            <span class="text-g-500 mr-2">产品总数:</span>
+            <span class="text-lg font-bold text-g-800">{{ totalQuantity }} 片</span>
           </div>
           <div>
             <span class="text-g-500 mr-2">总计:</span>
@@ -480,12 +478,6 @@
   // 总数量
   const totalQuantity = computed(() => {
     return formData.value.products.reduce((sum, p) => sum + (p.qty || 0), 0)
-  })
-
-  // 总单位（简化显示）
-  const totalUnit = computed(() => {
-    const units = [...new Set(formData.value.products.map((p) => p.unit))]
-    return units.length === 1 ? units[0] : 'PCS'
   })
 
   // 总计
