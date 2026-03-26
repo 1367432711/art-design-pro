@@ -183,14 +183,22 @@
         <!-- 产品型号 -->
         <ElTableColumn width="120" label="型号/SKU">
           <template #default="{ row }">
-            <ElInput v-model="row.sku" placeholder="型号" />
+            <ElInput v-model="row.sku" placeholder="型号" class="compact-input" />
           </template>
         </ElTableColumn>
 
         <!-- 产品等级 -->
         <ElTableColumn width="80" label="等级">
           <template #default="{ row }">
-            <ElSelect v-model="row.grade" placeholder="等级" style="width: 100%">
+            <ElTag
+              v-if="row.grade"
+              :type="getGradeTagType(row.grade)"
+              size="small"
+              class="grade-tag"
+            >
+              {{ row.grade }}
+            </ElTag>
+            <ElSelect v-else v-model="row.grade" placeholder="等级" style="width: 100%">
               <ElOption label="A 级" value="A 级" />
               <ElOption label="B 级" value="B 级" />
               <ElOption label="C 级" value="C 级" />
@@ -201,7 +209,10 @@
         <!-- 产品类型 -->
         <ElTableColumn width="100" label="产品类型">
           <template #default="{ row }">
-            <ElSelect v-model="row.type" placeholder="类型" style="width: 100%">
+            <ElTag v-if="row.type" :type="getTypeTagType(row.type)" size="small" class="type-tag">
+              {{ row.type }}
+            </ElTag>
+            <ElSelect v-else v-model="row.type" placeholder="类型" style="width: 100%">
               <ElOption label="切割片" value="切割片" />
               <ElOption label="百叶片" value="百叶片" />
               <ElOption label="磨光片" value="磨光片" />
@@ -220,6 +231,7 @@
               placeholder="0"
               controls-position="right"
               style="width: 100%"
+              class="compact-input-number"
               @change="updateTotal($index)"
             />
           </template>
@@ -235,6 +247,7 @@
               placeholder="0.00"
               controls-position="right"
               style="width: 100%"
+              class="compact-input-number"
               @change="updateTotal($index)"
             />
           </template>
@@ -270,6 +283,7 @@
               :rows="1"
               placeholder="可选备注"
               autosize
+              class="compact-textarea"
             />
           </template>
         </ElTableColumn>
@@ -565,6 +579,27 @@
     }
   }
 
+  // 获取等级标签类型
+  const getGradeTagType = (grade: string) => {
+    const types: Record<string, 'success' | 'primary' | 'warning'> = {
+      'A 级': 'success',
+      'B 级': 'primary',
+      'C 级': 'warning'
+    }
+    return types[grade] || 'info'
+  }
+
+  // 获取类型标签类型
+  const getTypeTagType = (type: string) => {
+    const types: Record<string, 'primary' | 'success' | 'warning' | 'info'> = {
+      切割片: 'primary',
+      百叶片: 'success',
+      磨光片: 'warning',
+      其他: 'info'
+    }
+    return types[type] || 'info'
+  }
+
   // 添加产品
   const addProduct = () => {
     formData.value.products.push({
@@ -662,15 +697,72 @@
   }
 
   .products-table {
+    // 表格头部样式
     :deep(.el-table__header th) {
+      font-size: 13px;
       font-weight: 600;
-      background: var(--el-fill-color);
+      color: var(--el-text-color-primary);
+      background: linear-gradient(to bottom, var(--el-fill-color), var(--el-fill-color-light));
     }
 
+    // 表格行样式
+    :deep(.el-table__row) {
+      &:hover {
+        background-color: var(--el-fill-color-lighter);
+      }
+    }
+
+    // 单元格内输入框
+    :deep(.el-input__wrapper),
+    :deep(.el-select .el-input__wrapper),
+    :deep(.el-textarea__inner) {
+      border-color: var(--el-border-color-light);
+      box-shadow: none;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: var(--el-color-primary-light-5);
+      }
+
+      &:focus-within {
+        border-color: var(--el-color-primary);
+        box-shadow: 0 0 0 1px var(--el-color-primary-light-9) inset;
+      }
+    }
+
+    // 数字输入框
     :deep(.el-input-number) {
       width: 100%;
+
+      .el-input__wrapper {
+        padding-right: 8px;
+        padding-left: 8px;
+      }
     }
 
+    // 紧凑输入框
+    .compact-input {
+      :deep(.el-input__wrapper) {
+        padding-right: 6px;
+        padding-left: 6px;
+      }
+    }
+
+    .compact-input-number {
+      :deep(.el-input-number__decrease),
+      :deep(.el-input-number__increase) {
+        display: none;
+      }
+    }
+
+    .compact-textarea {
+      :deep(.el-textarea__inner) {
+        padding: 4px 8px;
+        font-size: 13px;
+      }
+    }
+
+    // 图片上传按钮
     .image-upload-btn {
       display: flex;
       align-items: center;
@@ -688,12 +780,26 @@
       }
     }
 
+    // 产品图片
     .product-image {
       width: 60px;
       height: 60px;
       cursor: pointer;
       object-fit: cover;
       border-radius: 8px;
+      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    // 等级和类型标签
+    .grade-tag,
+    .type-tag {
+      font-weight: 500;
+      cursor: pointer;
     }
   }
 
