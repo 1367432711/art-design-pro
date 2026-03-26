@@ -310,11 +310,11 @@
         </div>
       </template>
 
-      <ElForm :model="formData.costSummary" label-width="100px">
+      <ElForm :model="formData.costSummary" label-width="80px">
         <!-- 费用明细 -->
         <div class="cost-section-title">费用明细 / Charges</div>
-        <ElRow :gutter="20" class="costs-row">
-          <ElCol :span="6">
+        <ElRow :gutter="16" class="costs-row">
+          <ElCol :span="5">
             <ElFormItem label="运费">
               <ElInputNumber
                 v-model="formData.costSummary.freightCharges"
@@ -327,7 +327,7 @@
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
+          <ElCol :span="5">
             <ElFormItem label="折扣">
               <ElInputNumber
                 v-model="formData.costSummary.discountValue"
@@ -340,7 +340,7 @@
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="5">
+          <ElCol :span="4">
             <ElFormItem label="折扣类型">
               <ElSelect v-model="formData.costSummary.discountType" style="width: 100%">
                 <ElOption label="百分比" value="percent" />
@@ -348,7 +348,7 @@
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
+          <ElCol :span="5">
             <ElFormItem label="税费">
               <ElInputNumber
                 v-model="formData.costSummary.taxValue"
@@ -361,7 +361,7 @@
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
+          <ElCol :span="5">
             <ElFormItem label="其他费用">
               <ElInputNumber
                 v-model="formData.costSummary.otherCharges"
