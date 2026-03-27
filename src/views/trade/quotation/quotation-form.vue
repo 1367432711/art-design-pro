@@ -442,7 +442,9 @@
   import {
     fetchGetCustomerList,
     fetchGetProductList,
-    fetchGetQuotationDetail
+    fetchGetQuotationDetail,
+    fetchCreateQuotation,
+    fetchUpdateQuotation
   } from '@/api/trade-manage'
 
   defineOptions({ name: 'QuotationForm' })
@@ -676,10 +678,46 @@
   }
 
   // 提交保存
-  const handleSubmit = () => {
-    ElMessage.success('报价单已保存（演示版）')
-    // TODO: 实现保存逻辑
-    console.log('Form data:', formData.value)
+  const handleSubmit = async () => {
+    try {
+      // 验证必填字段
+      if (!formData.value.customerId) {
+        ElMessage.warning('请选择客户')
+        return
+      }
+      if (formData.value.products.length === 0) {
+        ElMessage.warning('请至少添加一个产品')
+        return
+      }
+
+      // 准备提交数据
+      const submitData = {
+        ...formData.value,
+        status: '1' // 默认待确认
+      }
+
+      let result
+      if (isEdit.value) {
+        // 编辑模式
+        result = await fetchUpdateQuotation({
+          id: route.params.id as string,
+          ...submitData
+        })
+      } else {
+        // 新增模式
+        result = await fetchCreateQuotation(submitData)
+      }
+
+      ElMessage.success(result.msg || '保存成功')
+
+      // 保存成功后返回列表页
+      setTimeout(() => {
+        router.push('/trade/quotation')
+      }, 500)
+    } catch (error: any) {
+      console.error('保存失败:', error)
+      ElMessage.error(error.message || '保存失败，请重试')
+    }
   }
 
   // 返回
