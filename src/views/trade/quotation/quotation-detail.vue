@@ -61,19 +61,21 @@
             </div>
           </template>
           <ElTable :data="productList" border>
-            <ElTableColumn prop="productName" label="产品名称" min-width="180" />
-            <ElTableColumn prop="specification" label="规格型号" min-width="150" />
-            <ElTableColumn prop="quantity" label="数量" width="100" align="center" />
+            <ElTableColumn prop="name" label="产品名称" min-width="180" />
+            <ElTableColumn prop="sku" label="型号/SKU" min-width="150" />
+            <ElTableColumn prop="type" label="类型" width="100" align="center" />
+            <ElTableColumn prop="grade" label="等级" width="100" align="center" />
+            <ElTableColumn prop="qty" label="数量" width="100" align="center" />
             <ElTableColumn prop="unit" label="单位" width="80" align="center" />
-            <ElTableColumn prop="unitPrice" label="单价" width="120" align="right">
+            <ElTableColumn prop="price" label="单价" width="120" align="right">
               <template #default="{ row }">
-                {{ formatAmount(row.unitPrice, row.currency) }}
+                {{ formatAmount(row.price, row.currency || quotationData.currency) }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="totalPrice" label="金额" width="120" align="right">
+            <ElTableColumn prop="total" label="金额" width="120" align="right">
               <template #default="{ row }">
                 <span class="font-medium text-primary">{{
-                  formatAmount(row.totalPrice, row.currency)
+                  formatAmount(row.total || 0, row.currency || quotationData.currency)
                 }}</span>
               </template>
             </ElTableColumn>
@@ -115,8 +117,83 @@
                 {{ quotationData.validity || '-' }}
               </ElTag>
             </ElDescriptionsItem>
-            <ElDescriptionsItem label="备注" :span="2">
-              {{ quotationData.remarks || '-' }}
+            <ElDescriptionsItem label="装运港口">
+              {{ quotationData.shipmentPort || '-' }}
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="交货期">
+              {{ quotationData.leadTime || '-' }}
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="客户 WhatsApp">
+              {{ quotationData.clientWhatsapp || '-' }}
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="客户邮箱">
+              {{ quotationData.clientEmail || '-' }}
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="币种" :span="2">
+              <ElTag type="primary" size="small">{{ quotationData.currency || 'USD' }}</ElTag>
+            </ElDescriptionsItem>
+          </ElDescriptions>
+        </ElCard>
+
+        <!-- 费用汇总 -->
+        <ElCard class="art-card mt-3">
+          <template #header>
+            <div class="card-header">
+              <Icon icon="ri:calculator-line" class="mr-2" />
+              <span>费用汇总 / Cost Summary</span>
+            </div>
+          </template>
+          <ElDescriptions :column="3" border>
+            <ElDescriptionsItem label="产品总计">
+              <span class="text-gray-600">{{
+                formatAmount(
+                  quotationData.costSummary?.subtotal || 0,
+                  quotationData.currency || 'USD'
+                )
+              }}</span>
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="运费">
+              <span class="text-gray-600">{{
+                formatAmount(
+                  quotationData.costSummary?.freightCharges || 0,
+                  quotationData.currency || 'USD'
+                )
+              }}</span>
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="折扣">
+              <span class="text-warning"
+                >{{
+                  formatAmount(
+                    quotationData.costSummary?.discountValue || 0,
+                    quotationData.currency || 'USD'
+                  )
+                }}
+                ({{ quotationData.costSummary?.discountType === 'percent' ? '%' : '固定金额' }})
+              </span>
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="税费">
+              <span class="text-gray-600">{{
+                formatAmount(
+                  quotationData.costSummary?.taxValue || 0,
+                  quotationData.currency || 'USD'
+                )
+              }}</span>
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="其他费用">
+              <span class="text-gray-600">{{
+                formatAmount(
+                  quotationData.costSummary?.otherCharges || 0,
+                  quotationData.currency || 'USD'
+                )
+              }}</span>
+            </ElDescriptionsItem>
+            <ElDescriptionsItem label="总计" :span="3">
+              <span class="text-xl font-bold text-primary">{{
+                formatAmount(
+                  quotationData.costSummary?.grandTotal || 0,
+                  quotationData.currency || 'USD'
+                )
+              }}</span>
             </ElDescriptionsItem>
           </ElDescriptions>
         </ElCard>
@@ -185,30 +262,20 @@
   // 报价数据
   const quotationData = ref<Partial<Api.Trade.QuotationListItem>>({})
 
-  // 产品列表（单产品模式转为数组）
+  // 产品列表（从 products 数组获取）
   const productList = computed(() => {
     if (!quotationData.value) return []
-    return [
-      {
-        productName: quotationData.value.productName || '',
-        specification: quotationData.value.specification || '',
-        quantity: quotationData.value.quantity || 0,
-        unit: quotationData.value.unit || '',
-        unitPrice: quotationData.value.unitPrice || 0,
-        currency: quotationData.value.currency || 'USD',
-        totalPrice: quotationData.value.totalPrice || 0
-      }
-    ]
+    return quotationData.value.products || []
   })
 
   // 总数量
   const totalQuantity = computed(() => {
-    return productList.value.reduce((sum, item) => sum + (item.quantity || 0), 0)
+    return productList.value.reduce((sum, item) => sum + (item.qty || 0), 0)
   })
 
-  // 总金额
+  // 总金额（从 costSummary 获取）
   const totalAmount = computed(() => {
-    return productList.value.reduce((sum, item) => sum + (item.totalPrice || 0), 0)
+    return quotationData.value.costSummary?.grandTotal || 0
   })
 
   // 报价状态配置

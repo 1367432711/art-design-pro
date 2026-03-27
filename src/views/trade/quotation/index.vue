@@ -84,6 +84,18 @@
     return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
 
+  // 获取产品名称（第一个产品）
+  const getProductName = (row: QuotationListItem) => {
+    if (!row.products || row.products.length === 0) return '-'
+    return row.products[0].name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+  }
+
+  // 获取规格型号（第一个产品）
+  const getProductSpec = (row: QuotationListItem) => {
+    if (!row.products || row.products.length === 0) return '-'
+    return row.products[0].sku || '-'
+  }
+
   const {
     columns,
     columnChecks,
@@ -123,38 +135,44 @@
               h('span', { class: 'font-medium' }, row.customerName)
           },
           {
-            prop: 'productName',
+            prop: 'products',
             label: '产品名称',
-            minWidth: 150
+            minWidth: 150,
+            formatter: (row: QuotationListItem) => h('span', {}, getProductName(row))
           },
           {
-            prop: 'specification',
+            prop: 'products',
             label: '规格型号',
             minWidth: 150,
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            formatter: (row: QuotationListItem) => h('span', {}, getProductSpec(row))
           },
           {
-            prop: 'quantity',
-            label: '数量',
-            width: 100,
-            formatter: (row: QuotationListItem) => h('span', {}, `${row.quantity} ${row.unit}`)
+            prop: 'currency',
+            label: '币种',
+            width: 80,
+            formatter: (row: QuotationListItem) => h('span', {}, row.currency || 'USD')
           },
           {
-            prop: 'unitPrice',
-            label: '单价',
+            prop: 'costSummary.subtotal',
+            label: '产品总计',
             width: 120,
             formatter: (row: QuotationListItem) =>
-              h('span', { class: 'text-g-500' }, formatAmount(row.unitPrice, row.currency))
+              h(
+                'span',
+                { class: 'text-g-500' },
+                formatAmount(row.costSummary?.subtotal || 0, row.currency)
+              )
           },
           {
-            prop: 'totalPrice',
-            label: '总金额',
+            prop: 'costSummary.grandTotal',
+            label: '总计金额',
             width: 130,
             formatter: (row: QuotationListItem) =>
               h(
                 'span',
                 { class: 'font-medium text-primary' },
-                formatAmount(row.totalPrice, row.currency)
+                formatAmount(row.costSummary?.grandTotal || 0, row.currency)
               )
           },
           { prop: 'tradeTerm', label: '贸易条款', width: 120 },
