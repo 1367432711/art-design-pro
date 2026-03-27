@@ -1,6 +1,19 @@
 <!-- 报价表单 - 扁平化设计 -->
 <template>
   <div class="quotation-form-page">
+    <!-- 头部操作区 -->
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <ElButton type="text" @click="handleBack">
+          <Icon icon="ri:arrow-left-line" class="mr-1" />
+          返回
+        </ElButton>
+        <h2 class="text-xl font-semibold">
+          {{ isEdit ? '编辑报价单' : '新增报价单' }}
+        </h2>
+      </div>
+    </div>
+
     <!-- 报价单头部信息 -->
     <ElCard class="art-card mb-4">
       <template #header>
@@ -12,14 +25,14 @@
         </div>
       </template>
 
-      <ElForm :model="formData" label-width="120px" class="quotation-info-form">
+      <ElForm :model="formData" label-width="100px" class="quotation-info-form">
         <ElRow :gutter="20">
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="报价单号">
               <ElInput v-model="formData.quotationNo" placeholder="QT20260326123" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="客户">
               <ElSelect
                 v-model="formData.customerId"
@@ -37,20 +50,20 @@
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="报价日期">
               <ElDatePicker v-model="formData.quotationDate" type="date" style="width: 100%" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="有效期">
+              <ElInput v-model="formData.validity" placeholder="如：30 天" />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
         <ElRow :gutter="20">
-          <ElCol :span="8">
-            <ElFormItem label="有效期">
-              <ElInput v-model="formData.validity" placeholder="如：30 天" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="贸易条款">
               <ElSelect v-model="formData.tradeTerm" placeholder="选择条款" style="width: 100%">
                 <ElOption label="FOB" value="FOB" />
@@ -59,25 +72,25 @@
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="付款方式">
               <ElInput v-model="formData.paymentTerm" placeholder="如：T/T 30% deposit" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="装运港口">
+              <ElInput v-model="formData.shipmentPort" placeholder="如：Shanghai" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="交货期">
+              <ElInput v-model="formData.leadTime" placeholder="如：30 days" />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
         <ElRow :gutter="20">
-          <ElCol :span="8">
-            <ElFormItem label="装运港口">
-              <ElInput v-model="formData.shipmentPort" placeholder="如：Shanghai" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="8">
-            <ElFormItem label="交货期">
-              <ElInput v-model="formData.leadTime" placeholder="如：30 days" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="币种">
               <ElSelect v-model="formData.currency" style="width: 100%">
                 <ElOption label="USD" value="USD" />
@@ -87,15 +100,12 @@
               </ElSelect>
             </ElFormItem>
           </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="20">
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="客户 WhatsApp">
               <ElInput v-model="formData.clientWhatsapp" placeholder="+86 138 0000 0000" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="8">
+          <ElCol :span="6">
             <ElFormItem label="客户邮箱">
               <ElInput v-model="formData.clientEmail" placeholder="client@example.com" />
             </ElFormItem>
@@ -126,7 +136,7 @@
         header-cell-class-name="table-header-center"
       >
         <!-- 序号 -->
-        <ElTableColumn type="index" width="50" align="center" label="序号" />
+        <ElTableColumn type="index" width="70" align="center" label="序号" />
 
         <!-- 产品图片 -->
         <ElTableColumn width="100" align="center" label="产品图">
@@ -148,7 +158,7 @@
         </ElTableColumn>
 
         <!-- 产品名称（从产品库选择） -->
-        <ElTableColumn min-width="180" label="产品名称" align="center">
+        <ElTableColumn min-width="90" label="产品名称" align="center">
           <template #default="{ row, $index }">
             <ElSelect
               v-model="row.selectedProductId"
@@ -186,14 +196,14 @@
         </ElTableColumn>
 
         <!-- 产品型号 -->
-        <ElTableColumn width="120" label="型号/SKU" align="center">
+        <ElTableColumn min-width="90" label="型号/SKU" align="center">
           <template #default="{ row }">
             <ElInput v-model="row.sku" placeholder="型号" class="compact-input" />
           </template>
         </ElTableColumn>
 
         <!-- 产品等级 -->
-        <ElTableColumn width="80" label="等级" align="center">
+        <ElTableColumn width="110" label="等级" align="center">
           <template #default="{ row }">
             <ElTag
               v-if="row.grade"
@@ -213,7 +223,7 @@
         </ElTableColumn>
 
         <!-- 产品类型 -->
-        <ElTableColumn width="100" label="产品类型" align="center">
+        <ElTableColumn width="110" label="产品类型" align="center">
           <template #default="{ row }">
             <ElTag
               v-if="row.type"
@@ -266,7 +276,7 @@
         </ElTableColumn>
 
         <!-- 小计 -->
-        <ElTableColumn width="120" label="小计" align="center">
+        <ElTableColumn width="110" label="小计" align="center">
           <template #default="{ row }">
             <span class="font-bold text-primary text-base">
               {{ formatAmount(row.total || 0, formData.currency || 'USD') }}
@@ -275,7 +285,7 @@
         </ElTableColumn>
 
         <!-- 产品备注（展开显示） -->
-        <ElTableColumn min-width="150" label="备注" align="center">
+        <ElTableColumn min-width="100" label="备注" align="center">
           <template #default="{ row }">
             <ElInput
               v-model="row.remark"
@@ -427,8 +437,13 @@
 <script setup lang="ts">
   import { ElMessage } from 'element-plus'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
+  import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
-  import { fetchGetCustomerList, fetchGetProductList } from '@/api/trade-manage'
+  import {
+    fetchGetCustomerList,
+    fetchGetProductList,
+    fetchGetQuotationDetail
+  } from '@/api/trade-manage'
 
   defineOptions({ name: 'QuotationForm' })
 
@@ -667,9 +682,57 @@
     console.log('Form data:', formData.value)
   }
 
+  // 返回
+  const handleBack = () => {
+    router.back()
+  }
+
   // 取消
   const handleCancel = () => {
     router.back()
+  }
+
+  // 加载报价单详情
+  const loadQuotationDetail = async () => {
+    const id = route.params.id as string
+    if (!id) return
+
+    try {
+      const res = await fetchGetQuotationDetail(id)
+      const data = (res as any).data
+
+      if (data) {
+        // 填充表单数据
+        formData.value = {
+          ...formData.value,
+          quotationNo: data.quotationNo || '',
+          customerId: data.customerId || '',
+          customerName: data.customerName || '',
+          quotationDate: data.quotationDate || new Date().toISOString().slice(0, 10),
+          validity: data.validity || '',
+          currency: data.currency || 'USD',
+          tradeTerm: data.tradeTerm || '',
+          paymentTerm: data.paymentTerm || '',
+          shipmentPort: data.shipmentPort || '',
+          leadTime: data.leadTime || '',
+          clientWhatsapp: data.clientWhatsapp || '',
+          clientEmail: data.clientEmail || '',
+          products: data.products || [],
+          costSummary: data.costSummary || {
+            freightCharges: 0,
+            discountValue: 0,
+            discountType: 'percent',
+            taxValue: 0,
+            otherCharges: 0,
+            subtotal: 0,
+            grandTotal: 0
+          }
+        }
+      }
+    } catch (error) {
+      console.error('加载报价单详情失败:', error)
+      ElMessage.error('加载报价单详情失败')
+    }
   }
 
   // 加载数据
@@ -681,7 +744,20 @@
       const productRes = await fetchGetProductList({ current: 1, size: 100 })
       productOptions.value = (productRes.data as any)?.records || []
 
-      if (!isEdit.value && !formData.value.quotationNo) {
+      // 检查是否从客户详情页跳转（带 customerId 参数）
+      const customerId = route.query.customerId as string
+      const customerName = route.query.customerName as string
+
+      if (customerId) {
+        formData.value.customerId = customerId
+        formData.value.customerName = decodeURIComponent(customerName || '')
+      }
+
+      if (isEdit.value) {
+        // 编辑模式：加载报价单详情
+        await loadQuotationDetail()
+      } else if (!formData.value.quotationNo) {
+        // 新增模式：生成报价单号
         formData.value.quotationNo = generateQuotationNo()
       }
     } catch (error) {

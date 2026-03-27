@@ -9,7 +9,7 @@
           返回
         </ElButton>
         <h2 class="text-xl font-semibold">{{ customerData.customerName || '客户详情' }}</h2>
-        <ElTag :type="getStatusType(customerData.status)" size="medium">
+        <ElTag :type="getStatusType(customerData.status)">
           {{ getStatusText(customerData.status) }}
         </ElTag>
       </div>
@@ -126,7 +126,14 @@
               添加跟进
             </ElButton>
           </div>
-          <ElEmpty description="暂无跟进记录" />
+          <ArtTable
+            :loading="followupLoading"
+            :data="followupList"
+            :columns="followupColumns"
+            :pagination="followupPagination"
+            @pagination:size-change="handleFollowupSizeChange"
+            @pagination:current-change="handleFollowupCurrentChange"
+          />
         </ElTabPane>
 
         <!-- 订单 -->
@@ -157,6 +164,16 @@
       :quotation-data="currentQuotationData"
       @submit="handleQuotationDialogSubmit"
     />
+
+    <!-- 添加跟进弹窗 -->
+    <FollowupDialog
+      v-model:visible="followupDialogVisible"
+      :type="followupDialogType"
+      :customer-id="customerData.id"
+      :customer-name="customerData.customerName"
+      :followup-data="currentFollowupData"
+      @submit="handleFollowupDialogSubmit"
+    />
   </div>
 </template>
 
@@ -167,6 +184,7 @@
   import { fetchGetCustomerDetail, fetchGetCustomerQuotations } from '@/api/trade-manage'
   import CustomerDialog from './modules/customer-dialog.vue'
   import QuotationDialog from '../quotation/modules/quotation-dialog.vue'
+  import FollowupDialog from './modules/followup-dialog.vue'
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
   import { ElMessageBox, ElMessage, ElTag, ElLink, ElEmpty, ElTabs, ElTabPane } from 'element-plus'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
@@ -253,6 +271,81 @@
   const quotationDialogType = ref<'add' | 'edit'>('add')
   const currentQuotationData = ref<Partial<Api.Trade.QuotationListItem>>({})
 
+  // 跟进记录弹窗
+  const followupDialogVisible = ref(false)
+  const followupDialogType = ref<'add' | 'edit'>('add')
+  const currentFollowupData = ref<Partial<Api.Trade.FollowupListItem>>({})
+
+  // 跟进记录列表
+  const followupList = ref<Api.Trade.FollowupListItem[]>([])
+  const followupLoading = ref(false)
+  const followupPagination = reactive({
+    current: 1,
+    size: 10,
+    total: 0
+  })
+
+  // 跟进类型配置
+  const FOLLOWUP_TYPE_CONFIG = {
+    phone: { text: '电话跟进', color: '#409EFF' },
+    email: { text: '邮件跟进', color: '#67C23A' },
+    wechat: { text: '微信沟通', color: '#07C160' },
+    whatsapp: { text: 'WhatsApp 沟通', color: '#25D366' },
+    sample: { text: '样品寄送', color: '#E6A23C' },
+    contract: { text: '合同签订', color: '#F56C6C' },
+    other: { text: '其他', color: '#909399' }
+  } as const
+
+  // 获取跟进类型文本和颜色
+  const getFollowupTypeConfig = (type: string | undefined) => {
+    if (!type) return { text: '未知', color: '#909399' }
+    const config = FOLLOWUP_TYPE_CONFIG[type as keyof typeof FOLLOWUP_TYPE_CONFIG]
+    return config || { text: '未知', color: '#909399' }
+  }
+
+  // 跟进表格列配置
+  const followupColumns = computed(() => [
+    {
+      prop: 'followupType',
+      label: '跟进类型',
+      width: 120,
+      align: 'center',
+      formatter: (row: Api.Trade.FollowupListItem) => {
+        const config = getFollowupTypeConfig(row.followupType)
+        return h(
+          ElTag,
+          {
+            type: 'info' as const,
+            size: 'small',
+            style: { backgroundColor: config.color, borderColor: config.color }
+          },
+          () => config.text
+        )
+      }
+    },
+    { prop: 'followupTime', label: '跟进时间', width: 160, align: 'center', sortable: true },
+    { prop: 'content', label: '跟进内容', minWidth: 300, showOverflowTooltip: true },
+    { prop: 'nextPlan', label: '下一步计划', minWidth: 200, showOverflowTooltip: true },
+    {
+      prop: 'operation',
+      label: '操作',
+      width: 150,
+      fixed: 'right' as const,
+      align: 'center',
+      formatter: (row: Api.Trade.FollowupListItem) =>
+        h('div', [
+          h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => handleEditFollowup(row)
+          }),
+          h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => handleDeleteFollowup(row)
+          })
+        ])
+    }
+  ])
+
   // 报价表格列配置
   const quotationColumns = computed(() => [
     {
@@ -260,16 +353,20 @@
       label: '报价单号',
       width: 150,
       formatter: (row: QuotationListItem) =>
-        h(ElLink, { type: 'primary', underline: false }, () => row.quotationNo)
+        h(
+          ElLink,
+          { type: 'primary', underline: false, onClick: () => handleViewQuotation(row) },
+          () => row.quotationNo
+        )
     },
-    { prop: 'productName', label: '产品名称', minWidth: 150, showOverflowTooltip: true },
+    { prop: 'productName', label: '产品名称', minWidth: 150 },
     { prop: 'specification', label: '规格型号', minWidth: 120, showOverflowTooltip: true },
     {
       prop: 'quantity',
       label: '数量',
-      width: 100,
+      width: 120,
       align: 'center',
-      formatter: (row: QuotationListItem) => h('span', {}, `${row.quantity} ${row.unit}`)
+      formatter: (row: QuotationListItem) => h('span', {}, `${row.quantity} ${row.unit || ''}`)
     },
     {
       prop: 'unitPrice',
@@ -287,10 +384,11 @@
       formatter: (row: QuotationListItem) =>
         h('span', { class: 'font-medium text-primary' }, formatAmount(row.totalPrice, row.currency))
     },
+    { prop: 'tradeTerm', label: '贸易条款', width: 120 },
     {
       prop: 'status',
       label: '状态',
-      width: 90,
+      width: 100,
       align: 'center',
       formatter: (row: QuotationListItem) => {
         const statusType = getQuotationStatusType(row.status)
@@ -302,19 +400,31 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 120,
-      fixed: 'right',
+      width: 150,
+      fixed: 'right' as const,
       align: 'center',
       formatter: (row: QuotationListItem) =>
-        h('div', [
-          h(ArtButtonTable, {
-            type: 'edit',
-            onClick: () => handleEditQuotation(row)
-          }),
-          h(ArtButtonTable, {
-            type: 'delete',
-            onClick: () => handleDeleteQuotation(row)
-          })
+        h('div', { style: 'display: flex; justify-content: center; gap: 8px;' }, [
+          h(
+            ElButton,
+            {
+              type: 'primary',
+              size: 'small',
+              plain: true,
+              onClick: () => handleEditQuotation(row)
+            },
+            () => '修改'
+          ),
+          h(
+            ElButton,
+            {
+              type: 'danger',
+              size: 'small',
+              plain: true,
+              onClick: () => handleDeleteQuotation(row)
+            },
+            () => '删除'
+          )
         ])
     }
   ])
@@ -400,24 +510,148 @@
 
   // 添加跟进
   const handleAddFollowup = () => {
-    ElMessage.info('跟进记录功能待开发')
+    followupDialogType.value = 'add'
+    currentFollowupData.value = {}
+    followupDialogVisible.value = true
+  }
+
+  // 编辑跟进
+  const handleEditFollowup = (row: Api.Trade.FollowupListItem) => {
+    followupDialogType.value = 'edit'
+    currentFollowupData.value = row
+    followupDialogVisible.value = true
+  }
+
+  // 删除跟进
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDeleteFollowup = (_row: Api.Trade.FollowupListItem) => {
+    ElMessageBox.confirm('确定要删除这条跟进记录吗？', '删除跟进', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      ElMessage.success('删除成功')
+      loadFollowupList()
+    })
+  }
+
+  // 跟进记录弹窗提交
+  const handleFollowupDialogSubmit = () => {
+    followupDialogVisible.value = false
+    loadFollowupList()
+  }
+
+  // 加载跟进记录列表
+  const loadFollowupList = async () => {
+    const customerId = route.params.id as string
+    if (!customerId) return
+
+    followupLoading.value = true
+    try {
+      // TODO: 调用获取跟进记录的 API
+      // const res = await fetchGetCustomerFollowups(customerId, {
+      //   current: followupPagination.current,
+      //   size: followupPagination.size
+      // })
+      // followupList.value = res.data?.records || []
+      // followupPagination.total = res.data?.total || 0
+
+      // 模拟数据
+      followupList.value = [
+        {
+          id: '1',
+          customerId: customerId,
+          customerName: customerData.value.customerName || '测试客户',
+          followupType: 'phone',
+          followupTime: '2026-03-25 10:30:00',
+          content:
+            '电话联系客户，询问产品样品测试情况。客户反馈样品质量良好，但希望价格能有更多优惠。',
+          nextPlan: '准备报价方案，给予 3% 的折扣优惠',
+          reminderTime: '2026-03-27 14:00:00',
+          status: 'completed',
+          createTime: '2026-03-25 10:30:00',
+          updateBy: 'admin',
+          updateTime: '2026-03-25 10:30:00'
+        },
+        {
+          id: '2',
+          customerId: customerId,
+          customerName: customerData.value.customerName || '测试客户',
+          followupType: 'email',
+          followupTime: '2026-03-24 15:00:00',
+          content: '发送产品目录和价格表到客户邮箱',
+          nextPlan: '等待客户回复，跟进样品需求',
+          status: 'completed',
+          createTime: '2026-03-24 15:00:00',
+          updateBy: 'admin',
+          updateTime: '2026-03-24 15:00:00'
+        },
+        {
+          id: '3',
+          customerId: customerId,
+          customerName: customerData.value.customerName || '测试客户',
+          followupType: 'wechat',
+          followupTime: '2026-03-22 09:15:00',
+          content: '微信初次联系，客户表示对切割片产品有兴趣',
+          nextPlan: '安排寄送样品',
+          status: 'completed',
+          createTime: '2026-03-22 09:15:00',
+          updateBy: 'admin',
+          updateTime: '2026-03-22 09:15:00'
+        }
+      ]
+      followupPagination.total = followupList.value.length
+    } catch (error) {
+      console.error('加载跟进记录列表失败:', error)
+    } finally {
+      followupLoading.value = false
+    }
+  }
+
+  // 跟进记录分页大小变化
+  const handleFollowupSizeChange = (size: number) => {
+    followupPagination.size = size
+    followupPagination.current = 1
+    loadFollowupList()
+  }
+
+  // 跟进记录当前页变化
+  const handleFollowupCurrentChange = (current: number) => {
+    followupPagination.current = current
+    loadFollowupList()
   }
 
   // 创建订单
   const handleCreateOrder = () => {
-    ElMessage.info('订单管理功能待开发')
+    ElMessageBox.confirm(
+      `确定要为客户 "${customerData.value.customerName}" 创建订单吗？`,
+      '创建订单',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }
+    ).then(() => {
+      ElMessage.info('订单管理功能开发中，敬请期待...')
+      // TODO: 跳转到订单创建页面或打开创建订单弹窗
+      // router.push('/trade/order/create?customerId=' + customerData.value.id)
+    })
   }
 
   // 导出 PDF
   const handleExportPdf = () => {
-    ElMessage.info('PDF 导出功能待开发')
+    ElMessage.info('PDF 导出功能开发中，敬请期待...')
+    // TODO: 实现客户资料 PDF 导出功能
   }
 
   // 编辑报价
   const handleEditQuotation = (row: Api.Trade.QuotationListItem) => {
-    quotationDialogType.value = 'edit'
-    currentQuotationData.value = row
-    quotationDialogVisible.value = true
+    router.push(`/trade/quotation/form?id=${row.id}`)
+  }
+
+  // 查看报价详情
+  const handleViewQuotation = (row: Api.Trade.QuotationListItem) => {
+    router.push(`/trade/quotation/form?id=${row.id}`)
   }
 
   // 删除报价
@@ -447,6 +681,7 @@
   onMounted(() => {
     loadCustomerDetail()
     loadQuotationList()
+    loadFollowupList()
   })
 </script>
 

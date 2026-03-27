@@ -322,5 +322,32 @@ declare namespace Api {
       grade?: string // 产品等级
       material?: string // 材质
     } & Api.Common.CommonSearchParams
+
+    /** 跟进记录列表 */
+    type FollowupList = Api.Common.PaginatedResponse<FollowupListItem>
+
+    /** 跟进记录列表项 */
+    interface FollowupListItem {
+      id: string
+      customerId: string // 客户 ID
+      customerName: string // 客户名称
+      followupType: string // 跟进类型：phone/email/wechat/whatsapp/sample/contract/other
+      followupTime: string // 跟进时间
+      content: string // 跟进内容
+      nextPlan: string // 下一步计划
+      reminderTime?: string // 提醒时间
+      status?: string // 状态：pending-待跟进 completed-已完成 overdue-已逾期
+      createTime: string
+      updateBy: string
+      updateTime: string
+    }
+
+    /** 跟进记录搜索参数 */
+    type FollowupSearchParams = Partial<
+      Pick<FollowupListItem, 'customerId' | 'followupType' | 'status'> & {
+        startTime?: string // 开始日期
+        endTime?: string // 结束日期
+      } & Api.Common.CommonSearchParams
+    >
   }
 }
