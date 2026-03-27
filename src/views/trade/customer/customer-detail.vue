@@ -76,31 +76,17 @@
       </ElDescriptions>
     </ElCard>
 
-    <!-- 快捷操作栏 -->
-    <div class="quick-actions mt-3 flex items-center gap-2">
-      <ElButton type="primary" @click="handleAddQuotation">
-        <Icon icon="ri:add-line" class="mr-1" />
-        新建报价
-      </ElButton>
-      <ElButton @click="handleAddFollowup">
-        <Icon icon="ri:file-text-line" class="mr-1" />
-        添加跟进
-      </ElButton>
-      <ElButton @click="handleCreateOrder">
-        <Icon icon="ri:shopping-bag-3-line" class="mr-1" />
-        创建订单
-      </ElButton>
-      <ElButton @click="handleExportPdf">
-        <Icon icon="ri:file-pdf-line" class="mr-1" />
-        导出 PDF
-      </ElButton>
-    </div>
-
     <!-- 标签页切换 -->
     <ElCard class="art-card mt-3">
       <ElTabs v-model="activeTab" class="detail-tabs">
         <!-- 报价单 -->
         <ElTabPane label="报价单" name="quotation">
+          <div class="tab-actions">
+            <ElButton type="primary" @click="handleAddQuotation">
+              <Icon icon="ri:add-line" class="mr-1" />
+              新建报价
+            </ElButton>
+          </div>
           <ArtTable
             :loading="loading"
             :data="quotationList"
@@ -114,8 +100,8 @@
 
         <!-- 跟进记录 -->
         <ElTabPane label="跟进记录" name="followup">
-          <div class="tab-actions mb-3">
-            <ElButton type="primary" size="small" @click="handleAddFollowup">
+          <div class="tab-actions">
+            <ElButton type="primary" @click="handleAddFollowup">
               <Icon icon="ri:add-line" class="mr-1" />
               添加跟进
             </ElButton>
@@ -132,8 +118,8 @@
 
         <!-- 订单 -->
         <ElTabPane label="订单" name="order">
-          <div class="tab-actions mb-3">
-            <ElButton type="primary" size="small" @click="handleCreateOrder">
+          <div class="tab-actions">
+            <ElButton type="primary" @click="handleCreateOrder">
               <Icon icon="ri:add-line" class="mr-1" />
               创建订单
             </ElButton>
@@ -171,7 +157,16 @@
   import CustomerDialog from './modules/customer-dialog.vue'
   import FollowupDialog from './modules/followup-dialog.vue'
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
-  import { ElMessageBox, ElMessage, ElTag, ElLink, ElEmpty, ElTabs, ElTabPane } from 'element-plus'
+  import {
+    ElMessageBox,
+    ElMessage,
+    ElTag,
+    ElLink,
+    ElEmpty,
+    ElTabs,
+    ElTabPane,
+    ElButton
+  } from 'element-plus'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
 
   defineOptions({ name: 'CustomerDetail' })
@@ -331,7 +326,7 @@
     {
       prop: 'quotationNo',
       label: '报价单号',
-      width: 150,
+      minWidth: 140,
       formatter: (row: QuotationListItem) =>
         h(
           ElLink,
@@ -342,27 +337,20 @@
     {
       prop: 'products',
       label: '产品数量',
-      width: 100,
+      width: 160,
       align: 'center',
       formatter: (row: QuotationListItem) => h('span', {}, `${row.products?.length || 0} 个产品`)
     },
     {
-      prop: 'currency',
-      label: '币种',
-      width: 80,
-      align: 'center',
-      formatter: (row: QuotationListItem) => h('span', {}, row.currency || 'USD')
-    },
-    {
       prop: 'tradeTerm',
       label: '贸易条款',
-      width: 120,
+      width: 200,
       align: 'center'
     },
     {
       prop: 'costSummary.subtotal',
       label: '产品总计',
-      width: 120,
+      width: 140,
       align: 'right',
       formatter: (row: QuotationListItem) =>
         h(
@@ -374,7 +362,7 @@
     {
       prop: 'costSummary.grandTotal',
       label: '总计金额',
-      width: 130,
+      width: 140,
       align: 'right',
       formatter: (row: QuotationListItem) =>
         h(
@@ -386,7 +374,7 @@
     {
       prop: 'status',
       label: '状态',
-      width: 100,
+      width: 120,
       align: 'center',
       formatter: (row: QuotationListItem) => {
         const statusType = getQuotationStatusType(row.status)
@@ -394,11 +382,11 @@
         return h(ElTag, { type: statusType, size: 'small' }, () => statusText)
       }
     },
-    { prop: 'quotationDate', label: '报价日期', width: 110, align: 'center', sortable: true },
+    { prop: 'quotationDate', label: '报价日期', width: 160, align: 'center', sortable: true },
     {
       prop: 'operation',
       label: '操作',
-      width: 150,
+      width: 260,
       fixed: 'right' as const,
       align: 'center',
       formatter: (row: QuotationListItem) =>
@@ -408,20 +396,27 @@
             {
               type: 'primary',
               size: 'small',
-              plain: true,
               onClick: () => handleEditQuotation(row)
             },
-            () => '编辑'
+            () => [h(Icon, { icon: 'ri:edit-line' }), ' 编辑']
           ),
           h(
             ElButton,
             {
               type: 'danger',
               size: 'small',
-              plain: true,
               onClick: () => handleDeleteQuotation(row)
             },
-            () => '删除'
+            () => [h(Icon, { icon: 'ri:delete-bin-line' }), ' 删除']
+          ),
+          h(
+            ElButton,
+            {
+              type: 'info',
+              size: 'small',
+              onClick: () => handleExportQuotation(row)
+            },
+            () => [h(Icon, { icon: 'ri:download-line' }), ' 导出']
           )
         ])
     }
@@ -637,10 +632,10 @@
     })
   }
 
-  // 导出 PDF
-  const handleExportPdf = () => {
-    ElMessage.info('PDF 导出功能开发中，敬请期待...')
-    // TODO: 实现客户资料 PDF 导出功能
+  // 导出报价单
+  const handleExportQuotation = (row: Api.Trade.QuotationListItem) => {
+    ElMessage.info(`导出报价单 ${row.quotationNo} 的 PDF 功能开发中...`)
+    // TODO: 实现单个报价单 PDF 导出功能
   }
 
   // 编辑报价
@@ -702,10 +697,6 @@
       color: var(--el-text-color-regular);
     }
 
-    .quick-actions {
-      padding: 12px 0;
-    }
-
     .detail-tabs {
       :deep(.el-tabs__header) {
         margin-bottom: 16px;
@@ -718,7 +709,8 @@
 
     .tab-actions {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
+      margin-bottom: 16px;
     }
   }
 </style>
