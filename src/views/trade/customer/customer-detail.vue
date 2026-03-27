@@ -151,14 +151,6 @@
       @submit="handleDialogSubmit"
     />
 
-    <!-- 编辑报价弹窗 -->
-    <QuotationDialog
-      v-model:visible="quotationDialogVisible"
-      :type="quotationDialogType"
-      :quotation-data="currentQuotationData"
-      @submit="handleQuotationDialogSubmit"
-    />
-
     <!-- 添加跟进弹窗 -->
     <FollowupDialog
       v-model:visible="followupDialogVisible"
@@ -175,9 +167,8 @@
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
   import { h } from 'vue'
-  import { fetchGetCustomerDetail } from '@/api/trade-manage'
+  import { fetchGetCustomerDetail, fetchDeleteQuotation } from '@/api/trade-manage'
   import CustomerDialog from './modules/customer-dialog.vue'
-  import QuotationDialog from '../quotation/modules/quotation-dialog.vue'
   import FollowupDialog from './modules/followup-dialog.vue'
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
   import { ElMessageBox, ElMessage, ElTag, ElLink, ElEmpty, ElTabs, ElTabPane } from 'element-plus'
@@ -259,11 +250,6 @@
   const dialogVisible = ref(false)
   const dialogType = ref<'add' | 'edit'>('edit')
   const currentCustomerData = ref<Partial<Api.Trade.CustomerListItem>>({})
-
-  // 报价弹窗
-  const quotationDialogVisible = ref(false)
-  const quotationDialogType = ref<'add' | 'edit'>('add')
-  const currentQuotationData = ref<Partial<Api.Trade.QuotationListItem>>({})
 
   // 跟进记录弹窗
   const followupDialogVisible = ref(false)
@@ -353,32 +339,50 @@
           () => row.quotationNo
         )
     },
-    { prop: 'productName', label: '产品名称', minWidth: 150 },
-    { prop: 'specification', label: '规格型号', minWidth: 120, showOverflowTooltip: true },
     {
-      prop: 'quantity',
-      label: '数量',
-      width: 120,
+      prop: 'products',
+      label: '产品数量',
+      width: 100,
       align: 'center',
-      formatter: (row: QuotationListItem) => h('span', {}, `${row.quantity} ${row.unit || ''}`)
+      formatter: (row: QuotationListItem) => h('span', {}, `${row.products?.length || 0} 个产品`)
     },
     {
-      prop: 'unitPrice',
-      label: '单价',
+      prop: 'currency',
+      label: '币种',
+      width: 80,
+      align: 'center',
+      formatter: (row: QuotationListItem) => h('span', {}, row.currency || 'USD')
+    },
+    {
+      prop: 'tradeTerm',
+      label: '贸易条款',
+      width: 120,
+      align: 'center'
+    },
+    {
+      prop: 'costSummary.subtotal',
+      label: '产品总计',
       width: 120,
       align: 'right',
       formatter: (row: QuotationListItem) =>
-        h('span', { class: 'text-g-500' }, formatAmount(row.unitPrice, row.currency))
+        h(
+          'span',
+          { class: 'text-g-500' },
+          formatAmount(row.costSummary?.subtotal || 0, row.currency)
+        )
     },
     {
-      prop: 'totalPrice',
-      label: '总金额',
+      prop: 'costSummary.grandTotal',
+      label: '总计金额',
       width: 130,
       align: 'right',
       formatter: (row: QuotationListItem) =>
-        h('span', { class: 'font-medium text-primary' }, formatAmount(row.totalPrice, row.currency))
+        h(
+          'span',
+          { class: 'font-medium text-primary' },
+          formatAmount(row.costSummary?.grandTotal || 0, row.currency)
+        )
     },
-    { prop: 'tradeTerm', label: '贸易条款', width: 120 },
     {
       prop: 'status',
       label: '状态',
@@ -407,7 +411,7 @@
               plain: true,
               onClick: () => handleEditQuotation(row)
             },
-            () => '修改'
+            () => '编辑'
           ),
           h(
             ElButton,
@@ -650,14 +654,20 @@
   }
 
   // 删除报价
-  const handleDeleteQuotation = (row: Api.Trade.QuotationListItem) => {
+  const handleDeleteQuotation = async (row: Api.Trade.QuotationListItem) => {
     ElMessageBox.confirm(`确定要删除报价单 ${row.quotationNo} 吗？`, '删除报价', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
-    }).then(() => {
-      ElMessage.success('删除成功')
-      loadQuotationList()
+    }).then(async () => {
+      try {
+        await fetchDeleteQuotation(row.id)
+        ElMessage.success('删除成功')
+        loadQuotationList()
+      } catch (error) {
+        console.error('删除失败:', error)
+        ElMessage.error('删除失败')
+      }
     })
   }
 
@@ -665,12 +675,6 @@
   const handleDialogSubmit = () => {
     dialogVisible.value = false
     loadCustomerDetail()
-  }
-
-  // 报价弹窗提交
-  const handleQuotationDialogSubmit = () => {
-    quotationDialogVisible.value = false
-    loadQuotationList()
   }
 
   onMounted(() => {
