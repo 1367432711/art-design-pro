@@ -2,7 +2,7 @@
 
 > 📝 本文档用于记录 Art Design Pro 外贸管理模块的开发内容、功能设计、API 接口及开发进度。
 
-**最后更新**: 2026-03-26
+**最后更新**: 2026-03-27
 
 ---
 
@@ -324,12 +324,12 @@ interface ProductImage {
 
 ### 路由设计
 
-| 路由                        | 组件路径                  | 标题     | KeepAlive | 权限          |
-| --------------------------- | ------------------------- | -------- | --------- | ------------- |
-| `/trade/quotation`          | `/trade/quotation`        | 报价管理 | ✅        | 增/删/改/导出 |
-| `/trade/quotation/new`      | `/trade/quotation/form`   | 新增报价 | ✅        | 增            |
-| `/trade/quotation/:id`      | `/trade/quotation/detail` | 报价详情 | ✅        | -             |
-| `/trade/quotation/edit/:id` | `/trade/quotation/form`   | 编辑报价 | ✅        | 改            |
+| 路由                          | 组件路径                  | 标题     | KeepAlive | 权限          |
+| ----------------------------- | ------------------------- | -------- | --------- | ------------- |
+| `/trade/quotation`            | `/trade/quotation`        | 报价管理 | ✅        | 增/删/改/导出 |
+| `/trade/quotation/form`       | `/trade/quotation/form`   | 新增报价 | ✅        | 增            |
+| `/trade/quotation/form/:id`   | `/trade/quotation/form`   | 编辑报价 | ✅        | 改            |
+| `/trade/quotation/detail/:id` | `/trade/quotation/detail` | 报价详情 | ✅        | -             |
 
 ### 什么是形式发票 (CI)
 
@@ -391,34 +391,61 @@ interface ProductImage {
 
 **报价单字段**:
 
-| 字段          | 类型   | 必填 | 默认值 | 说明                                |
-| ------------- | ------ | ---- | ------ | ----------------------------------- |
-| **基础信息**  |        |      |        |                                     |
-| id            | string | -    | -      | 报价 ID                             |
-| quotationNo   | string | ✅   | -      | 报价单号 (CI-20260325-001)          |
-| customerId    | string | ✅   | -      | 关联客户 ID                         |
-| customerName  | string | ✅   | -      | 客户名称                            |
-| **产品明细**  |        |      |        |                                     |
-| productName   | string | ✅   | -      | 产品名称                            |
-| specification | string | ✅   | -      | 规格型号                            |
-| quantity      | number | ✅   | -      | 数量                                |
-| unit          | string | ✅   | PCS    | 单位                                |
-| unitPrice     | number | ✅   | -      | 单价                                |
-| totalPrice    | number | ✅   | -      | 总金额 (自动计算)                   |
-| currency      | string | -    | USD    | 币种                                |
-| **贸易条款**  |        |      |        |                                     |
-| tradeTerm     | string | -    | -      | 贸易术语 (FOB/CIF/CFR/EXW)          |
-| paymentTerm   | string | -    | -      | 付款方式 (T/T/L/C 等)               |
-| validity      | string | -    | -      | 有效期至                            |
-| remarks       | string | -    | -      | 备注条款                            |
-| **状态**      |        |      |        |                                     |
-| status        | string | -    | '1'    | 1:待确认/2:已接受/3:已拒绝/4:已过期 |
-| **时间戳**    |        |      |        |                                     |
-| quotationDate | string | -    | -      | 报价日期                            |
-| createTime    | string | -    | -      | 创建时间                            |
-| updateTime    | string | -    | -      | 更新时间                            |
+| 字段                       | 类型      | 必填 | 默认值  | 说明                                |
+| -------------------------- | --------- | ---- | ------- | ----------------------------------- |
+| **基础信息**               |           |      |         |                                     |
+| id                         | string    | -    | -       | 报价 ID                             |
+| quotationNo                | string    | ✅   | -       | 报价单号 (CI-20260325-001)          |
+| customerId                 | string    | ✅   | -       | 关联客户 ID                         |
+| customerName               | string    | ✅   | -       | 客户名称                            |
+| quotationDate              | string    | -    | -       | 报价日期                            |
+| validity                   | string    | -    | -       | 有效期至                            |
+| currency                   | string    | -    | USD     | 币种                                |
+| **多产品明细**             |           |      |         |                                     |
+| products                   | Product[] | ✅   | -       | 产品数组 (支持多产品)               |
+| **费用汇总**               |           |      |         |                                     |
+| costSummary                | object    | -    | -       | 费用汇总对象                        |
+| costSummary.subtotal       | number    | -    | -       | 产品小计                            |
+| costSummary.freightCharges | number    | -    | -       | 运费                                |
+| costSummary.discountValue  | number    | -    | -       | 折扣金额                            |
+| costSummary.discountType   | string    | -    | percent | 折扣类型 (percent/fixed)            |
+| costSummary.taxValue       | number    | -    | -       | 税费                                |
+| costSummary.otherCharges   | number    | -    | -       | 其他费用                            |
+| costSummary.grandTotal     | number    | -    | -       | 总计金额                            |
+| **贸易条款**               |           |      |         |                                     |
+| tradeTerm                  | string    | -    | -       | 贸易术语 (FOB/CIF/CFR/EXW)          |
+| paymentTerm                | string    | -    | -       | 付款方式 (T/T/L/C 等)               |
+| shipmentPort               | string    | -    | -       | 装运港口                            |
+| leadTime                   | string    | -    | -       | 交货期                              |
+| clientWhatsapp             | string    | -    | -       | 客户 WhatsApp                       |
+| clientEmail                | string    | -    | -       | 客户邮箱                            |
+| **状态**                   |           |      |         |                                     |
+| status                     | string    | -    | '1'     | 1:待确认/2:已接受/3:已拒绝/4:已过期 |
+| **时间戳**                 |           |      |         |                                     |
+| createTime                 | string    | -    | -       | 创建时间                            |
+| updateTime                 | string    | -    | -       | 更新时间                            |
 
-**多产品模式**: 报价单可包含多个产品明细，每个产品独立计算金额，最后汇总总金额。
+**产品数组结构 (products)**:
+
+```typescript
+interface QuotationProduct {
+  id: string // 产品 ID
+  selectedProductId?: string // 从产品库选择的产品 ID
+  image?: string // 产品图片
+  sku: string // 型号
+  name: string // 产品名称
+  type: string // 产品类型 (切割片/百叶片/磨光片/其他)
+  grade: string // 产品等级 (A 级/B 级/C 级)
+  qty: number // 数量
+  unit: string // 单位 (默认：片)
+  price: number // 单价
+  currency: string // 币种
+  total: number // 小计 (qty * price)
+  remark?: string // 备注
+}
+```
+
+**多产品模式**: 报价单可包含多个产品，每个产品独立计算小计，最后通过 costSummary 汇总所有费用。
 
 ### 报价表单页设计
 
@@ -457,9 +484,9 @@ interface ProductImage {
 
 ### 报价列表页设计
 
-**筛选条件**: | 筛选项 | 选项 | |--------|------| | 报价单号 | 模糊搜索 | | 客户名称 | 下拉选择/输入 | | 产品名称 | 输入框 | | 状态 | 全部/待确认/已接受/已拒绝/已过期 | | 币种 | 全部/USD/EUR/CNY 等 |
+**筛选条件**: | 筛选项 | 选项 | |--------|------| | 报价单号 | 模糊搜索 | | 客户名称 | 下拉选择/输入 | | 状态 | 全部/待确认/已接受/已拒绝/已过期 | | 币种 | 全部/USD/EUR/CNY 等 |
 
-**表格列定义**: | 列名 | 字段 | 宽度 | 说明 | |------|------|------|------| | 选择框 | - | 50px | 批量操作 | | 报价单号 | quotationNo | 150px | 如：CI-20260325-001 | | 客户名称 | customerName | 180px | 客户公司名称 | | 产品名称 | productName | 150px | 主要产品名称 | | 规格型号 | specification | 150px | 产品规格 | | 数量 | quantity | 100px | 数量 + 单位 | | 单价 | unitPrice | 120px | 单价金额 | | 总金额 | totalPrice | 130px | 合计金额 | | 贸易条款 | tradeTerm | 120px | FOB/CIF 等 | | 状态 | status | 100px | 标签显示 | | 报价日期 | quotationDate | 110px | 日期 | | 操作 | - | 200px | 查看/编辑/删除 |
+**表格列定义** (v0.4 新版): | 列名 | 字段 | 宽度 | 说明 | |------|------|------|------| | 选择框 | - | 50px | 批量操作 | | 报价单号 | quotationNo | 150px | 如：CI-20260325-001 | | 客户名称 | customerName | 180px | 客户公司名称 | | 产品数量 | products.length | 100px | 显示"X 个产品" | | 币种 | currency | 80px | USD/EUR 等 | | 贸易条款 | tradeTerm | 120px | FOB/CIF 等 | | 产品总计 | costSummary.subtotal | 120px | 产品小计金额 | | 总计金额 | costSummary.grandTotal | 130px | 合计金额 | | 状态 | status | 100px | 标签显示 | | 报价日期 | quotationDate | 110px | 日期 | | 操作 | - | 200px | 查看/编辑/删除 |
 
 ### 报价详情页设计
 
@@ -507,36 +534,63 @@ interface ProductImage {
 ### 类型定义
 
 ```typescript
-// 报价单列表项
+// 报价产品（多产品结构）
+interface QuotationProduct {
+  id: string
+  selectedProductId?: string // 关联的产品库 ID
+  image?: string
+  sku: string
+  name: string
+  type: string
+  grade: string
+  qty: number
+  unit: string
+  price: number
+  currency: string
+  total: number
+  remark?: string
+}
+
+// 费用汇总
+interface QuotationCostSummary {
+  freightCharges: number // 运费
+  discountValue: number // 折扣值
+  discountType: 'percent' | 'fixed' // 折扣类型
+  taxValue: number // 税费
+  otherCharges: number // 其他费用
+  subtotal: number // 产品小计
+  grandTotal: number // 总计
+}
+
+// 报价单列表项（简化版，用于列表展示）
 interface QuotationListItem {
   id: string
-  quotationNo: string // 报价单号
-  customerId: string // 客户 ID
-  customerName: string // 客户名称
-  productName: string // 产品名称
-  specification: string // 规格型号
-  quantity: number // 数量
-  unit: string // 单位
-  unitPrice: number // 单价
-  totalPrice: number // 总金额
-  currency: string // 币种
-  tradeTerm?: string // 贸易条款
-  paymentTerm?: string // 付款方式
-  validity?: string // 有效期至
-  remarks?: string // 备注
-  status: string // 状态
-  quotationDate: string // 报价日期
-  createTime?: string // 创建时间
-  updateTime?: string // 更新时间
+  customerId: string
+  customerName: string
+  quotationNo: string
+  products: QuotationProduct[] // 产品数组
+  costSummary: QuotationCostSummary // 费用汇总
+  currency: string
+  tradeTerm?: string
+  paymentTerm?: string
+  shipmentPort?: string
+  leadTime?: string
+  clientWhatsapp?: string
+  clientEmail?: string
+  status: string // 1:待确认/2:已接受/3:已拒绝/4:已过期
+  quotationDate: string
+  createTime?: string
+  updateTime?: string
 }
 
 // 报价搜索参数
 interface QuotationSearchParams extends PaginationParams {
-  quotationNo?: string // 报价单号
-  customerName?: string // 客户名称
-  productName?: string // 产品名称
-  status?: string // 状态
-  currency?: string // 币种
+  quotationNo?: string
+  customerName?: string
+  status?: string
+  currency?: string
+  startTime?: string
+  endTime?: string
 }
 ```
 
@@ -588,7 +642,7 @@ interface QuotationSearchParams extends PaginationParams {
 | 数据统计页     | 数据统计 | 4h     | ⏳ 待开发 | 所有数据   |
 | Excel 导入导出 | 公共功能 | 3h     | ⏳ 待开发 | -          |
 
-**已完成**: 约 25 小时 (截至 2026-03-26)
+**已完成**: 约 25 小时 (截至 2026-03-27)
 
 ### 开发顺序建议
 
@@ -616,11 +670,51 @@ interface QuotationSearchParams extends PaginationParams {
 
 ## 版本记录
 
-| 版本 | 日期       | 内容                                              | 状态 |
-| ---- | ---------- | ------------------------------------------------- | ---- |
-| v0.3 | 2026-03-26 | 报价管理模块完成 (列表/表单/详情) + 数据刷新优化  | ✅   |
-| v0.2 | 2026-03-26 | 产品管理模块完成 (列表/表单/详情) + Mock 数据支持 | ✅   |
-| v0.1 | 2026-03-25 | 初始需求整理 + 客户/产品设计                      | ✅   |
+| 版本 | 日期       | 内容                                                           | 状态 |
+| ---- | ---------- | -------------------------------------------------------------- | ---- |
+| v0.4 | 2026-03-27 | 报价数据结构重构 + 客户详情页增删改 + 问题修复                 | ✅   |
+|      |            | - 统一报价单数据结构为多产品模式 (products 数组 + costSummary) |
+|      |            | - 更新客户详情页报价列表表格列配置                             |
+|      |            | - 完善客户详情页报价单增删改功能                               |
+|      |            | - 更新报价列表/详情页适配新数据结构                            |
+|      |            | - 修复编辑报价单数据无法加载的问题                             |
+| v0.3 | 2026-03-26 | 报价管理模块完成 (列表/表单/详情) + 数据刷新优化               | ✅   |
+| v0.2 | 2026-03-26 | 产品管理模块完成 (列表/表单/详情) + Mock 数据支持              | ✅   |
+| v0.1 | 2026-03-25 | 初始需求整理 + 客户/产品设计                                   | ✅   |
+
+---
+
+## 附录：开发问题记录
+
+### 2026-03-27 报价单编辑数据无法加载问题
+
+**问题描述**: 从客户详情页点击报价单跳转编辑页面时，表单数据为空。
+
+**原因分析**:
+
+- 客户详情页跳转 URL: `/trade/quotation/form?id=1` (查询参数)
+- 路由配置：`/trade/quotation/form/:id` (路径参数)
+- 表单页 `isEdit` 判断只读取 `route.params.id`，无法识别查询参数
+
+**解决方案**:
+
+1. 修改客户详情页跳转方式为路径参数：`/trade/quotation/form/${row.id}`
+2. 修改表单页 `isEdit` 判断同时支持 `route.params.id` 和 `route.query.id`
+
+**代码修改**:
+
+```typescript
+// customer-detail.vue
+const handleEditQuotation = (row) => {
+  router.push(`/trade/quotation/form/${row.id}`) // 路径参数
+}
+
+// quotation-form.vue
+const isEdit = computed(() => !!(route.params.id || route.query.id))
+const quotationId = computed(() => (route.params.id || route.query.id) as string)
+```
+
+**经验教训**: 路由参数方式应统一，建议在跳转页面时优先使用路径参数。
 
 ---
 
