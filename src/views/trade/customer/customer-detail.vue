@@ -101,12 +101,6 @@
       <ElTabs v-model="activeTab" class="detail-tabs">
         <!-- 报价单 -->
         <ElTabPane label="报价单" name="quotation">
-          <div class="tab-actions mb-3">
-            <ElButton type="primary" size="small" @click="handleAddQuotation">
-              <Icon icon="ri:add-line" class="mr-1" />
-              新增报价
-            </ElButton>
-          </div>
           <ArtTable
             :loading="loading"
             :data="quotationList"
@@ -181,7 +175,7 @@
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
   import { h } from 'vue'
-  import { fetchGetCustomerDetail, fetchGetCustomerQuotations } from '@/api/trade-manage'
+  import { fetchGetCustomerDetail } from '@/api/trade-manage'
   import CustomerDialog from './modules/customer-dialog.vue'
   import QuotationDialog from '../quotation/modules/quotation-dialog.vue'
   import FollowupDialog from './modules/followup-dialog.vue'
@@ -450,13 +444,14 @@
 
     loading.value = true
     try {
-      const res = await fetchGetCustomerQuotations(customerId, {
-        current: pagination.current,
-        size: pagination.size
-      })
+      // 使用模拟数据
+      const { QUOTATION_LIST_DATA } = await import('@/mock/temp/quotationList')
 
-      quotationList.value = res.data?.records || []
-      pagination.total = res.data?.total || 0
+      // 根据客户 ID 过滤报价数据
+      const filteredData = QUOTATION_LIST_DATA.filter((item) => item.customerId === customerId)
+
+      quotationList.value = filteredData as Api.Trade.QuotationListItem[]
+      pagination.total = filteredData.length
     } catch (error) {
       console.error('加载报价列表失败:', error)
     } finally {
