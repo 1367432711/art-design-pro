@@ -451,7 +451,10 @@
 
   const router = useRouter()
   const route = useRoute()
-  const isEdit = computed(() => !!route.params.id)
+  // 编辑模式判断：支持路径参数和查询参数
+  const isEdit = computed(() => !!(route.params.id || route.query.id))
+  // 获取报价 ID
+  const quotationId = computed(() => (route.params.id || route.query.id) as string)
 
   // 客户列表
   const customerOptions = ref<Api.Trade.CustomerListItem[]>([])
@@ -732,7 +735,7 @@
 
   // 加载报价单详情
   const loadQuotationDetail = async () => {
-    const id = route.params.id as string
+    const id = quotationId.value
     if (!id) return
 
     try {
