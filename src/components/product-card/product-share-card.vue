@@ -353,14 +353,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 260px;
-      height: 320px;
-      padding: 12px;
+      width: 280px;
+      height: 340px;
+      padding: 8px;
 
       .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; // 填充满容器
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; // 保持图片完整，不裁剪
         filter: drop-shadow(0 16px 32px rgb(0 0 0 / 50%));
       }
     }
