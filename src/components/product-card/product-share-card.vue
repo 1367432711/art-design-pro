@@ -180,6 +180,7 @@
   $text-muted: #a8a29e;
 
   $card-width: 400px;
+  $card-height: 533px; // 3:4 比例
   $card-radius: 24px;
   $gold-gradient: linear-gradient(
     135deg,
@@ -195,10 +196,11 @@
     rgb(212 175 55 / 5%) 100%
   );
 
-  // ==================== 主卡片 ====================
+  // ==================== 主卡片 - 3:4 比例 ====================
   .product-share-card {
     position: relative;
     width: $card-width;
+    height: $card-height; // 3:4 比例
     overflow: hidden;
     background: linear-gradient(180deg, $bg-dark-secondary 0%, $bg-dark-primary 100%);
     border-radius: $card-radius;
@@ -305,29 +307,29 @@
       inset 0 1px 0 rgba($gold-light, 0.5);
   }
 
-  // ==================== 图片区域 - 3:4 比例 ====================
+  // ==================== 图片区域 ====================
   .card-image-section {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 340px; // 3:4 比例，放大图片区域
+    height: 380px; // 增大图片区域
     overflow: hidden;
     background: radial-gradient(ellipse at center, $bg-dark-tertiary 0%, $bg-dark-primary 100%);
 
     // 装饰圆环
     .decorative-ring {
       position: absolute;
-      width: 240px;
-      height: 240px;
+      width: 280px;
+      height: 280px;
       border: 1px solid rgba($gold-primary, 0.15);
       border-radius: 50%;
       animation: pulse-ring 4s ease-in-out infinite;
 
       &.ring-2 {
-        width: 320px;
-        height: 320px;
+        width: 360px;
+        height: 360px;
         animation-delay: 1s;
       }
     }
@@ -351,14 +353,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 220px;
-      height: 280px; // 3:4 比例容器
-      padding: 20px;
+      width: 260px;
+      height: 320px;
+      padding: 12px;
 
       .product-image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // 填充满容器
         filter: drop-shadow(0 16px 32px rgb(0 0 0 / 50%));
       }
     }
