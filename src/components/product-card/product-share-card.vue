@@ -1,8 +1,11 @@
-<!-- 产品分享卡片组件 - 深色奢华金风格 -->
+<!-- 产品分享卡片组件 - 液态玻璃拟态风格 -->
 <template>
-  <div ref="shareCardRef" class="product-share-card luxury-dark">
-    <!-- 金色边框光晕 -->
-    <div class="luxury-glow-border"></div>
+  <div ref="shareCardRef" class="product-share-card liquid-glass">
+    <!-- 液态光晕边框 -->
+    <div class="liquid-glow-border"></div>
+
+    <!-- 流动背景 -->
+    <div class="liquid-background"></div>
 
     <!-- 顶部品牌区域 -->
     <div class="card-header-section">
@@ -15,23 +18,17 @@
           <span class="brand-subtitle">PROFESSIONAL</span>
         </div>
       </div>
-      <div class="luxury-badge">PREMIUM</div>
+      <div class="liquid-badge">PREMIUM</div>
     </div>
 
     <!-- 产品图片区域 - 3:4 比例 -->
     <div class="card-image-section">
-      <!-- 背景装饰圆环 -->
-      <div class="decorative-ring"></div>
-      <div class="decorative-ring ring-2"></div>
+      <!-- 装饰液滴 -->
+      <div class="liquid-drop drop-1"></div>
+      <div class="liquid-drop drop-2"></div>
 
       <div class="image-wrapper">
         <ElImage :src="product.image" fit="contain" class="product-image" />
-      </div>
-
-      <!-- 产品等级徽章 -->
-      <div v-if="product.grade" class="grade-badge">
-        <Icon icon="ri:medal-line" class="grade-icon" />
-        <span>{{ product.grade }}</span>
       </div>
     </div>
 
@@ -52,7 +49,7 @@
             <Icon icon="ri:package-3-line" class="spec-icon" />
           </div>
           <div class="spec-content">
-            <span class="spec-label">箱装数量</span>
+            <span class="spec-label">装箱数量</span>
             <span class="spec-value">{{ product.cartonQuantity || '-' }}</span>
           </div>
         </div>
@@ -76,16 +73,6 @@
           <div class="spec-content">
             <span class="spec-label">产品类型</span>
             <span class="spec-value">{{ product.type || '-' }}</span>
-          </div>
-        </div>
-
-        <div class="spec-card">
-          <div class="spec-icon-wrapper">
-            <Icon icon="ri:medal-line" class="spec-icon" />
-          </div>
-          <div class="spec-content">
-            <span class="spec-label">产品等级</span>
-            <span class="spec-value">{{ product.grade || '-' }}</span>
           </div>
         </div>
       </div>
@@ -177,82 +164,120 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 奢华金配色系统 ====================
-  $gold-primary: #d4af37;
-  $gold-light: #f4df89;
-  $gold-dark: #aa892c;
-  $gold-muted: #c9a961;
+  // ==================== 液态玻璃拟态配色系统 ====================
+  $bg-dark-start: #0f0c29;
+  $bg-dark-mid: #302b63;
+  $bg-dark-end: #24243e;
 
-  $bg-dark-primary: #1c1917;
-  $bg-dark-secondary: #2a2826;
-  $bg-dark-tertiary: #3d3a38;
+  $card-glass: rgb(255 255 255 / 5%);
+  $card-glass-hover: rgb(255 255 255 / 8%);
+  $card-border: rgb(255 255 255 / 10%);
 
-  $text-primary: #fafaf9;
-  $text-secondary: #e7e5e4;
-  $text-muted: #a8a29e;
+  $text-primary: #fff;
+  $text-secondary: rgb(255 255 255 / 80%);
+  $text-muted: rgb(255 255 255 / 50%);
+
+  // 彩虹渐变色 (purple → pink → orange)
+  $rainbow-start: #a855f7;
+  $rainbow-mid: #ec4899;
+  $rainbow-end: #f97316;
 
   $card-width: 400px;
   $card-height: 533px; // 3:4 比例
   $card-radius: 24px;
-  $gold-gradient: linear-gradient(
+
+  $rainbow-gradient: linear-gradient(
     135deg,
-    $gold-primary 0%,
-    $gold-light 25%,
-    $gold-primary 50%,
-    $gold-dark 75%,
-    $gold-primary 100%
+    $rainbow-start 0%,
+    $rainbow-mid 50%,
+    $rainbow-end 100%
   );
-  $gold-gradient-subtle: linear-gradient(
+
+  $rainbow-glow: linear-gradient(
     135deg,
-    rgb(212 175 55 / 15%) 0%,
-    rgb(212 175 55 / 5%) 100%
+    rgba($rainbow-start, 0.4) 0%,
+    rgba($rainbow-mid, 0.4) 50%,
+    rgba($rainbow-end, 0.4) 100%
   );
+
+  $bg-gradient: linear-gradient(135deg, $bg-dark-start 0%, $bg-dark-mid 50%, $bg-dark-end 100%);
 
   // ==================== 主卡片 - 3:4 比例 ====================
   .product-share-card {
     position: relative;
     width: $card-width;
-    height: $card-height; // 3:4 比例
+    height: $card-height;
     overflow: hidden;
-    background: linear-gradient(180deg, $bg-dark-secondary 0%, $bg-dark-primary 100%);
+    background: $bg-gradient;
     border-radius: $card-radius;
     box-shadow:
-      0 0 0 1px rgba($gold-primary, 0.2),
-      0 20px 60px rgb(0 0 0 / 50%),
-      0 0 80px rgba($gold-primary, 0.1);
+      0 0 0 1px rgb(255 255 255 / 10%),
+      0 25px 80px rgb(0 0 0 / 50%),
+      0 0 120px rgba($rainbow-start, 0.15);
   }
 
-  // ==================== 金色光晕边框 ====================
-  .luxury-glow-border {
+  // ==================== 液态光晕边框 ====================
+  .liquid-glow-border {
     position: absolute;
     inset: 0;
     padding: 1px;
     pointer-events: none;
-    background: linear-gradient(
-      135deg,
-      rgba($gold-primary, 0.6) 0%,
-      rgba($gold-primary, 0.2) 25%,
-      rgba($gold-primary, 0.2) 50%,
-      rgba($gold-primary, 0.2) 75%,
-      rgba($gold-primary, 0.6) 100%
-    );
+    background: $rainbow-gradient;
     border-radius: $card-radius;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
+    animation: liquid-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes liquid-glow {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  // ==================== 流动背景动画 ====================
+  .liquid-background {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba($rainbow-start, 0.3) 0%,
+      transparent 60%
+    );
+    animation: liquid-flow 8s ease-in-out infinite;
+  }
+
+  @keyframes liquid-flow {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+
+    50% {
+      transform: translateY(-10px) scale(1.05);
+    }
   }
 
   // ==================== 顶部品牌区域 ====================
   .card-header-section {
     position: relative;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    background: linear-gradient(180deg, rgba($gold-primary, 0.08) 0%, transparent 100%);
-    border-bottom: 1px solid rgba($gold-primary, 0.15);
+    background: rgb(255 255 255 / 3%);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid $card-border;
   }
 
   .brand-logo {
@@ -267,17 +292,27 @@
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, $bg-dark-tertiary 0%, $bg-dark-secondary 100%);
-    border: 1px solid rgba($gold-primary, 0.3);
+    background: $card-glass;
+    backdrop-filter: blur(10px);
+    border: 1px solid $card-border;
     border-radius: 12px;
     box-shadow:
-      inset 0 1px 0 rgba($gold-light, 0.2),
+      inset 0 1px 0 rgb(255 255 255 / 10%),
       0 4px 12px rgb(0 0 0 / 30%);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $card-glass-hover;
+      border-color: rgba($rainbow-start, 0.5);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 20%),
+        0 4px 20px rgba($rainbow-start, 0.3);
+    }
 
     .logo-icon {
       font-size: 22px;
-      background: $gold-gradient;
-      filter: drop-shadow(0 2px 4px rgba($gold-primary, 0.4));
+      background: $rainbow-gradient;
+      filter: drop-shadow(0 2px 4px rgba($rainbow-start, 0.4));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -294,29 +329,29 @@
     font-size: 14px;
     font-weight: 700;
     color: $text-primary;
-    text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+    text-shadow: 0 2px 8px rgb(0 0 0 / 30%);
     letter-spacing: 2px;
   }
 
   .brand-subtitle {
     font-size: 9px;
     font-weight: 500;
-    color: $gold-muted;
+    color: $text-muted;
     text-transform: uppercase;
     letter-spacing: 1.5px;
   }
 
-  .luxury-badge {
+  .liquid-badge {
     padding: 6px 14px;
     font-size: 10px;
     font-weight: 700;
-    color: $bg-dark-primary;
+    color: #fff;
     letter-spacing: 1.5px;
-    background: $gold-gradient;
+    background: $rainbow-gradient;
     border-radius: 20px;
     box-shadow:
-      0 4px 12px rgba($gold-primary, 0.4),
-      inset 0 1px 0 rgba($gold-light, 0.5);
+      0 4px 12px rgba($rainbow-start, 0.4),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
   }
 
   // ==================== 图片区域 ====================
@@ -326,36 +361,44 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 380px; // 增大图片区域
+    height: 340px;
     overflow: hidden;
-    background: radial-gradient(ellipse at center, $bg-dark-tertiary 0%, $bg-dark-primary 100%);
+    background: radial-gradient(ellipse at center, rgba($rainbow-start, 0.15) 0%, transparent 60%);
 
-    // 装饰圆环
-    .decorative-ring {
+    // 装饰液滴
+    .liquid-drop {
       position: absolute;
-      width: 280px;
-      height: 280px;
-      border: 1px solid rgba($gold-primary, 0.15);
+      background: $rainbow-gradient;
+      filter: blur(20px);
       border-radius: 50%;
-      animation: pulse-ring 4s ease-in-out infinite;
+      opacity: 0.3;
+      animation: liquid-drop 6s ease-in-out infinite;
 
-      &.ring-2 {
-        width: 360px;
-        height: 360px;
-        animation-delay: 1s;
+      &.drop-1 {
+        top: 20px;
+        left: 50%;
+        width: 120px;
+        height: 120px;
+        transform: translateX(-50%);
+      }
+
+      &.drop-2 {
+        right: 60px;
+        bottom: 40px;
+        width: 80px;
+        height: 80px;
+        animation-delay: 2s;
       }
     }
 
-    @keyframes pulse-ring {
+    @keyframes liquid-drop {
       0%,
       100% {
-        opacity: 0.5;
-        transform: scale(1);
+        transform: translateX(-50%) translateY(0) scale(1);
       }
 
       50% {
-        opacity: 0.8;
-        transform: scale(1.05);
+        transform: translateX(-50%) translateY(-10px) scale(1.1);
       }
     }
 
@@ -366,68 +409,45 @@
       align-items: center;
       justify-content: center;
       width: 280px;
-      height: 340px;
+      height: 300px;
       padding: 8px;
+      background: $card-glass;
+      backdrop-filter: blur(10px);
+      border: 1px solid $card-border;
+      border-radius: 16px;
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 10%),
+        0 8px 32px rgb(0 0 0 / 30%);
 
       .product-image {
         max-width: 100%;
         max-height: 100%;
-        object-fit: contain; // 保持图片完整，不裁剪
-        filter: drop-shadow(0 16px 32px rgb(0 0 0 / 50%));
-      }
-    }
-
-    // 等级徽章
-    .grade-badge {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      padding: 8px 14px;
-      background: rgba($bg-dark-primary, 0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba($gold-primary, 0.4);
-      border-radius: 20px;
-      box-shadow: 0 4px 16px rgb(0 0 0 / 30%);
-
-      .grade-icon {
-        font-size: 16px;
-        background: $gold-gradient;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      span {
-        font-size: 12px;
-        font-weight: 600;
-        color: $gold-light;
-        letter-spacing: 0.5px;
+        object-fit: contain;
+        filter: drop-shadow(0 12px 24px rgb(0 0 0 / 40%));
       }
     }
   }
 
   // ==================== 信息区域 ====================
   .card-info-section {
-    padding: 24px;
+    padding: 20px 24px;
   }
 
   .product-title {
     display: -webkit-box;
-    min-height: 60px;
+    min-height: 56px;
     margin: 0 0 16px;
     overflow: hidden;
-    font-size: 19px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
     line-height: 1.5;
     color: $text-primary;
     text-align: center;
+    text-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+    letter-spacing: 0.3px;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
-    letter-spacing: 0.3px;
   }
 
   // SKU 标签
@@ -437,13 +457,10 @@
     align-items: baseline;
     justify-content: center;
     padding: 10px 20px;
-    margin-bottom: 20px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba($gold-primary, 0.08) 50%,
-      transparent 100%
-    );
+    margin-bottom: 16px;
+    background: rgb(255 255 255 / 3%);
+    backdrop-filter: blur(10px);
+    border: 1px solid $card-border;
     border-radius: 12px;
 
     .sku-label {
@@ -458,18 +475,17 @@
       font-family: 'Courier New', monospace;
       font-size: 14px;
       font-weight: 700;
-      color: $gold-light;
+      color: $text-primary;
+      text-shadow: 0 0 20px rgba($rainbow-start, 0.3);
       letter-spacing: 1px;
     }
   }
 
   // 参数网格
-  // 参数网格 - 2 列布局
   .specs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-bottom: 20px;
   }
 
   .spec-card {
@@ -478,23 +494,19 @@
     gap: 8px;
     align-items: center;
     padding: 16px 12px;
-    background: linear-gradient(
-      180deg,
-      rgba($gold-primary, 0.06) 0%,
-      rgba($gold-primary, 0.02) 100%
-    );
-    border: 1px solid rgba($gold-primary, 0.1);
+    background: $card-glass;
+    backdrop-filter: blur(10px);
+    border: 1px solid $card-border;
     border-radius: 14px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      background: linear-gradient(
-        180deg,
-        rgba($gold-primary, 0.1) 0%,
-        rgba($gold-primary, 0.04) 100%
-      );
-      border-color: rgba($gold-primary, 0.25);
-      box-shadow: 0 4px 16px rgba($gold-primary, 0.1);
+      background: $card-glass-hover;
+      border-color: rgba($rainbow-start, 0.4);
+      box-shadow:
+        0 8px 32px rgba($rainbow-start, 0.15),
+        inset 0 1px 0 rgb(255 255 255 / 10%);
+      transform: translateY(-2px);
     }
 
     .spec-icon-wrapper {
@@ -505,16 +517,16 @@
       height: 40px;
       background: linear-gradient(
         135deg,
-        rgba($gold-primary, 0.2) 0%,
-        rgba($gold-primary, 0.05) 100%
+        rgba($rainbow-start, 0.2) 0%,
+        rgba($rainbow-end, 0.1) 100%
       );
-      border: 1px solid rgba($gold-primary, 0.25);
+      border: 1px solid rgba($rainbow-start, 0.3);
       border-radius: 10px;
-      box-shadow: inset 0 1px 0 rgba($gold-light, 0.2);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
 
       .spec-icon {
         font-size: 20px;
-        background: $gold-gradient;
+        background: $rainbow-gradient;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -544,72 +556,25 @@
     }
   }
 
-  // ==================== 价格区域 ====================
-  .price-section {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    margin-top: 8px;
-    background: linear-gradient(
-      180deg,
-      rgba($gold-primary, 0.12) 0%,
-      rgba($gold-primary, 0.04) 100%
-    );
-    border: 1px solid rgba($gold-primary, 0.25);
-    border-radius: 16px;
-    box-shadow:
-      inset 0 1px 0 rgba($gold-light, 0.1),
-      0 4px 16px rgba($gold-primary, 0.15);
-
-    .price-content {
-      display: flex;
-      gap: 4px;
-      align-items: baseline;
-      margin-bottom: 4px;
-    }
-
-    .price-currency {
-      font-size: 20px;
-      font-weight: 600;
-      color: $gold-primary;
-    }
-
-    .price-value {
-      font-size: 36px;
-      font-weight: 800;
-      text-shadow: 0 2px 8px rgba($gold-primary, 0.3);
-      letter-spacing: -1px;
-      background: $gold-gradient;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .price-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: $text-muted;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-  }
-
   // ==================== 底部联系方式 ====================
   .card-footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px;
-    background: linear-gradient(180deg, rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 40%) 100%);
-    border-top: 1px solid rgba($gold-primary, 0.15);
+    padding: 16px 24px;
+    background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 40%) 100%);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid $card-border;
   }
 
   .footer-left {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 
     .footer-title {
       font-size: 10px;
@@ -630,37 +595,31 @@
         justify-content: center;
         width: 32px;
         height: 32px;
-        background: linear-gradient(
-          135deg,
-          rgba($gold-primary, 0.15) 0%,
-          rgba($gold-primary, 0.05) 100%
-        );
-        border: 1px solid rgba($gold-primary, 0.2);
+        background: $card-glass;
+        backdrop-filter: blur(10px);
+        border: 1px solid $card-border;
         border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: $card-glass-hover;
+          border-color: rgba($rainbow-start, 0.5);
+          box-shadow: 0 4px 16px rgba($rainbow-start, 0.3);
+        }
 
         :deep(svg) {
           font-size: 16px;
         }
 
         &.wechat {
-          background: linear-gradient(135deg, rgb(7 193 96 / 15%) 0%, rgb(7 193 96 / 5%) 100%);
-          border-color: rgb(7 193 96 / 40%);
-
           :deep(svg) {
             color: #07c160;
           }
         }
 
         &.email {
-          background: linear-gradient(
-            135deg,
-            rgba($gold-primary, 0.15) 0%,
-            rgba($gold-primary, 0.05) 100%
-          );
-          border-color: rgba($gold-primary, 0.4);
-
           :deep(svg) {
-            color: $gold-light;
+            color: $text-primary;
           }
         }
       }
@@ -682,8 +641,9 @@
 
     .qr-code {
       padding: 4px;
-      background: linear-gradient(135deg, $gold-gradient 0%, $gold-muted 100%);
+      background: $rainbow-gradient;
       border-radius: 12px;
+      box-shadow: 0 4px 16px rgba($rainbow-start, 0.4);
 
       .qr-inner {
         display: flex;
@@ -697,7 +657,7 @@
 
         .qr-icon {
           font-size: 36px;
-          color: $bg-dark-primary;
+          color: $bg-dark-start;
         }
       }
     }

@@ -144,16 +144,16 @@ pnpm clean:dev
 
 ## 技术栈
 
-| 类别 | 技术 |
-|------|------|
-| **核心框架** | Vue 3.5 + TypeScript 5.6 + Vite 7.1 |
-| **UI 组件库** | Element Plus 2.11 |
-| **状态管理** | Pinia 3.0 (+ 持久化插件) |
-| **路由** | Vue Router 4.5 |
-| **样式** | Tailwind CSS 4.1 + SCSS |
-| **HTTP** | Axios 1.12 |
-| **图表** | ECharts 6.0 |
-| **工具库** | VueUse 13.9 |
+| 类别          | 技术                                |
+| ------------- | ----------------------------------- |
+| **核心框架**  | Vue 3.5 + TypeScript 5.6 + Vite 7.1 |
+| **UI 组件库** | Element Plus 2.11                   |
+| **状态管理**  | Pinia 3.0 (+ 持久化插件)            |
+| **路由**      | Vue Router 4.5                      |
+| **样式**      | Tailwind CSS 4.1 + SCSS             |
+| **HTTP**      | Axios 1.12                          |
+| **图表**      | ECharts 6.0                         |
+| **工具库**    | VueUse 13.9                         |
 
 ---
 
@@ -172,24 +172,24 @@ no-multiple-empty-lines: ['warn', { max: 1 }]  // 不允许多个空行
 
 使用 `pnpm commit` 调用 cz-git，遵循 conventional commits:
 
-| 类型 | 说明 |
-|------|------|
-| `feat:` | 新功能 |
-| `fix:` | 修复 bug |
-| `docs:` | 文档变更 |
-| `refactor:` | 重构 |
-| `style:` | 代码格式 |
-| `test:` | 测试相关 |
-| `chore:` | 构建/工具链 |
+| 类型        | 说明        |
+| ----------- | ----------- |
+| `feat:`     | 新功能      |
+| `fix:`      | 修复 bug    |
+| `docs:`     | 文档变更    |
+| `refactor:` | 重构        |
+| `style:`    | 代码格式    |
+| `test:`     | 测试相关    |
+| `chore:`    | 构建/工具链 |
 
 ### 路径别名
 
-| 别名 | 路径 |
-|------|------|
-| `@/` | `src/` |
-| `@views/` | `src/views/` |
-| `@utils/` | `src/utils/` |
-| `@stores/` | `src/store/` |
+| 别名       | 路径                 |
+| ---------- | -------------------- |
+| `@/`       | `src/`               |
+| `@views/`  | `src/views/`         |
+| `@utils/`  | `src/utils/`         |
+| `@stores/` | `src/store/`         |
 | `@styles/` | `src/assets/styles/` |
 
 ---
@@ -200,9 +200,9 @@ no-multiple-empty-lines: ['warn', { max: 1 }]  // 不允许多个空行
 
 ```typescript
 interface BaseResponse<T = unknown> {
-  code: number; // 状态码
-  msg: string; // 消息
-  data: T; // 数据
+  code: number // 状态码
+  msg: string // 消息
+  data: T // 数据
 }
 ```
 
@@ -214,8 +214,8 @@ interface BaseResponse<T = unknown> {
 try {
   const { token, refreshToken } = await fetchLogin({
     userName: username,
-    password,
-  });
+    password
+  })
   // 直接使用 token, refreshToken
 } catch (error) {
   if (error instanceof HttpError) {
@@ -231,10 +231,10 @@ try {
 
 ### 路由类型
 
-| 类型 | 配置位置 | 说明 |
-|------|----------|------|
+| 类型         | 配置位置                            | 说明                         |
+| ------------ | ----------------------------------- | ---------------------------- |
 | **静态路由** | `src/router/routes/staticRoutes.ts` | 登录/注册/404/500 等公共页面 |
-| **动态路由** | `src/router/routes/asyncRoutes.ts` | 需要权限的业务页面 |
+| **动态路由** | `src/router/routes/asyncRoutes.ts`  | 需要权限的业务页面           |
 
 ### 权限模式配置
 
@@ -277,17 +277,17 @@ VITE_ACCESS_MODE = backend
 
 ### Meta 属性说明
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `title` | string | 路由标题 |
-| `icon` | string | 路由图标 (iconify 格式) |
-| `keepAlive` | boolean | 是否缓存页面 |
-| `fixedTab` | boolean | 是否固定标签页 |
-| `isHideTab` | boolean | 是否在标签页中隐藏 |
-| `isIframe` | boolean | 是否为 iframe 内嵌页面 |
-| `link` | string | 外部链接地址 |
-| `roles` | string[] | 角色权限 (前端模式) |
-| `activePath` | string | 手动指定激活的父级菜单路径 |
+| 属性         | 类型     | 说明                       |
+| ------------ | -------- | -------------------------- |
+| `title`      | string   | 路由标题                   |
+| `icon`       | string   | 路由图标 (iconify 格式)    |
+| `keepAlive`  | boolean  | 是否缓存页面               |
+| `fixedTab`   | boolean  | 是否固定标签页             |
+| `isHideTab`  | boolean  | 是否在标签页中隐藏         |
+| `isIframe`   | boolean  | 是否为 iframe 内嵌页面     |
+| `link`       | string   | 外部链接地址               |
+| `roles`      | string[] | 角色权限 (前端模式)        |
+| `activePath` | string   | 手动指定激活的父级菜单路径 |
 
 ---
 
@@ -298,17 +298,17 @@ VITE_ACCESS_MODE = backend
 ```typescript
 export const tableConfig = {
   // 响应数据字段映射（按顺序查找）
-  recordFields: ["list", "data", "records", "items", "result", "rows"],
-  totalFields: ["total", "count"],           // 总条数
-  currentFields: ["current", "page", "pageNum"],  // 当前页码
-  sizeFields: ["size", "pageSize", "limit"],      // 每页大小
+  recordFields: ['list', 'data', 'records', 'items', 'result', 'rows'],
+  totalFields: ['total', 'count'], // 总条数
+  currentFields: ['current', 'page', 'pageNum'], // 当前页码
+  sizeFields: ['size', 'pageSize', 'limit'], // 每页大小
 
   // 请求参数映射（前端发送请求时使用的参数名）
   paginationKey: {
-    current: "current",  // 当前页码
-    size: "size",        // 每页大小
-  },
-};
+    current: 'current', // 当前页码
+    size: 'size' // 每页大小
+  }
+}
 ```
 
 ### 自定义字段
@@ -316,7 +316,7 @@ export const tableConfig = {
 如果后端使用其他字段名，可以添加：
 
 ```typescript
-recordFields: ["list", "data", "yourCustomField"];
+recordFields: ['list', 'data', 'yourCustomField']
 ```
 
 ---
@@ -329,13 +329,14 @@ recordFields: ["list", "data", "yourCustomField"];
 
 ```vue
 <template>
-  <div class="page-content">  <!-- 这个类名可以让页面最小高度撑满屏幕 -->
+  <div class="page-content">
+    <!-- 这个类名可以让页面最小高度撑满屏幕 -->
     <h1>测试页面</h1>
   </div>
 </template>
 
 <script setup lang="ts">
-// 组件逻辑
+  // 组件逻辑
 </script>
 ```
 
@@ -348,15 +349,15 @@ recordFields: ["list", "data", "yourCustomField"];
 ```typescript
 export const asyncRoutes: MenuListType[] = [
   {
-    path: "/test/index",
-    name: "Test",
-    component: "/test/index",
+    path: '/test/index',
+    name: 'Test',
+    component: '/test/index',
     meta: {
-      title: "测试页",
-      keepAlive: true,
-    },
-  },
-];
+      title: '测试页',
+      keepAlive: true
+    }
+  }
+]
 ```
 
 **静态路由** (`src/router/routes/staticRoutes.ts`):
@@ -364,12 +365,12 @@ export const asyncRoutes: MenuListType[] = [
 ```typescript
 export const staticRoutes: AppRouteRecordRaw[] = [
   {
-    path: "/test",
-    name: "Test",
-    component: () => import("@views/test/index.vue"),
-    meta: { title: "测试页面", isHideTab: true },
-  },
-];
+    path: '/test',
+    name: 'Test',
+    component: () => import('@views/test/index.vue'),
+    meta: { title: '测试页面', isHideTab: true }
+  }
+]
 ```
 
 > **注意**: 如果动态路由已配置，静态路由中需移除相同配置，避免重复。
@@ -406,7 +407,7 @@ http://localhost:3006/#/test
 
 ```typescript
 // src/router/index.ts
-export const HOME_PAGE_PATH = "";
+export const HOME_PAGE_PATH = ''
 ```
 
 ---
@@ -420,6 +421,7 @@ export const HOME_PAGE_PATH = "";
 **解决方法**: 将所有内容包裹在单个容器元素中。
 
 ❌ **错误示例**:
+
 ```html
 <template>
   <div>内容 1</div>
@@ -428,6 +430,7 @@ export const HOME_PAGE_PATH = "";
 ```
 
 ✅ **正确示例**:
+
 ```html
 <template>
   <div>
@@ -442,6 +445,7 @@ export const HOME_PAGE_PATH = "";
 **原因**: Vite 在开发模式下自动进行依赖预构建优化。
 
 **识别方法**: 启动台看到提示:
+
 ```
 [vite] new dependencies optimized: element-plus/es/components/tooltip/style/index
 ```
@@ -452,11 +456,11 @@ export const HOME_PAGE_PATH = "";
 export default defineConfig({
   optimizeDeps: {
     include: [
-      "element-plus/es/components/tooltip/style/index",
-      "element-plus/es/components/message/style/index",
-    ],
-  },
-});
+      'element-plus/es/components/tooltip/style/index',
+      'element-plus/es/components/message/style/index'
+    ]
+  }
+})
 ```
 
 添加配置后需要重启开发服务器。
@@ -470,6 +474,7 @@ export default defineConfig({
 企业级表格数据管理 Hook，位于 `src/hooks/core/useTable.ts`。
 
 **主要功能**:
+
 - 数据获取与缓存
 - 分页控制 (含移动端适配)
 - 搜索功能 (防抖)
@@ -477,18 +482,25 @@ export default defineConfig({
 
 ```typescript
 const {
-  data, loading, pagination, searchParams,
-  getData, refreshData, refreshCreate, refreshUpdate, refreshRemove,
+  data,
+  loading,
+  pagination,
+  searchParams,
+  getData,
+  refreshData,
+  refreshCreate,
+  refreshUpdate,
+  refreshRemove,
   resetSearchParams
 } = useTable({
   core: {
     apiFn: fetchUserList,
-    immediate: true,
+    immediate: true
   },
   performance: {
-    enableCache: true,
-  },
-});
+    enableCache: true
+  }
+})
 ```
 
 ---
