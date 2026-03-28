@@ -18,7 +18,7 @@
       <div class="luxury-badge">PREMIUM</div>
     </div>
 
-    <!-- 产品图片区域 -->
+    <!-- 产品图片区域 - 3:4 比例 -->
     <div class="card-image-section">
       <!-- 背景装饰圆环 -->
       <div class="decorative-ring"></div>
@@ -45,7 +45,7 @@
         <span class="sku-value">{{ product.sku || 'N/A' }}</span>
       </div>
 
-      <!-- 产品参数网格 -->
+      <!-- 产品参数网格 - 3 列 -->
       <div class="specs-grid">
         <div v-if="product.cartonQuantity" class="spec-card">
           <div class="spec-icon-wrapper">
@@ -76,25 +76,6 @@
             <span class="spec-value">{{ product.type }}</span>
           </div>
         </div>
-
-        <div v-if="product.material" class="spec-card">
-          <div class="spec-icon-wrapper">
-            <Icon icon="ri:stack-line" class="spec-icon" />
-          </div>
-          <div class="spec-content">
-            <span class="spec-label">材质</span>
-            <span class="spec-value">{{ product.material }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 价格信息 -->
-      <div v-if="product.salePrice" class="price-section">
-        <div class="price-content">
-          <span class="price-currency">{{ formatPriceSymbol(product.currency) }}</span>
-          <span class="price-value">{{ formatPriceValue(product.salePrice) }}</span>
-        </div>
-        <div class="price-label">参考价格</div>
       </div>
     </div>
 
@@ -176,27 +157,6 @@
   )
 
   const shareCardRef = ref<HTMLElement>()
-
-  // 格式化货币符号
-  const formatPriceSymbol = (currency: string | undefined = 'USD') => {
-    const symbols: Record<string, string> = {
-      USD: '$',
-      EUR: '€',
-      CNY: '¥',
-      GBP: '£',
-      JPY: '¥'
-    }
-    return symbols[currency] || '$'
-  }
-
-  // 格式化价格数值
-  const formatPriceValue = (price: number | undefined) => {
-    if (price === undefined) return '0.00'
-    return price.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })
-  }
 
   // 暴露卡片引用给父组件用于 html2canvas
   defineExpose({
@@ -345,29 +305,29 @@
       inset 0 1px 0 rgba($gold-light, 0.5);
   }
 
-  // ==================== 图片区域 ====================
+  // ==================== 图片区域 - 3:4 比例 ====================
   .card-image-section {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 260px;
+    height: 340px; // 3:4 比例，放大图片区域
     overflow: hidden;
     background: radial-gradient(ellipse at center, $bg-dark-tertiary 0%, $bg-dark-primary 100%);
 
     // 装饰圆环
     .decorative-ring {
       position: absolute;
-      width: 200px;
-      height: 200px;
+      width: 240px;
+      height: 240px;
       border: 1px solid rgba($gold-primary, 0.15);
       border-radius: 50%;
       animation: pulse-ring 4s ease-in-out infinite;
 
       &.ring-2 {
-        width: 280px;
-        height: 280px;
+        width: 320px;
+        height: 320px;
         animation-delay: 1s;
       }
     }
@@ -391,17 +351,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 180px;
-      height: 180px;
-      padding: 16px;
-      background: radial-gradient(circle, rgba($gold-primary, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
+      width: 220px;
+      height: 280px; // 3:4 比例容器
+      padding: 20px;
 
       .product-image {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 12px 24px rgb(0 0 0 / 40%));
+        filter: drop-shadow(0 16px 32px rgb(0 0 0 / 50%));
       }
     }
 
@@ -492,19 +450,20 @@
   }
 
   // 参数网格
+  // 参数网格 - 3 列布局
   .specs-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     margin-bottom: 20px;
   }
 
   .spec-card {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
-    padding: 16px 12px;
+    padding: 12px 8px;
     background: linear-gradient(
       180deg,
       rgba($gold-primary, 0.06) 0%,
@@ -528,19 +487,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       background: linear-gradient(
         135deg,
         rgba($gold-primary, 0.2) 0%,
         rgba($gold-primary, 0.05) 100%
       );
       border: 1px solid rgba($gold-primary, 0.25);
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: inset 0 1px 0 rgba($gold-light, 0.2);
 
       .spec-icon {
-        font-size: 20px;
+        font-size: 18px;
         background: $gold-gradient;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -556,15 +515,15 @@
       text-align: center;
 
       .spec-label {
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 500;
         color: $text-muted;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
       }
 
       .spec-value {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
         color: $text-primary;
       }
