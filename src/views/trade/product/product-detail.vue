@@ -183,120 +183,16 @@
       :close-on-click-modal="false"
     >
       <div class="share-dialog-content">
-        <!-- 产品卡片预览 - 使用高级产品卡片组件 -->
-        <div ref="productCardRef" class="premium-card-wrapper">
-          <div class="premium-card">
-            <!-- 顶部装饰条 -->
-            <div class="card-top-accent"></div>
-
-            <!-- 产品图片区域 -->
-            <div class="card-image-section">
-              <div class="image-wrapper">
-                <ElImage :src="productData.mainImage" fit="contain" class="product-image" />
-              </div>
-              <!-- 品牌标识 -->
-              <div class="brand-badge">
-                <Icon icon="ri:package-line" class="brand-icon" />
-                <span>ART DESIGN PRO</span>
-              </div>
-            </div>
-
-            <!-- 产品信息区域 -->
-            <div class="card-info-section">
-              <h2 class="product-title">{{ productData.name || '产品名称' }}</h2>
-
-              <div class="product-sku">
-                <Icon icon="ri:barcode-box-line" class="sku-icon" />
-                <span class="sku-label">型号：</span>
-                <span class="sku-value">{{ productData.sku || '-' }}</span>
-              </div>
-
-              <!-- 产品参数 -->
-              <div class="product-specs">
-                <div class="spec-item">
-                  <div class="spec-icon-wrapper">
-                    <Icon icon="ri:package-3-line" class="spec-icon" />
-                  </div>
-                  <div class="spec-content">
-                    <span class="spec-label">每箱总片数</span>
-                    <span class="spec-value">{{ productData.cartonQuantity || '-' }} 片</span>
-                  </div>
-                </div>
-
-                <div class="spec-item">
-                  <div class="spec-icon-wrapper">
-                    <Icon icon="ri:stack-line" class="spec-icon" />
-                  </div>
-                  <div class="spec-content">
-                    <span class="spec-label">最低起订量</span>
-                    <span class="spec-value"
-                      >{{ productData.moq || '-' }} {{ productData.unit || '片' }}</span
-                    >
-                  </div>
-                </div>
-
-                <div class="spec-item" v-if="productData.type">
-                  <div class="spec-icon-wrapper">
-                    <Icon icon="ri:price-tag-3-line" class="spec-icon" />
-                  </div>
-                  <div class="spec-content">
-                    <span class="spec-label">产品类型</span>
-                    <span class="spec-value">{{ productData.type }}</span>
-                  </div>
-                </div>
-
-                <div class="spec-item" v-if="productData.grade">
-                  <div class="spec-icon-wrapper">
-                    <Icon icon="ri:medal-line" class="spec-icon" />
-                  </div>
-                  <div class="spec-content">
-                    <span class="spec-label">产品等级</span>
-                    <span class="spec-value">{{ productData.grade }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 价格信息 -->
-              <div class="price-section" v-if="productData.salePrice">
-                <div class="price-label">参考价格</div>
-                <div class="price-value">
-                  {{ formatPrice(productData.salePrice, productData.currency) }}
-                </div>
-              </div>
-            </div>
-
-            <!-- 底部：联系方式 + 二维码 -->
-            <div class="card-footer">
-              <div class="footer-left">
-                <div class="contact-row">
-                  <Icon icon="ri:wechat-line" class="contact-icon wechat" />
-                  <span class="contact-text">{{ productData.contact || 'artdesignpro' }}</span>
-                </div>
-                <div class="contact-row">
-                  <Icon icon="ri:mail-line" class="contact-icon email" />
-                  <span class="contact-text">{{
-                    productData.email || 'info@artdesignpro.com'
-                  }}</span>
-                </div>
-              </div>
-              <!-- 二维码 -->
-              <div class="qr-section">
-                <div class="qr-code">
-                  <Icon icon="ri:qr-code-line" class="qr-icon" />
-                </div>
-                <span class="qr-label">扫码咨询</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- 产品卡片预览 - 使用通用分享卡片组件 -->
+        <ProductShareCard ref="shareCardRef" :product="shareProductData" :contact="contactInfo" />
 
         <!-- 操作按钮 -->
         <div class="share-actions">
-          <ElButton type="primary" @click="downloadCard">
+          <ElButton type="primary" @click="handleDownloadCard">
             <Icon icon="ri:download-line" class="mr-1" />
             下载图片
           </ElButton>
-          <ElButton @click="copyCard">
+          <ElButton @click="handleCopyCard">
             <Icon icon="ri:file-copy-line" class="mr-1" />
             复制到剪贴板
           </ElButton>
@@ -327,6 +223,8 @@
     ElScrollbar,
     ElDialog
   } from 'element-plus'
+  import ProductShareCard from '@/components/product-card/product-share-card.vue'
+  import { useProductShare } from '@/hooks/useProductShare'
 
   defineOptions({ name: 'ProductDetail' })
 
@@ -384,11 +282,33 @@
   // 轮播图引用
   const carouselRef = ref<InstanceType<typeof ElCarousel>>()
 
+  // 分享卡片引用
+  const shareCardRef = ref<InstanceType<typeof ProductShareCard>>()
+
   // 分享弹窗
   const shareDialogVisible = ref(false)
 
-  // 产品卡片引用
-  const productCardRef = ref<HTMLElement>()
+  // 分享用产品数据（只包含必要字段）
+  const shareProductData = computed(() => ({
+    image: productData.value.mainImage || '',
+    name: productData.value.name || '',
+    sku: productData.value.spec || '',
+    type: productData.value.type,
+    grade: productData.value.grade,
+    material: productData.value.material,
+    salePrice: productData.value.salePrice,
+    costPrice: productData.value.costPrice,
+    currency: productData.value.currency,
+    moq: productData.value.moq,
+    unit: productData.value.unit,
+    cartonQuantity: productData.value.cartonQuantity
+  }))
+
+  // 联系信息
+  const contactInfo = computed(() => ({
+    wechat: productData.value.contact || 'artdesignpro',
+    email: productData.value.email || 'info@artdesignpro.com'
+  }))
 
   // 图片列表（用于轮播和预览）
   const imageList = computed(() => {
@@ -410,6 +330,19 @@
   const switchCarousel = (index: number) => {
     activeIndex.value = index
     carouselRef.value?.setActiveItem(index)
+  }
+
+  // 使用分享 Hook
+  const { downloadCard, copyCard } = useProductShare()
+
+  // 处理下载
+  const handleDownloadCard = async () => {
+    await downloadCard(shareCardRef.value?.shareCardRef, productData.value.name)
+  }
+
+  // 处理复制
+  const handleCopyCard = async () => {
+    await copyCard(shareCardRef.value?.shareCardRef, productData.value.name)
   }
 
   // 加载产品详情
@@ -457,67 +390,6 @@
   // 分享产品
   const handleShare = () => {
     shareDialogVisible.value = true
-  }
-
-  // 下载产品卡片
-  const downloadCard = async () => {
-    if (!productCardRef.value) return
-
-    try {
-      const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(productCardRef.value, {
-        useCORS: true,
-        backgroundColor: '#fff',
-        scale: 2
-      })
-
-      canvas.toBlob((blob) => {
-        if (!blob) return
-        const link = document.createElement('a')
-        link.download = `产品卡片-${productData.value.name}.png`
-        link.href = URL.createObjectURL(blob)
-        link.click()
-        URL.revokeObjectURL(link.href)
-        ElMessage.success('下载成功')
-      })
-    } catch (error) {
-      console.error('生成图片失败:', error)
-      ElMessage.error('生成图片失败，请重试')
-    }
-  }
-
-  // 复制到剪贴板
-  const copyCard = async () => {
-    if (!productCardRef.value) return
-
-    try {
-      const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(productCardRef.value, {
-        useCORS: true,
-        backgroundColor: '#fff',
-        scale: 2
-      })
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) return
-        try {
-          const item = new ClipboardItem({ 'image/png': blob })
-          await navigator.clipboard.write([item])
-          ElMessage.success('已复制到剪贴板')
-        } catch {
-          // 降级方案：下载图片
-          ElMessage.warning('浏览器不支持直接复制，已改为下载图片')
-          const link = document.createElement('a')
-          link.download = `产品卡片-${productData.value.name}.png`
-          link.href = URL.createObjectURL(blob)
-          link.click()
-          URL.revokeObjectURL(link.href)
-        }
-      })
-    } catch (error) {
-      console.error('复制失败:', error)
-      ElMessage.error('复制失败，请重试')
-    }
   }
 
   onMounted(() => {
@@ -617,271 +489,6 @@
 
     // 分享弹窗
     .share-dialog-content {
-      .premium-card-wrapper {
-        margin: -8px;
-      }
-
-      .premium-card {
-        width: 100%;
-        overflow: hidden;
-        background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        border: 1px solid rgb(255 255 255 / 10%);
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgb(0 0 0 / 40%);
-
-        // 顶部装饰条
-        .card-top-accent {
-          height: 4px;
-          background: linear-gradient(90deg, #e94560 0%, #ff6b6b 50%, #e94560 100%);
-        }
-
-        // 图片区域
-        .card-image-section {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 220px;
-          background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
-
-          .image-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-
-            .product-image {
-              max-width: 90%;
-              max-height: 90%;
-              object-fit: contain;
-              filter: drop-shadow(0 8px 16px rgb(0 0 0 / 15%));
-            }
-          }
-
-          // 品牌标识
-          .brand-badge {
-            position: absolute;
-            top: 12px;
-            left: 16px;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            padding: 6px 12px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #e94560 0%, #dc2626 100%);
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgb(233 69 96 / 40%);
-
-            .brand-icon {
-              font-size: 14px;
-            }
-          }
-        }
-
-        // 信息区域
-        .card-info-section {
-          padding: 20px;
-
-          .product-title {
-            display: -webkit-box;
-            min-height: 52px;
-            margin: 0 0 14px;
-            overflow: hidden;
-            font-size: 18px;
-            font-weight: 700;
-            line-height: 1.4;
-            color: #fff;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-          }
-
-          .product-sku {
-            display: inline-flex;
-            gap: 6px;
-            align-items: center;
-            padding: 6px 12px;
-            margin-bottom: 16px;
-            font-size: 12px;
-            background: rgb(255 255 255 / 8%);
-            border: 1px solid rgb(255 255 255 / 10%);
-            border-radius: 16px;
-
-            .sku-icon {
-              font-size: 14px;
-              color: #e94560;
-            }
-
-            .sku-label {
-              color: rgb(255 255 255 / 60%);
-            }
-
-            .sku-value {
-              font-family: 'Courier New', monospace;
-              font-weight: 600;
-              color: #fff;
-            }
-          }
-
-          // 产品参数
-          .product-specs {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
-
-            .spec-item {
-              display: flex;
-              gap: 12px;
-              align-items: center;
-              padding: 10px 12px;
-              background: rgb(255 255 255 / 5%);
-              border-radius: 10px;
-              transition: all 0.3s ease;
-
-              &:hover {
-                background: rgb(255 255 255 / 8%);
-              }
-
-              .spec-icon-wrapper {
-                display: flex;
-                flex-shrink: 0;
-                align-items: center;
-                justify-content: center;
-                width: 36px;
-                height: 36px;
-                background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgb(233 69 96 / 30%);
-
-                .spec-icon {
-                  font-size: 18px;
-                  color: #fff;
-                }
-              }
-
-              .spec-content {
-                display: flex;
-                flex: 1;
-                align-items: center;
-                justify-content: space-between;
-
-                .spec-label {
-                  font-size: 12px;
-                  color: rgb(255 255 255 / 60%);
-                }
-
-                .spec-value {
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: #fff;
-                }
-              }
-            }
-          }
-
-          // 价格信息
-          .price-section {
-            padding: 14px;
-            text-align: center;
-            background: linear-gradient(135deg, rgb(233 69 96 / 15%) 0%, rgb(233 69 96 / 5%) 100%);
-            border: 1px solid rgb(233 69 96 / 20%);
-            border-radius: 10px;
-
-            .price-label {
-              margin-bottom: 4px;
-              font-size: 12px;
-              color: rgb(255 255 255 / 70%);
-            }
-
-            .price-value {
-              font-size: 22px;
-              font-weight: 700;
-              color: #ffd700;
-              text-shadow: 0 2px 8px rgb(255 215 0 / 30%);
-            }
-          }
-        }
-
-        // 底部联系方式
-        .card-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 16px 20px;
-          background: rgb(0 0 0 / 30%);
-          border-top: 1px solid rgb(255 255 255 / 8%);
-
-          .footer-left {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-
-            .contact-row {
-              display: flex;
-              gap: 8px;
-              align-items: center;
-
-              .contact-icon {
-                flex-shrink: 0;
-                font-size: 16px;
-
-                &.wechat {
-                  color: #07c160;
-                }
-
-                &.email {
-                  color: #e94560;
-                }
-              }
-
-              .contact-text {
-                max-width: 140px;
-                font-size: 11px;
-                color: rgb(255 255 255 / 85%);
-              }
-            }
-          }
-
-          // 二维码区域
-          .qr-section {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            align-items: center;
-
-            .qr-code {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 60px;
-              height: 60px;
-              background: rgb(255 255 255 / 95%);
-              border-radius: 8px;
-              box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
-
-              .qr-icon {
-                font-size: 32px;
-                color: #0f172a;
-              }
-            }
-
-            .qr-label {
-              font-size: 10px;
-              color: rgb(255 255 255 / 70%);
-              letter-spacing: 0.5px;
-            }
-          }
-        }
-      }
-
       .share-actions {
         display: flex;
         gap: 12px;
