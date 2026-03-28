@@ -45,35 +45,47 @@
         <span class="sku-value">{{ product.sku || 'N/A' }}</span>
       </div>
 
-      <!-- 产品参数网格 - 3 列 -->
+      <!-- 产品参数网格 - 2 列 -->
       <div class="specs-grid">
-        <div v-if="product.cartonQuantity" class="spec-card">
+        <div class="spec-card">
           <div class="spec-icon-wrapper">
             <Icon icon="ri:package-3-line" class="spec-icon" />
           </div>
           <div class="spec-content">
             <span class="spec-label">箱装数量</span>
-            <span class="spec-value">{{ product.cartonQuantity }}</span>
+            <span class="spec-value">{{ product.cartonQuantity || '-' }}</span>
           </div>
         </div>
 
-        <div v-if="product.moq" class="spec-card">
+        <div class="spec-card">
           <div class="spec-icon-wrapper">
             <Icon icon="ri:stack-line" class="spec-icon" />
           </div>
           <div class="spec-content">
             <span class="spec-label">最低起订</span>
-            <span class="spec-value">{{ product.moq }} {{ product.unit || 'pcs' }}</span>
+            <span class="spec-value">{{
+              product.moq ? `${product.moq} ${product.unit || 'pcs'}` : '-'
+            }}</span>
           </div>
         </div>
 
-        <div v-if="product.type" class="spec-card">
+        <div class="spec-card">
           <div class="spec-icon-wrapper">
             <Icon icon="ri:price-tag-3-line" class="spec-icon" />
           </div>
           <div class="spec-content">
             <span class="spec-label">产品类型</span>
-            <span class="spec-value">{{ product.type }}</span>
+            <span class="spec-value">{{ product.type || '-' }}</span>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <div class="spec-icon-wrapper">
+            <Icon icon="ri:medal-line" class="spec-icon" />
+          </div>
+          <div class="spec-content">
+            <span class="spec-label">产品等级</span>
+            <span class="spec-value">{{ product.grade || '-' }}</span>
           </div>
         </div>
       </div>
@@ -452,20 +464,20 @@
   }
 
   // 参数网格
-  // 参数网格 - 3 列布局
+  // 参数网格 - 2 列布局
   .specs-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     margin-bottom: 20px;
   }
 
   .spec-card {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
-    padding: 12px 8px;
+    padding: 16px 12px;
     background: linear-gradient(
       180deg,
       rgba($gold-primary, 0.06) 0%,
@@ -489,19 +501,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       background: linear-gradient(
         135deg,
         rgba($gold-primary, 0.2) 0%,
         rgba($gold-primary, 0.05) 100%
       );
       border: 1px solid rgba($gold-primary, 0.25);
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: inset 0 1px 0 rgba($gold-light, 0.2);
 
       .spec-icon {
-        font-size: 18px;
+        font-size: 20px;
         background: $gold-gradient;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -517,15 +529,15 @@
       text-align: center;
 
       .spec-label {
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 500;
         color: $text-muted;
         text-transform: uppercase;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.5px;
       }
 
       .spec-value {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 600;
         color: $text-primary;
       }
