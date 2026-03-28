@@ -289,20 +289,24 @@
   const shareDialogVisible = ref(false)
 
   // 分享用产品数据（只包含必要字段）
-  const shareProductData = computed(() => ({
-    image: productData.value.mainImage || '',
-    name: productData.value.name || '',
-    sku: productData.value.spec || '',
-    type: productData.value.type,
-    grade: productData.value.grade,
-    material: productData.value.material,
-    salePrice: productData.value.salePrice,
-    costPrice: productData.value.costPrice,
-    currency: productData.value.currency,
-    moq: productData.value.moq,
-    unit: productData.value.unit,
-    cartonQuantity: productData.value.cartonQuantity
-  }))
+  const shareProductData = computed(() => {
+    const data = {
+      image: productData.value.mainImage || '',
+      name: productData.value.name || '',
+      sku: productData.value.spec || '',
+      type: productData.value.type,
+      grade: productData.value.grade,
+      material: productData.value.material,
+      salePrice: productData.value.salePrice,
+      costPrice: productData.value.costPrice,
+      currency: productData.value.currency,
+      moq: productData.value.moq,
+      unit: productData.value.unit,
+      cartonQuantity: productData.value.cartonQuantity
+    }
+    console.log('shareProductData:', data)
+    return data
+  })
 
   // 联系信息
   const contactInfo = computed(() => ({

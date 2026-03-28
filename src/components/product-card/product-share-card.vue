@@ -7,104 +7,107 @@
     <!-- 流动背景 -->
     <div class="liquid-background"></div>
 
-    <!-- 顶部品牌区域 -->
-    <div class="card-header-section">
-      <div class="brand-logo">
-        <div class="logo-icon-wrapper">
-          <Icon icon="ri:gemini-line" class="logo-icon" />
+    <!-- 卡片内容区域 -->
+    <div class="card-content">
+      <!-- 顶部品牌区域 -->
+      <div class="card-header-section">
+        <div class="brand-logo">
+          <div class="logo-icon-wrapper">
+            <Icon icon="ri:gemini-line" class="logo-icon" />
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">ART DESIGN</span>
+            <span class="brand-subtitle">PROFESSIONAL</span>
+          </div>
         </div>
-        <div class="brand-text">
-          <span class="brand-name">ART DESIGN</span>
-          <span class="brand-subtitle">PROFESSIONAL</span>
-        </div>
-      </div>
-      <div class="liquid-badge">PREMIUM</div>
-    </div>
-
-    <!-- 产品图片区域 - 调整高度 -->
-    <div class="card-image-section">
-      <!-- 装饰液滴 -->
-      <div class="liquid-drop drop-1"></div>
-      <div class="liquid-drop drop-2"></div>
-
-      <div class="image-wrapper">
-        <ElImage :src="product.image" fit="contain" class="product-image" />
-      </div>
-    </div>
-
-    <!-- 产品信息区域 -->
-    <div class="card-info-section">
-      <h2 class="product-title">{{ product.name || '产品名称' }}</h2>
-
-      <!-- 产品 SKU -->
-      <div class="product-sku">
-        <span class="sku-label">产品型号</span>
-        <span class="sku-value">{{ product.sku || 'N/A' }}</span>
+        <div class="liquid-badge">PREMIUM</div>
       </div>
 
-      <!-- 产品参数网格 - 2 列 -->
-      <div class="specs-grid">
-        <div class="spec-card">
-          <div class="spec-icon-wrapper">
-            <Icon icon="ri:package-3-line" class="spec-icon" />
-          </div>
-          <div class="spec-content">
-            <span class="spec-label">装箱数量</span>
-            <span class="spec-value">{{ product.cartonQuantity ?? '-' }}</span>
-          </div>
+      <!-- 产品图片区域 -->
+      <div class="card-image-section">
+        <!-- 装饰液滴 -->
+        <div class="liquid-drop drop-1"></div>
+        <div class="liquid-drop drop-2"></div>
+
+        <div class="image-wrapper">
+          <ElImage :src="product.image" fit="contain" class="product-image" />
+        </div>
+      </div>
+
+      <!-- 产品信息区域 -->
+      <div class="card-info-section">
+        <h2 class="product-title">{{ product.name || '产品名称' }}</h2>
+
+        <!-- 产品 SKU -->
+        <div class="product-sku">
+          <span class="sku-label">产品型号</span>
+          <span class="sku-value">{{ product.sku || 'N/A' }}</span>
         </div>
 
-        <div class="spec-card">
-          <div class="spec-icon-wrapper">
-            <Icon icon="ri:stack-line" class="spec-icon" />
+        <!-- 产品参数网格 - 2 列 -->
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-icon-wrapper">
+              <Icon icon="ri:package-3-line" class="spec-icon" />
+            </div>
+            <div class="spec-content">
+              <span class="spec-label">装箱数量</span>
+              <span class="spec-value">{{ product.cartonQuantity ?? '-' }}</span>
+            </div>
           </div>
-          <div class="spec-content">
-            <span class="spec-label">最低起订</span>
-            <span class="spec-value">{{
-              product.moq !== undefined && product.moq !== null
-                ? `${product.moq} ${product.unit || 'pcs'}`
-                : '-'
-            }}</span>
-          </div>
-        </div>
 
-        <div class="spec-card">
-          <div class="spec-icon-wrapper">
-            <Icon icon="ri:price-tag-3-line" class="spec-icon" />
+          <div class="spec-card">
+            <div class="spec-icon-wrapper">
+              <Icon icon="ri:stack-line" class="spec-icon" />
+            </div>
+            <div class="spec-content">
+              <span class="spec-label">最低起订</span>
+              <span class="spec-value">{{
+                product.moq !== undefined && product.moq !== null
+                  ? `${product.moq} ${product.unit || 'pcs'}`
+                  : '-'
+              }}</span>
+            </div>
           </div>
-          <div class="spec-content">
-            <span class="spec-label">产品类型</span>
-            <span class="spec-value">{{ product.type ?? '-' }}</span>
+
+          <div class="spec-card">
+            <div class="spec-icon-wrapper">
+              <Icon icon="ri:price-tag-3-line" class="spec-icon" />
+            </div>
+            <div class="spec-content">
+              <span class="spec-label">产品类型</span>
+              <span class="spec-value">{{ product.type ?? '-' }}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 底部：联系方式 + 二维码 -->
-    <div class="card-footer">
-      <div class="footer-left">
-        <div class="footer-title">联系我们</div>
-        <div class="contact-row">
-          <div class="contact-icon-wrapper wechat">
-            <Icon icon="ri:wechat-line" />
+      <!-- 底部：联系方式 + 二维码 -->
+      <div class="card-footer">
+        <div class="footer-left">
+          <div class="footer-title">联系我们</div>
+          <div class="contact-row">
+            <div class="contact-icon-wrapper wechat">
+              <Icon icon="ri:wechat-line" />
+            </div>
+            <span class="contact-text">{{ contact.wechat || 'artdesignpro' }}</span>
           </div>
-          <span class="contact-text">{{ contact.wechat || 'artdesignpro' }}</span>
-        </div>
-        <div class="contact-row">
-          <div class="contact-icon-wrapper email">
-            <Icon icon="ri:mail-line" />
-          </div>
-          <span class="contact-text">{{ contact.email || 'info@artdesignpro.com' }}</span>
-        </div>
-      </div>
-      <!-- 二维码 -->
-      <div class="qr-section">
-        <div class="qr-code">
-          <div class="qr-inner">
-            <Icon icon="ri:qr-code-line" class="qr-icon" />
+          <div class="contact-row">
+            <div class="contact-icon-wrapper email">
+              <Icon icon="ri:mail-line" />
+            </div>
+            <span class="contact-text">{{ contact.email || 'info@artdesignpro.com' }}</span>
           </div>
         </div>
-        <span class="qr-label">扫码获取详情</span>
+        <!-- 二维码 -->
+        <div class="qr-section">
+          <div class="qr-code">
+            <div class="qr-inner">
+              <Icon icon="ri:qr-code-line" class="qr-icon" />
+            </div>
+          </div>
+          <span class="qr-label">扫码获取详情</span>
+        </div>
       </div>
     </div>
   </div>
@@ -144,7 +147,7 @@
     whatsapp?: string
   }
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       product: ProductInfo
       contact?: ContactInfo
@@ -158,6 +161,11 @@
   )
 
   const shareCardRef = ref<HTMLElement>()
+
+  // 调试：打印产品数据
+  watchEffect(() => {
+    console.log('ProductShareCard - product data:', props.product)
+  })
 
   // 暴露卡片引用给父组件用于 html2canvas
   defineExpose({
@@ -211,6 +219,15 @@
       0 0 0 1px rgb(100 180 255 / 15%),
       0 25px 80px rgb(0 0 0 / 50%),
       0 0 120px rgba($blue-start, 0.2);
+  }
+
+  // 卡片内容容器
+  .card-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   // ==================== 液态光晕边框 ====================
@@ -267,11 +284,11 @@
   // ==================== 顶部品牌区域 ====================
   .card-header-section {
     position: relative;
-    z-index: 10;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px;
+    padding: 14px 24px;
     background: rgb(255 255 255 / 3%);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid $card-border;
@@ -355,10 +372,11 @@
   .card-image-section {
     position: relative;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 280px;
+    height: 240px;
     overflow: hidden;
     background: radial-gradient(ellipse at center, rgba($blue-start, 0.12) 0%, transparent 60%);
 
@@ -405,8 +423,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 280px;
-      height: 300px;
+      width: 240px;
+      height: 200px;
       padding: 8px;
       background: $card-glass;
       backdrop-filter: blur(10px);
@@ -427,16 +445,17 @@
 
   // ==================== 信息区域 ====================
   .card-info-section {
-    padding: 16px 24px 20px;
-    margin-bottom: 80px; // 为底部联系方式预留空间
+    flex: 1;
+    padding: 12px 24px;
+    overflow: hidden;
   }
 
   .product-title {
     display: -webkit-box;
-    min-height: 48px;
-    margin: 0 0 12px;
+    min-height: 40px;
+    margin: 0 0 8px;
     overflow: hidden;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
     color: $text-primary;
@@ -454,15 +473,15 @@
     gap: 10px;
     align-items: baseline;
     justify-content: center;
-    padding: 8px 20px;
-    margin-bottom: 12px;
+    padding: 6px 20px;
+    margin-bottom: 8px;
     background: rgb(255 255 255 / 3%);
     backdrop-filter: blur(10px);
     border: 1px solid $card-border;
     border-radius: 12px;
 
     .sku-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
       color: $text-muted;
       text-transform: uppercase;
@@ -471,7 +490,7 @@
 
     .sku-value {
       font-family: 'Courier New', monospace;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: $text-primary;
       text-shadow: 0 0 20px rgba($blue-start, 0.3);
@@ -483,19 +502,19 @@
   .specs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
 
   .spec-card {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     align-items: center;
-    padding: 12px 10px;
+    padding: 8px 6px;
     background: $card-glass;
     backdrop-filter: blur(10px);
     border: 1px solid $card-border;
-    border-radius: 12px;
+    border-radius: 8px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
@@ -511,15 +530,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, rgba($blue-start, 0.25) 0%, rgba($blue-end, 0.15) 100%);
       border: 1px solid rgba($blue-start, 0.4);
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
 
       .spec-icon {
-        font-size: 18px;
+        font-size: 16px;
         background: $blue-gradient;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -543,7 +562,7 @@
       }
 
       .spec-value {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: $text-primary;
       }
@@ -552,15 +571,13 @@
 
   // ==================== 底部联系方式 ====================
   .card-footer {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: relative;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
-    background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 40%) 100%);
+    padding: 14px 24px;
+    background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 50%) 100%);
     backdrop-filter: blur(20px);
     border-top: 1px solid $card-border;
   }
