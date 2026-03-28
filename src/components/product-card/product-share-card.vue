@@ -21,7 +21,7 @@
       <div class="liquid-badge">PREMIUM</div>
     </div>
 
-    <!-- 产品图片区域 - 3:4 比例 -->
+    <!-- 产品图片区域 - 调整高度 -->
     <div class="card-image-section">
       <!-- 装饰液滴 -->
       <div class="liquid-drop drop-1"></div>
@@ -50,7 +50,7 @@
           </div>
           <div class="spec-content">
             <span class="spec-label">装箱数量</span>
-            <span class="spec-value">{{ product.cartonQuantity || '-' }}</span>
+            <span class="spec-value">{{ product.cartonQuantity ?? '-' }}</span>
           </div>
         </div>
 
@@ -61,7 +61,9 @@
           <div class="spec-content">
             <span class="spec-label">最低起订</span>
             <span class="spec-value">{{
-              product.moq ? `${product.moq} ${product.unit || 'pcs'}` : '-'
+              product.moq !== undefined && product.moq !== null
+                ? `${product.moq} ${product.unit || 'pcs'}`
+                : '-'
             }}</span>
           </div>
         </div>
@@ -72,7 +74,7 @@
           </div>
           <div class="spec-content">
             <span class="spec-label">产品类型</span>
-            <span class="spec-value">{{ product.type || '-' }}</span>
+            <span class="spec-value">{{ product.type ?? '-' }}</span>
           </div>
         </div>
       </div>
@@ -164,40 +166,35 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 液态玻璃拟态配色系统 ====================
-  $bg-dark-start: #0f0c29;
-  $bg-dark-mid: #302b63;
-  $bg-dark-end: #24243e;
+  // ==================== 深蓝色调配色系统 ====================
+  $bg-dark-start: #0a1628;
+  $bg-dark-mid: #1e3a5f;
+  $bg-dark-end: #0f2942;
 
   $card-glass: rgb(255 255 255 / 5%);
   $card-glass-hover: rgb(255 255 255 / 8%);
-  $card-border: rgb(255 255 255 / 10%);
+  $card-border: rgb(100 180 255 / 15%);
 
-  $text-primary: #fff;
-  $text-secondary: rgb(255 255 255 / 80%);
-  $text-muted: rgb(255 255 255 / 50%);
+  $text-primary: #e0f2ff;
+  $text-secondary: rgb(200 230 255 / 75%);
+  $text-muted: rgb(150 200 235 / 45%);
 
-  // 彩虹渐变色 (purple → pink → orange)
-  $rainbow-start: #a855f7;
-  $rainbow-mid: #ec4899;
-  $rainbow-end: #f97316;
+  // 蓝色渐变色 (deep blue → cyan → light blue)
+  $blue-start: #3b82f6;
+  $blue-mid: #06b6d4;
+  $blue-end: #60a5fa;
 
   $card-width: 400px;
   $card-height: 533px; // 3:4 比例
   $card-radius: 24px;
 
-  $rainbow-gradient: linear-gradient(
-    135deg,
-    $rainbow-start 0%,
-    $rainbow-mid 50%,
-    $rainbow-end 100%
-  );
+  $blue-gradient: linear-gradient(135deg, $blue-start 0%, $blue-mid 50%, $blue-end 100%);
 
-  $rainbow-glow: linear-gradient(
+  $blue-glow: linear-gradient(
     135deg,
-    rgba($rainbow-start, 0.4) 0%,
-    rgba($rainbow-mid, 0.4) 50%,
-    rgba($rainbow-end, 0.4) 100%
+    rgba($blue-start, 0.4) 0%,
+    rgba($blue-mid, 0.4) 50%,
+    rgba($blue-end, 0.4) 100%
   );
 
   $bg-gradient: linear-gradient(135deg, $bg-dark-start 0%, $bg-dark-mid 50%, $bg-dark-end 100%);
@@ -211,9 +208,9 @@
     background: $bg-gradient;
     border-radius: $card-radius;
     box-shadow:
-      0 0 0 1px rgb(255 255 255 / 10%),
+      0 0 0 1px rgb(100 180 255 / 15%),
       0 25px 80px rgb(0 0 0 / 50%),
-      0 0 120px rgba($rainbow-start, 0.15);
+      0 0 120px rgba($blue-start, 0.2);
   }
 
   // ==================== 液态光晕边框 ====================
@@ -222,7 +219,7 @@
     inset: 0;
     padding: 1px;
     pointer-events: none;
-    background: $rainbow-gradient;
+    background: $blue-gradient;
     border-radius: $card-radius;
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
@@ -250,7 +247,7 @@
     pointer-events: none;
     background: radial-gradient(
       ellipse 80% 50% at 50% -20%,
-      rgba($rainbow-start, 0.3) 0%,
+      rgba($blue-start, 0.25) 0%,
       transparent 60%
     );
     animation: liquid-flow 8s ease-in-out infinite;
@@ -303,16 +300,16 @@
 
     &:hover {
       background: $card-glass-hover;
-      border-color: rgba($rainbow-start, 0.5);
+      border-color: rgba($blue-start, 0.6);
       box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 20%),
-        0 4px 20px rgba($rainbow-start, 0.3);
+        0 4px 20px rgba($blue-start, 0.3);
     }
 
     .logo-icon {
       font-size: 22px;
-      background: $rainbow-gradient;
-      filter: drop-shadow(0 2px 4px rgba($rainbow-start, 0.4));
+      background: $blue-gradient;
+      filter: drop-shadow(0 2px 4px rgba($blue-start, 0.4));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -347,10 +344,10 @@
     font-weight: 700;
     color: #fff;
     letter-spacing: 1.5px;
-    background: $rainbow-gradient;
+    background: $blue-gradient;
     border-radius: 20px;
     box-shadow:
-      0 4px 12px rgba($rainbow-start, 0.4),
+      0 4px 12px rgba($blue-start, 0.4),
       inset 0 1px 0 rgb(255 255 255 / 30%);
   }
 
@@ -361,14 +358,14 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 340px;
+    height: 280px;
     overflow: hidden;
-    background: radial-gradient(ellipse at center, rgba($rainbow-start, 0.15) 0%, transparent 60%);
+    background: radial-gradient(ellipse at center, rgba($blue-start, 0.12) 0%, transparent 60%);
 
     // 装饰液滴
     .liquid-drop {
       position: absolute;
-      background: $rainbow-gradient;
+      background: $blue-gradient;
       filter: blur(20px);
       border-radius: 50%;
       opacity: 0.3;
@@ -430,17 +427,18 @@
 
   // ==================== 信息区域 ====================
   .card-info-section {
-    padding: 20px 24px;
+    padding: 16px 24px 20px;
+    margin-bottom: 80px; // 为底部联系方式预留空间
   }
 
   .product-title {
     display: -webkit-box;
-    min-height: 56px;
-    margin: 0 0 16px;
+    min-height: 48px;
+    margin: 0 0 12px;
     overflow: hidden;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1.4;
     color: $text-primary;
     text-align: center;
     text-shadow: 0 2px 8px rgb(0 0 0 / 30%);
@@ -456,8 +454,8 @@
     gap: 10px;
     align-items: baseline;
     justify-content: center;
-    padding: 10px 20px;
-    margin-bottom: 16px;
+    padding: 8px 20px;
+    margin-bottom: 12px;
     background: rgb(255 255 255 / 3%);
     backdrop-filter: blur(10px);
     border: 1px solid $card-border;
@@ -476,7 +474,7 @@
       font-size: 14px;
       font-weight: 700;
       color: $text-primary;
-      text-shadow: 0 0 20px rgba($rainbow-start, 0.3);
+      text-shadow: 0 0 20px rgba($blue-start, 0.3);
       letter-spacing: 1px;
     }
   }
@@ -485,26 +483,26 @@
   .specs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
 
   .spec-card {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
-    padding: 16px 12px;
+    padding: 12px 10px;
     background: $card-glass;
     backdrop-filter: blur(10px);
     border: 1px solid $card-border;
-    border-radius: 14px;
+    border-radius: 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
       background: $card-glass-hover;
-      border-color: rgba($rainbow-start, 0.4);
+      border-color: rgba($blue-start, 0.5);
       box-shadow:
-        0 8px 32px rgba($rainbow-start, 0.15),
+        0 8px 32px rgba($blue-start, 0.2),
         inset 0 1px 0 rgb(255 255 255 / 10%);
       transform: translateY(-2px);
     }
@@ -513,20 +511,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(
-        135deg,
-        rgba($rainbow-start, 0.2) 0%,
-        rgba($rainbow-end, 0.1) 100%
-      );
-      border: 1px solid rgba($rainbow-start, 0.3);
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, rgba($blue-start, 0.25) 0%, rgba($blue-end, 0.15) 100%);
+      border: 1px solid rgba($blue-start, 0.4);
       border-radius: 10px;
       box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
 
       .spec-icon {
-        font-size: 20px;
-        background: $rainbow-gradient;
+        font-size: 18px;
+        background: $blue-gradient;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -541,7 +535,7 @@
       text-align: center;
 
       .spec-label {
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 500;
         color: $text-muted;
         text-transform: uppercase;
@@ -549,7 +543,7 @@
       }
 
       .spec-value {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
         color: $text-primary;
       }
@@ -603,8 +597,8 @@
 
         &:hover {
           background: $card-glass-hover;
-          border-color: rgba($rainbow-start, 0.5);
-          box-shadow: 0 4px 16px rgba($rainbow-start, 0.3);
+          border-color: rgba($blue-start, 0.6);
+          box-shadow: 0 4px 16px rgba($blue-start, 0.3);
         }
 
         :deep(svg) {
@@ -641,9 +635,9 @@
 
     .qr-code {
       padding: 4px;
-      background: $rainbow-gradient;
+      background: $blue-gradient;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba($rainbow-start, 0.4);
+      box-shadow: 0 4px 16px rgba($blue-start, 0.4);
 
       .qr-inner {
         display: flex;
