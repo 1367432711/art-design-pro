@@ -227,7 +227,9 @@
   import ProductShareCard from '@/components/product-card/product-share-card.vue'
   import { useUserStore } from '@/store/modules/user'
   import defaultAvatar from '@/assets/images/user/avatar.webp'
-  import qrCode from '@/assets/images/qr/wechat-qr.png'
+
+  // 微信二维码（使用占位图，实际项目中请替换为真实二维码）
+  const qrCode = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=WeChatQRCode'
 
   defineOptions({ name: 'ProductDetail' })
 
