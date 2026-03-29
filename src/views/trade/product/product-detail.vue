@@ -305,6 +305,7 @@
   // 用户信息
   const userInfo = computed(() => {
     const userStore = useUserStore()
+    console.log('userStore.info:', userStore.info)
     return {
       avatar: userStore.info?.avatar || '@imgs/user/avatar.webp',
       userName: userStore.info?.userName || 'Art Design Pro',
