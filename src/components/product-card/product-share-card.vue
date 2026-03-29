@@ -132,8 +132,8 @@
 
   // 卡片规格（参考用户资料卡片）
   $card-width: 380px;
-  $card-radius: 28px;
-  $cover-height: 140px;
+  $card-radius: 16px;
+  $cover-height: 200px;
   $avatar-size: 88px;
 
   // ==================== 主卡片 ====================
@@ -305,7 +305,7 @@
       text-align: center;
 
       .stat-value {
-        font-size: 20px;
+        font-size: 12px;
         font-weight: 600;
         color: $text-primary;
       }

@@ -310,7 +310,7 @@
       avatar: defaultAvatar,
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
-      role: userStore.info?.roles?.[0] || '销售经理'
+      role: '经理'
     }
   })
 
