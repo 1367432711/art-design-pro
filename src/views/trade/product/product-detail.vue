@@ -305,12 +305,15 @@
   // 用户信息
   const userInfo = computed(() => {
     const userStore = useUserStore()
-    console.log('userStore.info:', userStore.info)
     return {
-      avatar: userStore.info?.avatar || '@imgs/user/avatar.webp',
+      avatar:
+        userStore.info?.avatar ||
+        'https://ui-avatars.com/api/?name=' +
+          encodeURIComponent(userStore.info?.userName || 'User') +
+          '&background=3b82f6&color=fff&size=256',
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
-      role: userStore.info?.role || '销售经理'
+      role: userStore.info?.roles?.[0] || '销售经理'
     }
   })
 
