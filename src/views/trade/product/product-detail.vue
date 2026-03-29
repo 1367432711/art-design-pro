@@ -226,6 +226,7 @@
   } from 'element-plus'
   import ProductShareCard from '@/components/product-card/product-share-card.vue'
   import { useUserStore } from '@/store/modules/user'
+  import defaultAvatar from '@/assets/images/user/avatar.webp'
 
   defineOptions({ name: 'ProductDetail' })
 
@@ -306,7 +307,7 @@
   const userInfo = computed(() => {
     const userStore = useUserStore()
     return {
-      avatar: '@imgs/user/avatar.webp',
+      avatar: defaultAvatar,
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
       role: userStore.info?.roles?.[0] || '销售经理'
