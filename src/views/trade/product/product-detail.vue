@@ -227,6 +227,7 @@
   import ProductShareCard from '@/components/product-card/product-share-card.vue'
   import { useUserStore } from '@/store/modules/user'
   import defaultAvatar from '@/assets/images/user/avatar.webp'
+  import qrCode from '@/assets/images/qr/wechat-qr.png'
 
   defineOptions({ name: 'ProductDetail' })
 
@@ -310,7 +311,11 @@
       avatar: defaultAvatar,
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
-      role: '销售经理'
+      role: '销售经理',
+      wechat: '微信号：ArtDesignPro',
+      phone: '手机：+86 138 0000 0000',
+      facebook: 'Facebook: Art Design Pro',
+      qrCode: qrCode
     }
   })
 

@@ -47,18 +47,35 @@
         </div>
       </div>
 
-      <!-- CTA 按钮（类似 Get in Touch） -->
-      <ElButton class="cta-button" type="primary" size="large">
-        <Icon icon="ri:wechat-line" class="button-icon" />
-        立即咨询
-      </ElButton>
+      <!-- 联系信息区：左侧联系方式，右侧微信二维码 -->
+      <div class="contact-section">
+        <div class="contact-info">
+          <div class="contact-label">联系方式</div>
+          <div class="contact-item">
+            <Icon icon="ri:wechat-line" class="contact-icon" />
+            <span>{{ user.wechat || '微信：请添加' }}</span>
+          </div>
+          <div v-if="user.phone" class="contact-item">
+            <Icon icon="ri:phone-line" class="contact-icon" />
+            <span>{{ user.phone }}</span>
+          </div>
+          <div v-if="user.facebook" class="contact-item">
+            <Icon icon="ri:facebook-line" class="contact-icon" />
+            <span>{{ user.facebook }}</span>
+          </div>
+        </div>
+        <div class="qr-code-wrapper">
+          <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" />
+          <div class="qr-code-label">扫一扫加微信</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
-  import { ElImage, ElButton } from 'element-plus'
+  import { ElImage } from 'element-plus'
 
   defineOptions({ name: 'ProductShareCard' })
 
@@ -77,6 +94,10 @@
     userName: string
     email?: string
     role?: string
+    wechat?: string
+    phone?: string
+    facebook?: string
+    qrCode?: string
   }
 
   const props = defineProps<{
@@ -324,29 +345,60 @@
     }
   }
 
-  // CTA 按钮（类似 Get in Touch）
-  .cta-button {
+  // 联系信息区：左侧联系方式，右侧微信二维码
+  .contact-section {
     display: flex;
-    gap: 8px;
+    gap: 16px;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 52px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    background: $bg-button !important;
-    border: none !important;
-    border-radius: 18px;
-    transition: all 0.2s ease;
+    justify-content: space-between;
+    padding: 16px;
+    background: $bg-stats;
+    border-radius: 16px;
 
-    &:hover {
-      box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
-      transform: translateY(-2px);
+    .contact-info {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 8px;
+
+      .contact-label {
+        margin-bottom: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        color: $text-muted;
+      }
+
+      .contact-item {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: $text-primary;
+
+        .contact-icon {
+          font-size: 16px;
+          color: $primary-color;
+        }
+      }
     }
 
-    .button-icon {
-      font-size: 18px;
+    .qr-code-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+
+      .qr-code-image {
+        width: 80px;
+        height: 80px;
+        border: 2px solid $primary-light;
+        border-radius: 8px;
+      }
+
+      .qr-code-label {
+        font-size: 11px;
+        color: $text-muted;
+      }
     }
   }
 </style>
