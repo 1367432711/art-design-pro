@@ -1,113 +1,84 @@
-<!-- 产品分享卡片组件 - 液态玻璃拟态风格 -->
+<!-- 产品分享卡片组件 - 简洁专业风格（参考用户资料卡片设计） -->
 <template>
-  <div ref="shareCardRef" class="product-share-card liquid-glass">
-    <!-- 液态光晕边框 -->
-    <div class="liquid-glow-border"></div>
-
-    <!-- 流动背景 -->
-    <div class="liquid-background"></div>
+  <div ref="shareCardRef" class="product-share-card">
+    <!-- 产品图片区域（类似封面图） -->
+    <div class="card-cover-section">
+      <div class="cover-background"></div>
+      <div class="image-container">
+        <ElImage :src="product.image" fit="contain" class="product-image" />
+      </div>
+      <!-- 产品等级徽章（类似认证徽章） -->
+      <div v-if="product.grade" class="grade-badge" :class="gradeClass">
+        <Icon icon="ri:medal-line" class="badge-icon" />
+        <span>{{ product.grade }}</span>
+      </div>
+    </div>
 
     <!-- 卡片内容区域 -->
     <div class="card-content">
-      <!-- 顶部品牌区域 -->
-      <div class="card-header-section">
-        <div class="brand-logo">
-          <div class="logo-icon-wrapper">
-            <Icon icon="ri:gemini-line" class="logo-icon" />
-          </div>
-          <div class="brand-text">
-            <span class="brand-name">ART DESIGN</span>
-            <span class="brand-subtitle">PROFESSIONAL</span>
-          </div>
-        </div>
-        <div class="liquid-badge">PREMIUM</div>
-      </div>
-
-      <!-- 产品图片区域 -->
-      <div class="card-image-section">
-        <!-- 装饰液滴 -->
-        <div class="liquid-drop drop-1"></div>
-        <div class="liquid-drop drop-2"></div>
-
-        <div class="image-wrapper">
-          <ElImage :src="product.image" fit="contain" class="product-image" />
-        </div>
-      </div>
-
-      <!-- 产品信息区域 -->
+      <!-- 产品信息 -->
       <div class="card-info-section">
         <h2 class="product-title">{{ product.name || '产品名称' }}</h2>
 
         <!-- 产品 SKU -->
         <div class="product-sku">
-          <span class="sku-label">产品型号</span>
+          <Icon icon="ri:barcode-box-line" class="sku-icon" />
+          <span class="sku-label">型号：</span>
           <span class="sku-value">{{ product.sku || 'N/A' }}</span>
-        </div>
-
-        <!-- 产品参数网格 - 2 列 -->
-        <div class="specs-grid">
-          <div class="spec-card">
-            <div class="spec-icon-wrapper">
-              <Icon icon="ri:package-3-line" class="spec-icon" />
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">装箱数量</span>
-              <span class="spec-value">{{ product.cartonQuantity ?? '-' }}</span>
-            </div>
-          </div>
-
-          <div class="spec-card">
-            <div class="spec-icon-wrapper">
-              <Icon icon="ri:stack-line" class="spec-icon" />
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">最低起订</span>
-              <span class="spec-value">{{
-                product.moq !== undefined && product.moq !== null
-                  ? `${product.moq} ${product.unit || 'pcs'}`
-                  : '-'
-              }}</span>
-            </div>
-          </div>
-
-          <div class="spec-card">
-            <div class="spec-icon-wrapper">
-              <Icon icon="ri:price-tag-3-line" class="spec-icon" />
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">产品类型</span>
-              <span class="spec-value">{{ product.type ?? '-' }}</span>
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- 底部：联系方式 + 二维码 -->
-      <div class="card-footer">
-        <div class="footer-left">
-          <div class="footer-title">联系我们</div>
-          <div class="contact-row">
-            <div class="contact-icon-wrapper wechat">
-              <Icon icon="ri:wechat-line" />
-            </div>
-            <span class="contact-text">{{ contact.wechat || 'artdesignpro' }}</span>
-          </div>
-          <div class="contact-row">
-            <div class="contact-icon-wrapper email">
-              <Icon icon="ri:mail-line" />
-            </div>
-            <span class="contact-text">{{ contact.email || 'info@artdesignpro.com' }}</span>
-          </div>
+      <!-- 统计数据区（三列布局） -->
+      <div class="stats-section">
+        <div class="stat-item">
+          <div class="stat-value">{{ product.cartonQuantity ?? '-' }}</div>
+          <div class="stat-label">装箱数量</div>
         </div>
-        <!-- 二维码 -->
-        <div class="qr-section">
-          <div class="qr-code">
-            <div class="qr-inner">
-              <Icon icon="ri:qr-code-line" class="qr-icon" />
-            </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">
+            {{ product.moq !== undefined && product.moq !== null ? product.moq : '-' }}
           </div>
-          <span class="qr-label">扫码获取详情</span>
+          <div class="stat-label">最低起订</div>
         </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">{{ formatPrice(product.salePrice, product.currency) }}</div>
+          <div class="stat-label">参考价格</div>
+        </div>
+      </div>
+
+      <!-- 产品类型标签 -->
+      <div v-if="product.type" class="type-section">
+        <div class="type-badge">
+          <Icon icon="ri:price-tag-3-line" class="type-icon" />
+          <span>{{ product.type }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部 CTA 区域 -->
+    <div class="card-footer">
+      <div class="contact-info">
+        <div class="contact-row">
+          <div class="contact-icon wechat">
+            <Icon icon="ri:wechat-line" />
+          </div>
+          <span class="contact-text">{{ contact.wechat || 'artdesignpro' }}</span>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon email">
+            <Icon icon="ri:mail-line" />
+          </div>
+          <span class="contact-text">{{ contact.email || 'info@artdesignpro.com' }}</span>
+        </div>
+      </div>
+      <!-- 二维码 -->
+      <div class="qr-section">
+        <div class="qr-code">
+          <Icon icon="ri:qr-code-line" class="qr-icon" />
+        </div>
+        <span class="qr-label">扫码咨询</span>
       </div>
     </div>
   </div>
@@ -162,10 +133,29 @@
 
   const shareCardRef = ref<HTMLElement>()
 
-  // 调试：打印产品数据
-  watchEffect(() => {
-    console.log('ProductShareCard - product data:', props.product)
+  // 产品等级样式映射
+  const gradeClassMap: Record<string, string> = {
+    'A 级': 'grade-a',
+    'B 级': 'grade-b',
+    'C 级': 'grade-c'
+  }
+
+  const gradeClass = computed(() => {
+    return gradeClassMap[props.product.grade || ''] || ''
   })
+
+  // 格式化价格
+  const formatPrice = (price: number | undefined, currency: string = 'USD') => {
+    if (price === undefined) return '-'
+    const symbols: Record<string, string> = {
+      USD: '$',
+      EUR: '€',
+      CNY: '¥',
+      GBP: '£'
+    }
+    const symbol = symbols[currency] || currency
+    return `${symbol}${price.toFixed(2)}`
+  }
 
   // 暴露卡片引用给父组件用于 html2canvas
   defineExpose({
@@ -174,511 +164,305 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 深蓝色调配色系统 ====================
-  $bg-dark-start: #0a1628;
-  $bg-dark-mid: #1e3a5f;
-  $bg-dark-end: #0f2942;
+  // ==================== 配色系统 ====================
+  // 主色调
+  $primary-color: #3b82f6;
+  $primary-light: #dbeafe;
+  $primary-dark: #1d4ed8;
 
-  $card-glass: rgb(255 255 255 / 5%);
-  $card-glass-hover: rgb(255 255 255 / 8%);
-  $card-border: rgb(100 180 255 / 15%);
+  // 中性色
+  $bg-dark: #0f172a;
+  $bg-cover: #1e293b;
+  $bg-white: #fff;
+  $bg-stats: #f8fafc;
 
-  $text-primary: #e0f2ff;
-  $text-secondary: rgb(200 230 255 / 75%);
-  $text-muted: rgb(150 200 235 / 45%);
+  $text-primary: #1e293b;
+  $text-secondary: #64748b;
+  $text-muted: #94a3b8;
+  $text-light: #fff;
 
-  // 蓝色渐变色 (deep blue → cyan → light blue)
-  $blue-start: #3b82f6;
-  $blue-mid: #06b6d4;
-  $blue-end: #60a5fa;
+  // 等级色
+  $grade-a: #10b981;
+  $grade-b: #3b82f6;
+  $grade-c: #f59e0b;
 
+  // 卡片规格
   $card-width: 400px;
-  $card-height: 533px; // 3:4 比例
-  $card-radius: 24px;
+  $card-radius: 28px;
+  $cover-height: 220px;
 
-  $blue-gradient: linear-gradient(135deg, $blue-start 0%, $blue-mid 50%, $blue-end 100%);
-
-  $blue-glow: linear-gradient(
-    135deg,
-    rgba($blue-start, 0.4) 0%,
-    rgba($blue-mid, 0.4) 50%,
-    rgba($blue-end, 0.4) 100%
-  );
-
-  $bg-gradient: linear-gradient(135deg, $bg-dark-start 0%, $bg-dark-mid 50%, $bg-dark-end 100%);
-
-  // ==================== 主卡片 - 3:4 比例 ====================
+  // ==================== 主卡片 ====================
   .product-share-card {
     position: relative;
     width: $card-width;
-    height: $card-height;
     overflow: hidden;
-    background: $bg-gradient;
+    background: $bg-white;
     border-radius: $card-radius;
-    box-shadow:
-      0 0 0 1px rgb(100 180 255 / 15%),
-      0 25px 80px rgb(0 0 0 / 50%),
-      0 0 120px rgba($blue-start, 0.2);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   }
 
-  // 卡片内容容器
-  .card-content {
+  // ==================== 封面图片区域 ====================
+  .card-cover-section {
     position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  // ==================== 液态光晕边框 ====================
-  .liquid-glow-border {
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    pointer-events: none;
-    background: $blue-gradient;
-    border-radius: $card-radius;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: liquid-glow 3s ease-in-out infinite;
-  }
-
-  @keyframes liquid-glow {
-    0%,
-    100% {
-      opacity: 0.6;
-    }
-
-    50% {
-      opacity: 1;
-    }
-  }
-
-  // ==================== 流动背景动画 ====================
-  .liquid-background {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      rgba($blue-start, 0.25) 0%,
-      transparent 60%
-    );
-    animation: liquid-flow 8s ease-in-out infinite;
-  }
-
-  @keyframes liquid-flow {
-    0%,
-    100% {
-      transform: translateY(0) scale(1);
-    }
-
-    50% {
-      transform: translateY(-10px) scale(1.05);
-    }
-  }
-
-  // ==================== 顶部品牌区域 ====================
-  .card-header-section {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 24px;
-    background: rgb(255 255 255 / 3%);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid $card-border;
-  }
-
-  .brand-logo {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .logo-icon-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: $card-glass;
-    backdrop-filter: blur(10px);
-    border: 1px solid $card-border;
-    border-radius: 12px;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 10%),
-      0 4px 12px rgb(0 0 0 / 30%);
-    transition: all 0.3s ease;
+    height: $cover-height;
+    background: linear-gradient(135deg, $bg-cover 0%, $bg-dark 100%);
 
-    &:hover {
-      background: $card-glass-hover;
-      border-color: rgba($blue-start, 0.6);
-      box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 20%),
-        0 4px 20px rgba($blue-start, 0.3);
-    }
-
-    .logo-icon {
-      font-size: 22px;
-      background: $blue-gradient;
-      filter: drop-shadow(0 2px 4px rgba($blue-start, 0.4));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .brand-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: $text-primary;
-    text-shadow: 0 2px 8px rgb(0 0 0 / 30%);
-    letter-spacing: 2px;
-  }
-
-  .brand-subtitle {
-    font-size: 9px;
-    font-weight: 500;
-    color: $text-muted;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-  }
-
-  .liquid-badge {
-    padding: 6px 14px;
-    font-size: 10px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 1.5px;
-    background: $blue-gradient;
-    border-radius: 20px;
-    box-shadow:
-      0 4px 12px rgba($blue-start, 0.4),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
-  }
-
-  // ==================== 图片区域 ====================
-  .card-image-section {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 240px;
-    overflow: hidden;
-    background: radial-gradient(ellipse at center, rgba($blue-start, 0.12) 0%, transparent 60%);
-
-    // 装饰液滴
-    .liquid-drop {
+    .cover-background {
       position: absolute;
-      background: $blue-gradient;
-      filter: blur(20px);
-      border-radius: 50%;
-      opacity: 0.3;
-      animation: liquid-drop 6s ease-in-out infinite;
-
-      &.drop-1 {
-        top: 20px;
-        left: 50%;
-        width: 120px;
-        height: 120px;
-        transform: translateX(-50%);
-      }
-
-      &.drop-2 {
-        right: 60px;
-        bottom: 40px;
-        width: 80px;
-        height: 80px;
-        animation-delay: 2s;
-      }
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 50% 0%,
+        rgba($primary-color, 0.15) 0%,
+        transparent 60%
+      );
     }
 
-    @keyframes liquid-drop {
-      0%,
-      100% {
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-
-      50% {
-        transform: translateX(-50%) translateY(-10px) scale(1.1);
-      }
-    }
-
-    .image-wrapper {
+    .image-container {
       position: relative;
       z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 240px;
-      height: 200px;
-      padding: 8px;
-      background: $card-glass;
-      backdrop-filter: blur(10px);
-      border: 1px solid $card-border;
-      border-radius: 16px;
-      box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 10%),
-        0 8px 32px rgb(0 0 0 / 30%);
+      width: 80%;
+      height: 100%;
+      padding: 20px;
 
       .product-image {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 12px 24px rgb(0 0 0 / 40%));
+        filter: drop-shadow(0 8px 24px rgb(0 0 0 / 30%));
+      }
+    }
+
+    // 等级徽章
+    .grade-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, $grade-a 0%, #059669 100%);
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgb(16 185 129 / 40%);
+
+      &.grade-b {
+        background: linear-gradient(135deg, $grade-b 0%, #2563eb 100%);
+        box-shadow: 0 4px 12px rgb(59 130 246 / 40%);
+      }
+
+      &.grade-c {
+        background: linear-gradient(135deg, $grade-c 0%, #d97706 100%);
+        box-shadow: 0 4px 12px rgb(245 158 11 / 40%);
+      }
+
+      .badge-icon {
+        font-size: 14px;
       }
     }
   }
 
-  // ==================== 信息区域 ====================
-  .card-info-section {
-    flex: 1;
-    padding: 12px 24px;
-    overflow: hidden;
-  }
-
-  .product-title {
-    display: -webkit-box;
-    min-height: 40px;
-    margin: 0 0 8px;
-    overflow: hidden;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.4;
-    color: $text-primary;
-    text-align: center;
-    text-shadow: 0 2px 8px rgb(0 0 0 / 30%);
-    letter-spacing: 0.3px;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  // SKU 标签
-  .product-sku {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
-    justify-content: center;
-    padding: 6px 20px;
-    margin-bottom: 8px;
-    background: rgb(255 255 255 / 3%);
-    backdrop-filter: blur(10px);
-    border: 1px solid $card-border;
-    border-radius: 12px;
-
-    .sku-label {
-      font-size: 10px;
-      font-weight: 500;
-      color: $text-muted;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .sku-value {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: $text-primary;
-      text-shadow: 0 0 20px rgba($blue-start, 0.3);
-      letter-spacing: 1px;
-    }
-  }
-
-  // 参数网格
-  .specs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-
-  .spec-card {
+  // ==================== 内容区域 ====================
+  .card-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    padding: 8px 6px;
-    background: $card-glass;
-    backdrop-filter: blur(10px);
-    border: 1px solid $card-border;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 16px;
+    padding: 20px 24px;
+  }
 
-    &:hover {
-      background: $card-glass-hover;
-      border-color: rgba($blue-start, 0.5);
-      box-shadow:
-        0 8px 32px rgba($blue-start, 0.2),
-        inset 0 1px 0 rgb(255 255 255 / 10%);
-      transform: translateY(-2px);
+  // 产品信息区
+  .card-info-section {
+    text-align: center;
+
+    .product-title {
+      display: -webkit-box;
+      min-height: 48px;
+      margin: 0 0 12px;
+      overflow: hidden;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: $text-primary;
+      letter-spacing: 0.3px;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
-    .spec-icon-wrapper {
-      display: flex;
+    // SKU 标签
+    .product-sku {
+      display: inline-flex;
+      gap: 8px;
       align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, rgba($blue-start, 0.25) 0%, rgba($blue-end, 0.15) 100%);
-      border: 1px solid rgba($blue-start, 0.4);
-      border-radius: 8px;
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+      padding: 8px 16px;
+      background: $bg-stats;
+      border-radius: 12px;
 
-      .spec-icon {
+      .sku-icon {
         font-size: 16px;
-        background: $blue-gradient;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-    }
-
-    .spec-content {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      align-items: center;
-      text-align: center;
-
-      .spec-label {
-        font-size: 9px;
-        font-weight: 500;
-        color: $text-muted;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: $primary-color;
       }
 
-      .spec-value {
+      .sku-label {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 500;
+        color: $text-secondary;
+      }
+
+      .sku-value {
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        font-weight: 700;
         color: $text-primary;
       }
     }
   }
 
-  // ==================== 底部联系方式 ====================
-  .card-footer {
-    position: relative;
+  // 统计数据区（三列）
+  .stats-section {
     display: flex;
-    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 24px;
-    background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 50%) 100%);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid $card-border;
-  }
+    padding: 20px 16px;
+    background: $bg-stats;
+    border-radius: 16px;
 
-  .footer-left {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    .stat-item {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      text-align: center;
 
-    .footer-title {
-      font-size: 10px;
-      font-weight: 600;
-      color: $text-muted;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        font-weight: 400;
+        color: $text-muted;
+      }
     }
 
-    .contact-row {
+    .stat-divider {
+      width: 1px;
+      height: 40px;
+      background: #e2e8f0;
+    }
+  }
+
+  // 产品类型标签
+  .type-section {
+    display: flex;
+    justify-content: center;
+
+    .type-badge {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: $primary-color;
+      background: $primary-light;
+      border-radius: 12px;
+
+      .type-icon {
+        font-size: 16px;
+      }
+    }
+  }
+
+  // ==================== 底部 CTA 区域 ====================
+  .card-footer {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    margin: 0 16px 16px;
+    background: linear-gradient(180deg, $bg-dark 0%, #1e293b 100%);
+    border-radius: 16px;
+
+    .contact-info {
       display: flex;
+      flex: 1;
+      flex-direction: column;
       gap: 10px;
+
+      .contact-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        .contact-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          font-size: 18px;
+          color: #fff;
+          border-radius: 8px;
+
+          &.wechat {
+            color: #07c160;
+            background: rgb(255 255 255 / 10%);
+          }
+
+          &.email {
+            color: #fff;
+            background: rgb(255 255 255 / 10%);
+          }
+        }
+
+        .contact-text {
+          font-size: 13px;
+          color: rgb(255 255 255 / 85%);
+        }
+      }
+    }
+
+    // 二维码区域
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       align-items: center;
 
-      .contact-icon-wrapper {
+      .qr-code {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        background: $card-glass;
-        backdrop-filter: blur(10px);
-        border: 1px solid $card-border;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-
-        &:hover {
-          background: $card-glass-hover;
-          border-color: rgba($blue-start, 0.6);
-          box-shadow: 0 4px 16px rgba($blue-start, 0.3);
-        }
-
-        :deep(svg) {
-          font-size: 16px;
-        }
-
-        &.wechat {
-          :deep(svg) {
-            color: #07c160;
-          }
-        }
-
-        &.email {
-          :deep(svg) {
-            color: $text-primary;
-          }
-        }
-      }
-
-      .contact-text {
-        font-size: 12px;
-        color: $text-secondary;
-        letter-spacing: 0.3px;
-      }
-    }
-  }
-
-  // 二维码区域
-  .qr-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-
-    .qr-code {
-      padding: 4px;
-      background: $blue-gradient;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba($blue-start, 0.4);
-
-      .qr-inner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 64px;
-        height: 64px;
+        width: 56px;
+        height: 56px;
         background: #fff;
-        border-radius: 8px;
-        box-shadow: inset 0 2px 8px rgb(0 0 0 / 10%);
+        border-radius: 12px;
 
         .qr-icon {
-          font-size: 36px;
-          color: $bg-dark-start;
+          font-size: 28px;
+          color: $bg-dark;
         }
       }
-    }
 
-    .qr-label {
-      font-size: 9px;
-      font-weight: 500;
-      color: $text-muted;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      .qr-label {
+        font-size: 10px;
+        font-weight: 500;
+        color: rgb(255 255 255 / 60%);
+        letter-spacing: 0.5px;
+      }
     }
   }
 </style>
