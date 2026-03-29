@@ -306,10 +306,10 @@
   const userInfo = computed(() => {
     const userStore = useUserStore()
     return {
-      avatar: userStore.userInfo.avatar || '@imgs/user/avatar.webp',
-      userName: userStore.userInfo.userName || 'Art Design Pro',
-      email: userStore.userInfo.email || 'info@artdesignpro.com',
-      role: userStore.userInfo.role || '销售经理'
+      avatar: userStore.userInfo?.avatar || '@imgs/user/avatar.webp',
+      userName: userStore.userInfo?.userName || 'Art Design Pro',
+      email: userStore.userInfo?.email || 'info@artdesignpro.com',
+      role: userStore.userInfo?.role || '销售经理'
     }
   })
 
