@@ -28,18 +28,18 @@
       <!-- 统计数据区（三列布局）：产品名称、产品型号、装箱数量 -->
       <div class="stats-section">
         <div class="stat-item">
-          <div class="stat-value">{{ truncateText(product.name, 8) }}</div>
           <div class="stat-label">产品名称</div>
+          <div class="stat-value">{{ truncateText(product.name, 8) }}</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-value">{{ product.sku || '-' }}</div>
           <div class="stat-label">产品型号</div>
+          <div class="stat-value">{{ product.sku || '-' }}</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-value">{{ product.cartonQuantity ?? '-' }}</div>
           <div class="stat-label">装箱数量</div>
+          <div class="stat-value">{{ product.cartonQuantity ?? '-' }}</div>
         </div>
       </div>
 
