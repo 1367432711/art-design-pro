@@ -306,11 +306,7 @@
   const userInfo = computed(() => {
     const userStore = useUserStore()
     return {
-      avatar:
-        userStore.info?.avatar ||
-        'https://ui-avatars.com/api/?name=' +
-          encodeURIComponent(userStore.info?.userName || 'User') +
-          '&background=3b82f6&color=fff&size=256',
+      avatar: '@imgs/user/avatar.webp',
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
       role: userStore.info?.roles?.[0] || '销售经理'
