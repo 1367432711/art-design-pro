@@ -1,11 +1,15 @@
 <!-- 产品分享卡片组件 - 完全参考用户资料卡片设计 -->
 <template>
   <div ref="shareCardRef" class="product-share-card">
-    <!-- 封面图区域（浅蓝白渐变背景） -->
+    <!-- 封面图区域（产品图作为封面背景） -->
     <div class="card-cover-section">
-      <!-- 产品主图（类似头像，圆形，偏移出封面） -->
-      <div class="product-image-wrapper">
-        <ElImage :src="product.image" fit="contain" class="product-image" />
+      <!-- 产品图作为封面背景 -->
+      <div class="cover-product-image">
+        <ElImage :src="product.image" fit="cover" class="cover-image" />
+      </div>
+      <!-- 用户头像（圆形，偏移出封面） -->
+      <div class="user-avatar-wrapper">
+        <ElImage :src="user.avatar" fit="cover" class="user-avatar" />
       </div>
       <!-- 产品等级徽章（类似认证徽章） -->
       <div v-if="product.grade" class="grade-badge" :class="gradeClass">
@@ -16,13 +20,13 @@
 
     <!-- 卡片内容区域 -->
     <div class="card-content">
-      <!-- 产品信息区（类似用户名 + 职位） -->
-      <div class="product-info-section">
-        <div class="product-header">
-          <h2 class="product-name">{{ product.name || '产品名称' }}</h2>
-          <div v-if="product.type" class="type-badge">{{ product.type }}</div>
+      <!-- 用户信息区（类似用户名 + 职位） -->
+      <div class="user-info-section">
+        <div class="user-header">
+          <h2 class="user-name">{{ user.userName || '用户名' }}</h2>
+          <div v-if="user.role" class="role-badge">{{ user.role }}</div>
         </div>
-        <p class="product-spec">{{ product.spec || '规格型号' }}</p>
+        <p class="user-email">{{ user.email || '邮箱' }}</p>
       </div>
 
       <!-- 统计数据区（三列布局）：产品名称、产品型号、装箱数量 -->
@@ -68,8 +72,16 @@
     cartonQuantity?: number
   }
 
+  interface UserInfo {
+    avatar: string
+    userName: string
+    email?: string
+    role?: string
+  }
+
   const props = defineProps<{
     product: ProductInfo
+    user: UserInfo
   }>()
 
   const shareCardRef = ref<HTMLElement>()
@@ -122,7 +134,7 @@
   $card-width: 380px;
   $card-radius: 28px;
   $cover-height: 140px;
-  $image-size: 88px;
+  $avatar-size: 88px;
 
   // ==================== 主卡片 ====================
   .product-share-card {
@@ -134,44 +146,62 @@
     box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   }
 
-  // ==================== 封面图区域 ====================
+  // ==================== 封面图区域（产品图作为封面） ====================
   .card-cover-section {
     position: relative;
     height: $cover-height;
     background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
     border-radius: $card-radius $card-radius 0 0;
 
-    .cover-background {
+    // 产品图作为封面背景
+    .cover-product-image {
       position: absolute;
       inset: 0;
-      background: radial-gradient(
-        ellipse 80% 100% at 80% 0%,
-        rgba($primary-color, 0.15) 0%,
-        transparent 60%
-      );
+      overflow: hidden;
+      border-radius: $card-radius $card-radius 0 0;
+
+      // 添加渐变遮罩，让产品图半透明
+      &::after {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        content: '';
+        background: linear-gradient(
+          to bottom,
+          rgb(255 255 255 / 30%) 0%,
+          rgb(255 255 255 / 60%) 100%
+        );
+      }
+
+      .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
 
-    // 产品主图（类似头像，圆形，向左下偏移）
-    .product-image-wrapper {
+    // 用户头像（圆形，向左下偏移）
+    .user-avatar-wrapper {
       position: absolute;
       bottom: -44px; // 一半图片高度，形成偏移效果
       left: 24px;
-      z-index: 10;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: $image-size;
-      height: $image-size;
-      padding: 12px;
+      width: $avatar-size;
+      height: $avatar-size;
+      padding: 4px;
       background: $bg-white;
       border: 4px solid $bg-white;
       border-radius: 50%;
       box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 
-      .product-image {
+      .user-avatar {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
+        border-radius: 50%;
       }
     }
 
@@ -180,6 +210,7 @@
       position: absolute;
       top: 16px;
       right: 16px;
+      z-index: 20;
       display: flex;
       gap: 6px;
       align-items: center;
@@ -220,16 +251,16 @@
     padding: 52px 24px 24px; // 顶部留出头像空间（88px/2 = 44px + 8px 间距）
   }
 
-  // 产品信息区（类似用户名 + 职位）
-  .product-info-section {
-    .product-header {
+  // 用户信息区（类似用户名 + 职位）
+  .user-info-section {
+    .user-header {
       display: flex;
       gap: 12px;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 8px;
 
-      .product-name {
+      .user-name {
         flex: 1;
         font-size: 22px;
         font-weight: 700;
@@ -237,7 +268,7 @@
         color: $text-primary;
       }
 
-      .type-badge {
+      .role-badge {
         flex-shrink: 0;
         padding: 4px 10px;
         font-size: 11px;
@@ -248,7 +279,7 @@
       }
     }
 
-    .product-spec {
+    .user-email {
       font-size: 14px;
       font-weight: 400;
       line-height: 1.5;

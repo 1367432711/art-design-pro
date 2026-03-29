@@ -180,11 +180,12 @@
       v-model="shareDialogVisible"
       title="分享产品"
       width="420px"
-      :close-on-click-modal="false"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
     >
       <div class="share-dialog-content">
         <!-- 产品卡片预览 - 使用通用分享卡片组件 -->
-        <ProductShareCard ref="shareCardRef" :product="shareProductData" />
+        <ProductShareCard ref="shareCardRef" :product="shareProductData" :user="userInfo" />
 
         <!-- 操作按钮 -->
         <div class="share-actions">
@@ -224,6 +225,7 @@
     ElDialog
   } from 'element-plus'
   import ProductShareCard from '@/components/product-card/product-share-card.vue'
+  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'ProductDetail' })
 
@@ -297,6 +299,17 @@
       type: productData.value.type,
       grade: productData.value.grade,
       cartonQuantity: productData.value.cartonQuantity
+    }
+  })
+
+  // 用户信息
+  const userInfo = computed(() => {
+    const userStore = useUserStore()
+    return {
+      avatar: userStore.userInfo.avatar || '@imgs/user/avatar.webp',
+      userName: userStore.userInfo.userName || 'Art Design Pro',
+      email: userStore.userInfo.email || 'info@artdesignpro.com',
+      role: userStore.userInfo.role || '销售经理'
     }
   })
 
