@@ -184,7 +184,7 @@
     >
       <div class="share-dialog-content">
         <!-- 产品卡片预览 - 使用通用分享卡片组件 -->
-        <ProductShareCard ref="shareCardRef" :product="shareProductData" :contact="contactInfo" />
+        <ProductShareCard ref="shareCardRef" :product="shareProductData" />
 
         <!-- 操作按钮 -->
         <div class="share-actions">
@@ -224,7 +224,6 @@
     ElDialog
   } from 'element-plus'
   import ProductShareCard from '@/components/product-card/product-share-card.vue'
-  import { useProductShare } from '@/hooks/useProductShare'
 
   defineOptions({ name: 'ProductDetail' })
 
@@ -290,29 +289,16 @@
 
   // 分享用产品数据（只包含必要字段）
   const shareProductData = computed(() => {
-    const data = {
+    return {
       image: productData.value.mainImage || '',
       name: productData.value.name || '',
-      sku: productData.value.spec || '',
+      sku: productData.value.sku || productData.value.spec || '',
+      spec: productData.value.spec || '',
       type: productData.value.type,
       grade: productData.value.grade,
-      material: productData.value.material,
-      salePrice: productData.value.salePrice,
-      costPrice: productData.value.costPrice,
-      currency: productData.value.currency,
-      moq: productData.value.moq,
-      unit: productData.value.unit,
       cartonQuantity: productData.value.cartonQuantity
     }
-    console.log('shareProductData:', data)
-    return data
   })
-
-  // 联系信息
-  const contactInfo = computed(() => ({
-    wechat: productData.value.contact || 'artdesignpro',
-    email: productData.value.email || 'info@artdesignpro.com'
-  }))
 
   // 图片列表（用于轮播和预览）
   const imageList = computed(() => {
@@ -336,17 +322,64 @@
     carouselRef.value?.setActiveItem(index)
   }
 
-  // 使用分享 Hook
-  const { downloadCard, copyCard } = useProductShare()
-
-  // 处理下载
+  // 下载产品卡片
   const handleDownloadCard = async () => {
-    await downloadCard(shareCardRef.value?.shareCardRef, productData.value.name)
+    if (!shareCardRef.value?.shareCardRef) return
+
+    try {
+      const html2canvas = (await import('html2canvas')).default
+      const canvas = await html2canvas(shareCardRef.value.shareCardRef, {
+        useCORS: true,
+        backgroundColor: '#fff',
+        scale: 2
+      })
+
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const link = document.createElement('a')
+        link.download = `产品卡片-${productData.value.name}.png`
+        link.href = URL.createObjectURL(blob)
+        link.click()
+        URL.revokeObjectURL(link.href)
+        ElMessage.success('下载成功')
+      })
+    } catch (error) {
+      console.error('生成图片失败:', error)
+      ElMessage.error('生成图片失败，请重试')
+    }
   }
 
-  // 处理复制
+  // 复制到剪贴板
   const handleCopyCard = async () => {
-    await copyCard(shareCardRef.value?.shareCardRef, productData.value.name)
+    if (!shareCardRef.value?.shareCardRef) return
+
+    try {
+      const html2canvas = (await import('html2canvas')).default
+      const canvas = await html2canvas(shareCardRef.value.shareCardRef, {
+        useCORS: true,
+        backgroundColor: '#fff',
+        scale: 2
+      })
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) return
+        try {
+          const item = new ClipboardItem({ 'image/png': blob })
+          await navigator.clipboard.write([item])
+          ElMessage.success('已复制到剪贴板')
+        } catch {
+          ElMessage.warning('浏览器不支持直接复制，已改为下载图片')
+          const link = document.createElement('a')
+          link.download = `产品卡片-${productData.value.name}.png`
+          link.href = URL.createObjectURL(blob)
+          link.click()
+          URL.revokeObjectURL(link.href)
+        }
+      })
+    } catch (error) {
+      console.error('复制失败:', error)
+      ElMessage.error('复制失败，请重试')
+    }
   }
 
   // 加载产品详情

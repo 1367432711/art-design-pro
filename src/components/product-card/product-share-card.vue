@@ -1,10 +1,10 @@
-<!-- 产品分享卡片组件 - 简洁专业风格（参考用户资料卡片设计） -->
+<!-- 产品分享卡片组件 - 完全参考用户资料卡片设计 -->
 <template>
   <div ref="shareCardRef" class="product-share-card">
-    <!-- 产品图片区域（类似封面图） -->
+    <!-- 封面图区域（浅蓝白渐变背景） -->
     <div class="card-cover-section">
-      <div class="cover-background"></div>
-      <div class="image-container">
+      <!-- 产品主图（类似头像，圆形，偏移出封面） -->
+      <div class="product-image-wrapper">
         <ElImage :src="product.image" fit="contain" class="product-image" />
       </div>
       <!-- 产品等级徽章（类似认证徽章） -->
@@ -16,77 +16,45 @@
 
     <!-- 卡片内容区域 -->
     <div class="card-content">
-      <!-- 产品信息 -->
-      <div class="card-info-section">
-        <h2 class="product-title">{{ product.name || '产品名称' }}</h2>
-
-        <!-- 产品 SKU -->
-        <div class="product-sku">
-          <Icon icon="ri:barcode-box-line" class="sku-icon" />
-          <span class="sku-label">型号：</span>
-          <span class="sku-value">{{ product.sku || 'N/A' }}</span>
+      <!-- 产品信息区（类似用户名 + 职位） -->
+      <div class="product-info-section">
+        <div class="product-header">
+          <h2 class="product-name">{{ product.name || '产品名称' }}</h2>
+          <div v-if="product.type" class="type-badge">{{ product.type }}</div>
         </div>
+        <p class="product-spec">{{ product.spec || '规格型号' }}</p>
       </div>
 
-      <!-- 统计数据区（三列布局） -->
+      <!-- 统计数据区（三列布局）：产品名称、产品型号、装箱数量 -->
       <div class="stats-section">
+        <div class="stat-item">
+          <div class="stat-value">{{ truncateText(product.name, 8) }}</div>
+          <div class="stat-label">产品名称</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">{{ product.sku || '-' }}</div>
+          <div class="stat-label">产品型号</div>
+        </div>
+        <div class="stat-divider"></div>
         <div class="stat-item">
           <div class="stat-value">{{ product.cartonQuantity ?? '-' }}</div>
           <div class="stat-label">装箱数量</div>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-value">
-            {{ product.moq !== undefined && product.moq !== null ? product.moq : '-' }}
-          </div>
-          <div class="stat-label">最低起订</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-value">{{ formatPrice(product.salePrice, product.currency) }}</div>
-          <div class="stat-label">参考价格</div>
-        </div>
       </div>
 
-      <!-- 产品类型标签 -->
-      <div v-if="product.type" class="type-section">
-        <div class="type-badge">
-          <Icon icon="ri:price-tag-3-line" class="type-icon" />
-          <span>{{ product.type }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 底部 CTA 区域 -->
-    <div class="card-footer">
-      <div class="contact-info">
-        <div class="contact-row">
-          <div class="contact-icon wechat">
-            <Icon icon="ri:wechat-line" />
-          </div>
-          <span class="contact-text">{{ contact.wechat || 'artdesignpro' }}</span>
-        </div>
-        <div class="contact-row">
-          <div class="contact-icon email">
-            <Icon icon="ri:mail-line" />
-          </div>
-          <span class="contact-text">{{ contact.email || 'info@artdesignpro.com' }}</span>
-        </div>
-      </div>
-      <!-- 二维码 -->
-      <div class="qr-section">
-        <div class="qr-code">
-          <Icon icon="ri:qr-code-line" class="qr-icon" />
-        </div>
-        <span class="qr-label">扫码咨询</span>
-      </div>
+      <!-- CTA 按钮（类似 Get in Touch） -->
+      <ElButton class="cta-button" type="primary" size="large">
+        <Icon icon="ri:wechat-line" class="button-icon" />
+        立即咨询
+      </ElButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
-  import { ElImage } from 'element-plus'
+  import { ElImage, ElButton } from 'element-plus'
 
   defineOptions({ name: 'ProductShareCard' })
 
@@ -97,39 +65,12 @@
     spec?: string
     type?: string
     grade?: string
-    material?: string
-    model?: string
-    salePrice?: number
-    costPrice?: number
-    currency?: string
-    moq?: number
-    unit?: string
     cartonQuantity?: number
-    singleWeight?: string
-    grossWeight?: number
-    netWeight?: number
-    cartonSize?: string
   }
 
-  interface ContactInfo {
-    wechat?: string
-    email?: string
-    phone?: string
-    whatsapp?: string
-  }
-
-  const props = withDefaults(
-    defineProps<{
-      product: ProductInfo
-      contact?: ContactInfo
-    }>(),
-    {
-      contact: () => ({
-        wechat: 'artdesignpro',
-        email: 'info@artdesignpro.com'
-      })
-    }
-  )
+  const props = defineProps<{
+    product: ProductInfo
+  }>()
 
   const shareCardRef = ref<HTMLElement>()
 
@@ -144,17 +85,10 @@
     return gradeClassMap[props.product.grade || ''] || ''
   })
 
-  // 格式化价格
-  const formatPrice = (price: number | undefined, currency: string = 'USD') => {
-    if (price === undefined) return '-'
-    const symbols: Record<string, string> = {
-      USD: '$',
-      EUR: '€',
-      CNY: '¥',
-      GBP: '£'
-    }
-    const symbol = symbols[currency] || currency
-    return `${symbol}${price.toFixed(2)}`
+  // 截断文本
+  const truncateText = (text: string | undefined, maxLength: number) => {
+    if (!text) return '-'
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
   }
 
   // 暴露卡片引用给父组件用于 html2canvas
@@ -164,32 +98,31 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 配色系统 ====================
+  // ==================== 配色系统（参考用户资料卡片） ====================
   // 主色调
   $primary-color: #3b82f6;
   $primary-light: #dbeafe;
   $primary-dark: #1d4ed8;
 
   // 中性色
-  $bg-dark: #0f172a;
-  $bg-cover: #1e293b;
   $bg-white: #fff;
-  $bg-stats: #f8fafc;
+  $bg-stats: #f3f4f6;
+  $bg-button: #1a1a1a;
 
-  $text-primary: #1e293b;
-  $text-secondary: #64748b;
-  $text-muted: #94a3b8;
-  $text-light: #fff;
+  $text-primary: #1a1a1a;
+  $text-secondary: #6b7280;
+  $text-muted: #9ca3af;
 
   // 等级色
   $grade-a: #10b981;
   $grade-b: #3b82f6;
   $grade-c: #f59e0b;
 
-  // 卡片规格
-  $card-width: 400px;
+  // 卡片规格（参考用户资料卡片）
+  $card-width: 380px;
   $card-radius: 28px;
-  $cover-height: 220px;
+  $cover-height: 140px;
+  $image-size: 88px;
 
   // ==================== 主卡片 ====================
   .product-share-card {
@@ -201,44 +134,48 @@
     box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   }
 
-  // ==================== 封面图片区域 ====================
+  // ==================== 封面图区域 ====================
   .card-cover-section {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: $cover-height;
-    background: linear-gradient(135deg, $bg-cover 0%, $bg-dark 100%);
+    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
+    border-radius: $card-radius $card-radius 0 0;
 
     .cover-background {
       position: absolute;
       inset: 0;
       background: radial-gradient(
-        ellipse at 50% 0%,
+        ellipse 80% 100% at 80% 0%,
         rgba($primary-color, 0.15) 0%,
         transparent 60%
       );
     }
 
-    .image-container {
-      position: relative;
+    // 产品主图（类似头像，圆形，向左下偏移）
+    .product-image-wrapper {
+      position: absolute;
+      bottom: -44px; // 一半图片高度，形成偏移效果
+      left: 24px;
       z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 80%;
-      height: 100%;
-      padding: 20px;
+      width: $image-size;
+      height: $image-size;
+      padding: 12px;
+      background: $bg-white;
+      border: 4px solid $bg-white;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 
       .product-image {
-        max-width: 100%;
-        max-height: 100%;
+        width: 100%;
+        height: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 8px 24px rgb(0 0 0 / 30%));
       }
     }
 
-    // 等级徽章
+    // 等级徽章（类似认证徽章）
     .grade-badge {
       position: absolute;
       top: 16px;
@@ -246,22 +183,27 @@
       display: flex;
       gap: 6px;
       align-items: center;
-      padding: 8px 14px;
-      font-size: 12px;
+      padding: 6px 12px;
+      font-size: 11px;
       font-weight: 600;
       color: #fff;
       background: linear-gradient(135deg, $grade-a 0%, #059669 100%);
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgb(16 185 129 / 40%);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgb(16 185 129 / 30%);
+
+      &.grade-a {
+        background: linear-gradient(135deg, $grade-a 0%, #059669 100%);
+        box-shadow: 0 4px 12px rgb(16 185 129 / 30%);
+      }
 
       &.grade-b {
         background: linear-gradient(135deg, $grade-b 0%, #2563eb 100%);
-        box-shadow: 0 4px 12px rgb(59 130 246 / 40%);
+        box-shadow: 0 4px 12px rgb(59 130 246 / 30%);
       }
 
       &.grade-c {
         background: linear-gradient(135deg, $grade-c 0%, #d97706 100%);
-        box-shadow: 0 4px 12px rgb(245 158 11 / 40%);
+        box-shadow: 0 4px 12px rgb(245 158 11 / 30%);
       }
 
       .badge-icon {
@@ -275,54 +217,42 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 20px 24px;
+    padding: 52px 24px 24px; // 顶部留出头像空间（88px/2 = 44px + 8px 间距）
   }
 
-  // 产品信息区
-  .card-info-section {
-    text-align: center;
-
-    .product-title {
-      display: -webkit-box;
-      min-height: 48px;
-      margin: 0 0 12px;
-      overflow: hidden;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.4;
-      color: $text-primary;
-      letter-spacing: 0.3px;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    // SKU 标签
-    .product-sku {
-      display: inline-flex;
-      gap: 8px;
+  // 产品信息区（类似用户名 + 职位）
+  .product-info-section {
+    .product-header {
+      display: flex;
+      gap: 12px;
       align-items: center;
-      padding: 8px 16px;
-      background: $bg-stats;
-      border-radius: 12px;
+      justify-content: space-between;
+      margin-bottom: 8px;
 
-      .sku-icon {
-        font-size: 16px;
-        color: $primary-color;
-      }
-
-      .sku-label {
-        font-size: 12px;
-        font-weight: 500;
-        color: $text-secondary;
-      }
-
-      .sku-value {
-        font-family: 'Courier New', monospace;
-        font-size: 14px;
+      .product-name {
+        flex: 1;
+        font-size: 22px;
         font-weight: 700;
+        line-height: 1.3;
         color: $text-primary;
       }
+
+      .type-badge {
+        flex-shrink: 0;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: $primary-color;
+        background: $primary-light;
+        border-radius: 12px;
+      }
+    }
+
+    .product-spec {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: $text-secondary;
     }
   }
 
@@ -359,110 +289,33 @@
     .stat-divider {
       width: 1px;
       height: 40px;
-      background: #e2e8f0;
+      background: #e5e7eb;
     }
   }
 
-  // 产品类型标签
-  .type-section {
+  // CTA 按钮（类似 Get in Touch）
+  .cta-button {
     display: flex;
-    justify-content: center;
-
-    .type-badge {
-      display: inline-flex;
-      gap: 6px;
-      align-items: center;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: $primary-color;
-      background: $primary-light;
-      border-radius: 12px;
-
-      .type-icon {
-        font-size: 16px;
-      }
-    }
-  }
-
-  // ==================== 底部 CTA 区域 ====================
-  .card-footer {
-    display: flex;
-    gap: 16px;
+    gap: 8px;
     align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    margin: 0 16px 16px;
-    background: linear-gradient(180deg, $bg-dark 0%, #1e293b 100%);
-    border-radius: 16px;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background: $bg-button !important;
+    border: none !important;
+    border-radius: 18px;
+    transition: all 0.2s ease;
 
-    .contact-info {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 10px;
-
-      .contact-row {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-
-        .contact-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          font-size: 18px;
-          color: #fff;
-          border-radius: 8px;
-
-          &.wechat {
-            color: #07c160;
-            background: rgb(255 255 255 / 10%);
-          }
-
-          &.email {
-            color: #fff;
-            background: rgb(255 255 255 / 10%);
-          }
-        }
-
-        .contact-text {
-          font-size: 13px;
-          color: rgb(255 255 255 / 85%);
-        }
-      }
+    &:hover {
+      box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+      transform: translateY(-2px);
     }
 
-    // 二维码区域
-    .qr-section {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      align-items: center;
-
-      .qr-code {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        background: #fff;
-        border-radius: 12px;
-
-        .qr-icon {
-          font-size: 28px;
-          color: $bg-dark;
-        }
-      }
-
-      .qr-label {
-        font-size: 10px;
-        font-weight: 500;
-        color: rgb(255 255 255 / 60%);
-        letter-spacing: 0.5px;
-      }
+    .button-icon {
+      font-size: 18px;
     }
   }
 </style>
