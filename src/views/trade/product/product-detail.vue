@@ -348,22 +348,23 @@
     if (!shareCardRef.value?.shareCardRef) return
 
     try {
-      const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(shareCardRef.value.shareCardRef, {
-        useCORS: true,
-        backgroundColor: '#fff',
-        scale: 2
+      const { toPng } = await import('html-to-image')
+      const dataUrl = await toPng(shareCardRef.value.shareCardRef, {
+        backgroundColor: 'transparent',
+        scale: window.devicePixelRatio || 2,
+        cacheBust: true,
+        pixelRatio: window.devicePixelRatio || 2,
+        // 等待所有图片加载
+        fetchRequestInit: {
+          mode: 'cors'
+        }
       })
 
-      canvas.toBlob((blob) => {
-        if (!blob) return
-        const link = document.createElement('a')
-        link.download = `产品卡片-${productData.value.name}.png`
-        link.href = URL.createObjectURL(blob)
-        link.click()
-        URL.revokeObjectURL(link.href)
-        ElMessage.success('下载成功')
-      })
+      const link = document.createElement('a')
+      link.download = `产品卡片-${productData.value.name}.png`
+      link.href = dataUrl
+      link.click()
+      ElMessage.success('下载成功')
     } catch (error) {
       console.error('生成图片失败:', error)
       ElMessage.error('生成图片失败，请重试')
@@ -375,15 +376,18 @@
     if (!shareCardRef.value?.shareCardRef) return
 
     try {
-      const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(shareCardRef.value.shareCardRef, {
-        useCORS: true,
-        backgroundColor: '#fff',
-        scale: 2
+      const { toBlob } = await import('html-to-image')
+      const blob = await toBlob(shareCardRef.value.shareCardRef, {
+        backgroundColor: 'transparent',
+        scale: window.devicePixelRatio || 2,
+        cacheBust: true,
+        pixelRatio: window.devicePixelRatio || 2,
+        fetchRequestInit: {
+          mode: 'cors'
+        }
       })
 
-      canvas.toBlob(async (blob) => {
-        if (!blob) return
+      if (blob) {
         try {
           const item = new ClipboardItem({ 'image/png': blob })
           await navigator.clipboard.write([item])
@@ -394,9 +398,8 @@
           link.download = `产品卡片-${productData.value.name}.png`
           link.href = URL.createObjectURL(blob)
           link.click()
-          URL.revokeObjectURL(link.href)
         }
-      })
+      }
     } catch (error) {
       console.error('复制失败:', error)
       ElMessage.error('复制失败，请重试')

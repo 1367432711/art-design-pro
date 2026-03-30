@@ -226,8 +226,8 @@
       width: $avatar-size;
       height: $avatar-size;
       padding: 4px;
-      background: #fff;
-      border: 4px solid #fff;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 30%);
       border-radius: 50%;
       box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 

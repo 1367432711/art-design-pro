@@ -137,6 +137,9 @@ importers:
       globals:
         specifier: ^15.9.0
         version: 15.15.0
+      html-to-image:
+        specifier: ^1.11.13
+        version: 1.11.13
       husky:
         specifier: ^9.1.5
         version: 9.1.7
@@ -3870,6 +3873,12 @@ packages:
         integrity: sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ==
       }
     engines: { node: '>=8' }
+
+  html-to-image@1.11.13:
+    resolution:
+      {
+        integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==
+      }
 
   html-void-elements@2.0.1:
     resolution:
@@ -8864,6 +8873,8 @@ snapshots:
   hookified@1.12.1: {}
 
   html-tags@3.3.1: {}
+
+  html-to-image@1.11.13: {}
 
   html-void-elements@2.0.1: {}
 
