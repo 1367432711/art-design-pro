@@ -200,8 +200,9 @@
           {
             prop: 'operation',
             label: '操作',
-            width: 220,
+            width: 150,
             fixed: 'right',
+            align: 'left',
             formatter: (row: ProductListItem) =>
               h('div', [
                 h(ArtButtonTable, {
