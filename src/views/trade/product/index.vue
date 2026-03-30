@@ -200,7 +200,7 @@
           {
             prop: 'operation',
             label: '操作',
-            width: 150,
+            width: 180,
             fixed: 'right',
             align: 'left',
             formatter: (row: ProductListItem) =>
