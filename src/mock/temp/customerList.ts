@@ -7,7 +7,7 @@ import {
   updateCustomer,
   deleteCustomer,
   getCustomerById,
-  getQuotationCountByCustomerId
+  getQuotationCountByCustomerId as getQuotationCountByCustomer
 } from '@/utils/storage/db'
 import customerData from '@/mock/data/customerList.json'
 
@@ -76,7 +76,7 @@ export function getCustomerListData(
   const endIndex = startIndex + size
   const records = filteredData.slice(startIndex, endIndex).map((item) => ({
     ...item,
-    quotationCount: getQuotationCountByCustomerId(item.id)
+    quotationCount: getQuotationCountByCustomer(item.id)
   }))
 
   return {

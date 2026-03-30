@@ -4,16 +4,16 @@ import {
   getQuotationListData,
   getQuotationCountByCustomer,
   getQuotationDetailById,
-  createQuotation,
-  updateQuotation,
-  deleteQuotation
+  createQuotationData as createQuotation,
+  updateQuotationData as updateQuotation,
+  deleteQuotationData as deleteQuotation
 } from '@/mock/temp/quotationList'
 import {
   getProductListData,
   getProductDetailById,
-  createProduct,
-  updateProduct,
-  deleteProduct
+  createProductData as createProduct,
+  updateProductData as updateProduct,
+  deleteProductData as deleteProduct
 } from '@/mock/temp/productList'
 
 // ==================== 客户管理 ====================
