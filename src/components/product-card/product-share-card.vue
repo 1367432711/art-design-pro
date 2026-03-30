@@ -169,26 +169,16 @@
     position: relative;
     width: $card-width;
     overflow: hidden;
-    background: linear-gradient(
-      135deg,
-      rgb(15 23 42 / 90%) 0%,
-      rgb(30 41 59 / 85%) 50%,
-      rgb(51 65 85 / 80%) 100%
-    );
-    backdrop-filter: blur(40px);
-    border: 1px solid $border-light;
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
     border-radius: $card-radius;
-    box-shadow:
-      0 8px 32px rgb(0 0 0 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 10%);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
   }
 
   // ==================== 封面图区域（产品图作为封面） ====================
   .card-cover-section {
     position: relative;
     height: $cover-height;
-    background: linear-gradient(135deg, rgb(30 41 59 / 50%) 0%, rgb(51 65 85 / 30%) 100%);
-    border-bottom: 1px solid $border-light;
+    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
     border-radius: $card-radius $card-radius 0 0;
 
     // 产品图作为封面背景
@@ -204,7 +194,11 @@
         inset: 0;
         z-index: 1;
         content: '';
-        background: linear-gradient(to bottom, rgb(15 23 42 / 20%) 0%, rgb(15 23 42 / 60%) 100%);
+        background: linear-gradient(
+          to bottom,
+          rgb(255 255 255 / 30%) 0%,
+          rgb(255 255 255 / 60%) 100%
+        );
       }
 
       .cover-image {
@@ -226,12 +220,10 @@
       width: $avatar-size;
       height: $avatar-size;
       padding: 4px;
-      background: linear-gradient(135deg, rgb(30 41 59 / 90%), rgb(51 65 85 / 90%));
-      border: 4px solid rgb(30 41 59 / 80%);
+      background: #fff;
+      border: 4px solid #fff;
       border-radius: 50%;
-      box-shadow:
-        0 4px 12px rgb(0 0 0 / 30%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 
       .user-avatar {
         width: 100%;
@@ -300,21 +292,22 @@
       gap: 12px;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
 
       .user-name {
         flex: 1;
-        font-size: 22px;
-        font-weight: 700;
-        line-height: 1.3;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.4;
         color: $text-primary;
+        letter-spacing: 0.3px;
       }
 
       .role-badge {
         flex-shrink: 0;
-        padding: 4px 10px;
-        font-size: 11px;
-        font-weight: 600;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 500;
         color: #93c5fd;
         background: rgb(59 130 246 / 15%);
         border: 1px solid rgb(59 130 246 / 30%);
@@ -323,10 +316,11 @@
     }
 
     .user-email {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.6;
       color: $text-secondary;
+      letter-spacing: 0.2px;
     }
   }
 
@@ -335,9 +329,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 16px;
+    padding: 18px 16px;
     background: rgb(255 255 255 / 5%);
-    backdrop-filter: blur(16px) saturate(180%);
     border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
@@ -348,20 +341,23 @@
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       align-items: center;
       text-align: center;
 
       .stat-value {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
         color: $text-primary;
+        letter-spacing: 0.3px;
       }
 
       .stat-label {
         font-size: 11px;
         font-weight: 400;
         color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
     }
 
@@ -380,7 +376,6 @@
     justify-content: space-between;
     padding: 16px;
     background: rgb(255 255 255 / 5%);
-    backdrop-filter: blur(16px) saturate(180%);
     border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
@@ -394,10 +389,12 @@
       gap: 8px;
 
       .contact-label {
-        margin-bottom: 4px;
-        font-size: 12px;
+        margin-bottom: 6px;
+        font-size: 11px;
         font-weight: 500;
         color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
       }
 
       .contact-item {
@@ -405,7 +402,9 @@
         gap: 8px;
         align-items: center;
         font-size: 13px;
+        font-weight: 400;
         color: $text-primary;
+        letter-spacing: 0.2px;
 
         .contact-icon {
           font-size: 16px;
@@ -417,20 +416,22 @@
     .qr-code-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
 
       .qr-code-image {
         width: 80px;
         height: 80px;
-        border: 2px solid rgb(59 130 246 / 50%);
+        border: 2px solid rgb(255 255 255);
         border-radius: 8px;
         box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
       }
 
       .qr-code-label {
         font-size: 11px;
+        font-weight: 400;
         color: $text-muted;
+        letter-spacing: 0.5px;
       }
     }
   }
