@@ -314,7 +314,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 16px;
-    background: $bg-stats;
+    background: rgb(255 255 255 / 70%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(229 231 235 / 50%);
     border-radius: 16px;
 
     .stat-item {
@@ -326,13 +328,13 @@
       text-align: center;
 
       .stat-value {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 600;
         color: $text-primary;
       }
 
       .stat-label {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 400;
         color: $text-muted;
       }
@@ -341,7 +343,7 @@
     .stat-divider {
       width: 1px;
       height: 40px;
-      background: #e5e7eb;
+      background: linear-gradient(to bottom, transparent, rgb(229 231 235 / 80%), transparent);
     }
   }
 
@@ -352,7 +354,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    background: $bg-stats;
+    background: rgb(255 255 255 / 70%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(229 231 235 / 50%);
     border-radius: 16px;
 
     .contact-info {
@@ -391,7 +395,7 @@
       .qr-code-image {
         width: 80px;
         height: 80px;
-        border: 2px solid $primary-light;
+        border: 2px solid rgb(59 130 246 / 30%);
         border-radius: 8px;
       }
 
