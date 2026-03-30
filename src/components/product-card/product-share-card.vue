@@ -131,29 +131,31 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 配色系统（参考用户资料卡片） ====================
-  // 主色调
+  // ==================== 深色毛玻璃配色系统（参考深色财务卡片） ====================
+  // 深色背景渐变
+  $bg-dark-outer: rgb(15 23 42 / 80%);
+  $bg-dark-inner: rgb(30 41 59 / 60%);
+  $bg-card: rgb(255 255 255 / 5%);
+  $bg-card-hover: rgb(255 255 255 / 8%);
+
+  // 边框色 - 白色半透明
+  $border-light: rgb(255 255 255 / 10%);
+  $border-lighter: rgb(255 255 255 / 15%);
+  $border-bright: rgb(255 255 255 / 20%);
+
+  // 文字色
+  $text-primary: #fff;
+  $text-secondary: #94a3b8;
+  $text-muted: #64748b;
+  $text-accent: #10b981;
+
+  // 蓝色强调
   $primary-color: #3b82f6;
-  $primary-light: #dbeafe;
-  $primary-dark: #1d4ed8;
+  $primary-glow: rgb(59 130 246 / 40%);
 
-  // 中性色
-  $bg-white: #fff;
-  $bg-stats: #f3f4f6;
-  $bg-button: #1a1a1a;
-
-  $text-primary: #1a1a1a;
-  $text-secondary: #6b7280;
-  $text-muted: #9ca3af;
-
-  // 等级色
-  $grade-a: #10b981;
-  $grade-b: #3b82f6;
-  $grade-c: #f59e0b;
-
-  // 卡片规格（参考用户资料卡片）
+  // 卡片规格
   $card-width: 380px;
-  $card-radius: 16px;
+  $card-radius: 20px;
   $cover-height: 200px;
   $avatar-size: 88px;
 
@@ -162,16 +164,26 @@
     position: relative;
     width: $card-width;
     overflow: hidden;
-    background: $bg-white;
+    background: linear-gradient(
+      135deg,
+      rgb(15 23 42 / 90%) 0%,
+      rgb(30 41 59 / 85%) 50%,
+      rgb(51 65 85 / 80%) 100%
+    );
+    backdrop-filter: blur(40px);
+    border: 1px solid $border-light;
     border-radius: $card-radius;
-    box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
+    box-shadow:
+      0 8px 32px rgb(0 0 0 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 10%);
   }
 
   // ==================== 封面图区域（产品图作为封面） ====================
   .card-cover-section {
     position: relative;
     height: $cover-height;
-    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
+    background: linear-gradient(135deg, rgb(30 41 59 / 50%) 0%, rgb(51 65 85 / 30%) 100%);
+    border-bottom: 1px solid $border-light;
     border-radius: $card-radius $card-radius 0 0;
 
     // 产品图作为封面背景
@@ -187,11 +199,7 @@
         inset: 0;
         z-index: 1;
         content: '';
-        background: linear-gradient(
-          to bottom,
-          rgb(255 255 255 / 30%) 0%,
-          rgb(255 255 255 / 60%) 100%
-        );
+        background: linear-gradient(to bottom, rgb(15 23 42 / 20%) 0%, rgb(15 23 42 / 60%) 100%);
       }
 
       .cover-image {
@@ -204,7 +212,7 @@
     // 用户头像（圆形，向左下偏移）
     .user-avatar-wrapper {
       position: absolute;
-      bottom: -44px; // 一半图片高度，形成偏移效果
+      bottom: -44px;
       left: 24px;
       z-index: 20;
       display: flex;
@@ -213,10 +221,12 @@
       width: $avatar-size;
       height: $avatar-size;
       padding: 4px;
-      background: $bg-white;
-      border: 4px solid $bg-white;
+      background: linear-gradient(135deg, rgb(30 41 59 / 90%), rgb(51 65 85 / 90%));
+      border: 4px solid rgb(30 41 59 / 80%);
       border-radius: 50%;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+      box-shadow:
+        0 4px 12px rgb(0 0 0 / 30%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
 
       .user-avatar {
         width: 100%;
@@ -274,6 +284,12 @@
 
   // 用户信息区（类似用户名 + 职位）
   .user-info-section {
+    padding: 16px;
+    background: rgb(255 255 255 / 3%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(255 255 255 / 8%);
+    border-radius: 16px;
+
     .user-header {
       display: flex;
       gap: 12px;
@@ -294,8 +310,9 @@
         padding: 4px 10px;
         font-size: 11px;
         font-weight: 600;
-        color: $primary-color;
-        background: $primary-light;
+        color: #93c5fd;
+        background: rgb(59 130 246 / 15%);
+        border: 1px solid rgb(59 130 246 / 30%);
         border-radius: 12px;
       }
     }
@@ -314,13 +331,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 16px;
-    background: rgb(255 255 255 / 50%);
+    background: rgb(255 255 255 / 5%);
     backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgb(255 255 255 / 60%);
+    border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 80%),
-      0 4px 12px rgb(0 0 0 / 4%);
+      inset 0 1px 0 rgb(255 255 255 / 10%),
+      0 4px 12px rgb(0 0 0 / 20%);
 
     .stat-item {
       display: flex;
@@ -339,14 +356,14 @@
       .stat-label {
         font-size: 11px;
         font-weight: 400;
-        color: $text-muted;
+        color: $text-secondary;
       }
     }
 
     .stat-divider {
       width: 1px;
       height: 40px;
-      background: linear-gradient(to bottom, transparent, rgb(200 210 220 / 60%), transparent);
+      background: linear-gradient(to bottom, transparent, rgb(255 255 255 / 15%), transparent);
     }
   }
 
@@ -357,13 +374,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    background: rgb(255 255 255 / 50%);
+    background: rgb(255 255 255 / 5%);
     backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgb(255 255 255 / 60%);
+    border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 80%),
-      0 4px 12px rgb(0 0 0 / 4%);
+      inset 0 1px 0 rgb(255 255 255 / 10%),
+      0 4px 12px rgb(0 0 0 / 20%);
 
     .contact-info {
       display: flex;
@@ -401,9 +418,9 @@
       .qr-code-image {
         width: 80px;
         height: 80px;
-        border: 2px solid rgb(59 130 246 / 40%);
+        border: 2px solid rgb(59 130 246 / 50%);
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
       }
 
       .qr-code-label {
