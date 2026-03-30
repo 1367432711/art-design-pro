@@ -149,6 +149,11 @@
   $text-muted: #64748b;
   $text-accent: #10b981;
 
+  // 等级色
+  $grade-a: #10b981;
+  $grade-b: #3b82f6;
+  $grade-c: #f59e0b;
+
   // 蓝色强调
   $primary-color: #3b82f6;
   $primary-glow: rgb(59 130 246 / 40%);
