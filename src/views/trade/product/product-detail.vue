@@ -462,6 +462,7 @@
 
 <style lang="scss" scoped>
   .product-detail-page {
+    padding: 20px;
     padding-bottom: 20px;
 
     .card-header {
@@ -552,6 +553,152 @@
         gap: 12px;
         justify-content: center;
         margin-top: 16px;
+      }
+    }
+
+    // ==================== 移动端适配 ====================
+
+    // 平板及以下（768px）
+    @media screen and (width <= 768px) {
+      padding: 12px;
+
+      // 头部操作区
+      .mb-3 {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start !important;
+
+        h2 {
+          font-size: 18px !important;
+        }
+
+        .el-space {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+      }
+
+      // 布局调整为单列
+      .el-row {
+        .el-col {
+          flex: 0 0 100% !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+      }
+
+      // 卡片内边距缩小
+      .art-card {
+        :deep(.el-card__header) {
+          padding: 12px 16px;
+        }
+
+        :deep(.el-card__body) {
+          padding: 16px;
+        }
+      }
+
+      // 产品图片高度调整
+      .product-image-section {
+        .main-image-wrapper {
+          .image-carousel,
+          .main-image {
+            height: 240px !important;
+          }
+        }
+
+        .image-thumbnails {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 6px;
+
+          .image-thumbnail {
+            height: 50px;
+          }
+        }
+      }
+
+      // 描述列表优化
+      .el-descriptions {
+        :deep(.el-descriptions__label) {
+          padding: 10px 8px !important;
+          font-size: 13px;
+        }
+
+        :deep(.el-descriptions__content) {
+          padding: 10px 8px !important;
+          font-size: 13px;
+        }
+      }
+
+      // 分享弹窗适配
+      .share-dialog-content {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+    }
+
+    // 小屏手机（480px）
+    @media screen and (width <= 480px) {
+      padding: 8px;
+
+      // 头部操作区进一步压缩
+      .mb-3 {
+        h2 {
+          font-size: 16px !important;
+        }
+
+        .el-button {
+          padding: 8px 12px;
+          font-size: 13px;
+          white-space: nowrap;
+        }
+      }
+
+      // 卡片内边距进一步缩小
+      .art-card {
+        :deep(.el-card__header) {
+          padding: 10px 12px;
+        }
+
+        :deep(.el-card__body) {
+          padding: 12px;
+        }
+      }
+
+      // 产品图片更小
+      .product-image-section {
+        .main-image-wrapper {
+          .image-carousel,
+          .main-image {
+            height: 200px !important;
+          }
+        }
+
+        .image-thumbnails {
+          .image-thumbnail {
+            height: 44px;
+          }
+        }
+      }
+
+      // 描述列表字体缩小
+      .el-descriptions {
+        :deep(.el-descriptions__label) {
+          padding: 8px 6px !important;
+          font-size: 12px;
+        }
+
+        :deep(.el-descriptions__content) {
+          padding: 8px 6px !important;
+          font-size: 12px;
+        }
+      }
+
+      // 分享卡片缩放
+      .share-dialog-content {
+        transform: scale(0.9);
+        transform-origin: top center;
       }
     }
   }

@@ -229,6 +229,156 @@ html.dark .el-card {
   .el-picker-panel__sidebar + .el-picker-panel__body {
     margin-left: 0;
   }
+
+  // 表格横向滚动
+  .el-table {
+    font-size: 13px;
+
+    .el-table__header th {
+      padding: 8px 4px;
+      font-size: 13px;
+    }
+
+    .el-table__body td {
+      padding: 10px 4px;
+    }
+
+    // 固定列调整
+    .el-table__fixed,
+    .el-table__fixed-right {
+      box-shadow: none !important;
+    }
+  }
+
+  // 卡片内边距缩小
+  .el-card {
+    .el-card__header {
+      padding: 12px 16px !important;
+    }
+
+    .el-card__body {
+      padding: 16px !important;
+    }
+  }
+
+  // 表单元素调整
+  .el-form-item__label {
+    font-size: 13px !important;
+  }
+
+  .el-input__inner,
+  .el-textarea__inner {
+    font-size: 13px;
+  }
+
+  // 描述列表优化
+  .el-descriptions {
+    .el-descriptions__label,
+    .el-descriptions__content {
+      font-size: 13px;
+      padding: 10px 8px !important;
+    }
+  }
+
+  // 按钮调整
+  .el-button {
+    padding: 10px 16px;
+    font-size: 14px;
+
+    &.is-circle {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  // Tag 标签缩小
+  .el-tag {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  // 分页调整
+  .el-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+
+    .el-pagination__total {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+  }
+
+  // 选择器下拉框优化
+  .el-select__popper,
+  .el-dropdown__popper {
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+// 小屏手机（480px）
+@media screen and (max-width: 480px) {
+  .el-dialog {
+    width: calc(100% - 16px) !important;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  .el-message-box {
+    width: calc(100% - 16px) !important;
+  }
+
+  // 表格字体进一步缩小
+  .el-table {
+    font-size: 12px;
+
+    .el-table__header th {
+      padding: 6px 2px;
+      font-size: 12px;
+    }
+
+    .el-table__body td {
+      padding: 8px 2px;
+    }
+  }
+
+  // 卡片内边距进一步缩小
+  .el-card {
+    .el-card__header {
+      padding: 10px 12px !important;
+    }
+
+    .el-card__body {
+      padding: 12px !important;
+    }
+  }
+
+  // 按钮全宽
+  .el-button--default {
+    width: 100%;
+    margin-bottom: 8px;
+
+    + .el-button {
+      margin-left: 0;
+    }
+  }
+
+  // 描述列表字体缩小
+  .el-descriptions {
+    .el-descriptions__label,
+    .el-descriptions__content {
+      font-size: 12px;
+      padding: 8px 6px !important;
+    }
+  }
+
+  // 分页进一步优化
+  .el-pagination {
+    .el-pagination__sizes {
+      display: none;
+    }
+  }
 }
 
 // 修改el-button样式

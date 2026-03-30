@@ -279,3 +279,96 @@
     refreshData()
   })
 </script>
+
+<style lang="scss" scoped>
+  .product-page {
+    padding: 20px;
+
+    // 移动端适配
+    @media screen and (width <= 768px) {
+      padding: 12px;
+
+      .art-table-card {
+        :deep(.el-card__body) {
+          padding: 12px;
+        }
+
+        // 表格横向滚动
+        .el-table {
+          font-size: 13px;
+
+          .el-table__header {
+            th {
+              padding: 8px 4px;
+              font-size: 13px;
+            }
+          }
+
+          .el-table__body {
+            td {
+              padding: 10px 4px;
+            }
+          }
+        }
+
+        // 按钮换行、缩小
+        .el-button {
+          padding: 8px 12px;
+          font-size: 13px;
+
+          + .el-button {
+            margin-top: 8px;
+            margin-left: 0;
+          }
+        }
+      }
+    }
+
+    // 小屏手机（< 480px）
+    @media screen and (width <= 480px) {
+      padding: 8px;
+
+      .art-table-card {
+        :deep(.el-card__body) {
+          padding: 8px;
+        }
+
+        // 表格字体进一步缩小
+        .el-table {
+          font-size: 12px;
+
+          .el-table__header {
+            th {
+              padding: 6px 2px;
+              font-size: 12px;
+            }
+          }
+
+          .el-table__body {
+            td {
+              padding: 8px 2px;
+            }
+          }
+
+          // 图片缩小
+          .el-image {
+            width: 40px !important;
+            height: 40px !important;
+          }
+        }
+
+        // 按钮全宽、堆叠
+        .el-button {
+          width: 100%;
+          padding: 10px 16px;
+          font-size: 14px;
+
+          + .el-button {
+            margin-top: 6px;
+            margin-left: 0;
+          }
+        }
+      }
+    }
+  }
+</style>

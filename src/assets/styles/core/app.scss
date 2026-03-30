@@ -187,6 +187,15 @@
     height: 100%;
     overflow: hidden;
   }
+
+  // 移动端适配
+  @media screen and (max-width: 768px) {
+    margin-top: 8px;
+
+    .el-card__body {
+      overflow-x: auto; // 允许横向滚动
+    }
+  }
 }
 
 // 容器全高
