@@ -38,7 +38,7 @@
         <div class="stat-divider"></div>
         <div class="stat-item">
           <div class="stat-label">产品型号</div>
-          <div class="stat-value">{{ product.sku || '-' }}</div>
+          <div class="stat-value">{{ product.spec || '-' }}</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -47,26 +47,32 @@
         </div>
       </div>
 
-      <!-- 联系信息区：左侧联系方式，右侧微信二维码 -->
+      <!-- 联系信息区 -->
       <div class="contact-section">
-        <div class="contact-info">
+        <!-- 上方：联系方式标签 -->
+        <div class="contact-label-wrapper">
           <div class="contact-label">联系方式</div>
-          <div class="contact-item">
-            <Icon icon="ri:wechat-line" class="contact-icon" />
-            <span>{{ user.wechat || '微信：请添加' }}</span>
-          </div>
-          <div v-if="user.phone" class="contact-item">
-            <Icon icon="ri:phone-line" class="contact-icon" />
-            <span>{{ user.phone }}</span>
-          </div>
-          <div v-if="user.facebook" class="contact-item">
-            <Icon icon="ri:facebook-line" class="contact-icon" />
-            <span>{{ user.facebook }}</span>
-          </div>
         </div>
-        <div class="qr-code-wrapper">
-          <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" />
-          <div class="qr-code-label">扫一扫加微信</div>
+        <!-- 下方：左侧联系信息，右侧二维码 -->
+        <div class="contact-content">
+          <div class="contact-info">
+            <div class="contact-item">
+              <Icon icon="ri:wechat-line" class="contact-icon" />
+              <span>{{ user.wechat || '微信：请添加' }}</span>
+            </div>
+            <div v-if="user.phone" class="contact-item">
+              <Icon icon="ri:phone-line" class="contact-icon" />
+              <span>{{ user.phone }}</span>
+            </div>
+            <div v-if="user.facebook" class="contact-item">
+              <Icon icon="ri:facebook-line" class="contact-icon" />
+              <span>{{ user.facebook }}</span>
+            </div>
+          </div>
+          <div class="qr-code-wrapper">
+            <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" />
+            <div class="qr-code-label">扫一扫加微信</div>
+          </div>
         </div>
       </div>
     </div>
@@ -370,12 +376,11 @@
     }
   }
 
-  // 联系信息区：左侧联系方式，右侧微信二维码
+  // 联系信息区
   .contact-section {
     display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 12px;
     padding: 16px;
     background: rgb(255 255 255 / 5%);
     border: 1px solid rgb(255 255 255 / 12%);
@@ -384,56 +389,72 @@
       inset 0 1px 0 rgb(255 255 255 / 58%),
       0 4px 12px rgb(0 0 0 / 7%);
 
-    .contact-info {
+    // 标签区域
+    .contact-label-wrapper {
       display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 8px;
+      align-items: center;
 
       .contact-label {
-        margin-bottom: 6px;
         font-size: 12px;
         font-weight: 600;
         color: $text-primary;
         text-transform: uppercase;
         letter-spacing: 0.8px;
       }
-
-      .contact-item {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        font-size: 12px;
-        font-weight: 400;
-        color: $text-secondary;
-        letter-spacing: 0.2px;
-
-        .contact-icon {
-          font-size: 16px;
-          color: $primary-color;
-        }
-      }
     }
 
-    .qr-code-wrapper {
+    // 内容区域（左侧信息 + 右侧二维码）
+    .contact-content {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
+      gap: 16px;
+      align-items: stretch; // 让左右两侧高度一致
 
-      .qr-code-image {
-        width: 80px;
-        height: 80px;
-        border: 2px solid rgb(255 255 255);
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+      // 左侧联系信息
+      .contact-info {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 8px;
+        justify-content: space-around;
+
+        .contact-item {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          font-size: 12px;
+          font-weight: 400;
+          color: $text-secondary;
+          letter-spacing: 0.2px;
+
+          .contact-icon {
+            font-size: 16px;
+            color: $primary-color;
+          }
+        }
       }
 
-      .qr-code-label {
-        font-size: 11px;
-        font-weight: 400;
-        color: $text-muted;
-        letter-spacing: 0.5px;
+      // 右侧二维码
+      .qr-code-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        justify-content: center; // 垂直居中
+
+        .qr-code-image {
+          width: 80px;
+          height: 80px;
+          border: 2px solid rgb(255 255 255);
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+        }
+
+        .qr-code-label {
+          font-size: 11px;
+          font-weight: 400;
+          color: $text-muted;
+          letter-spacing: 0.5px;
+        }
       }
     }
   }
