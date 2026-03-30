@@ -26,13 +26,13 @@ export default ({ mode }: { mode: string }) => {
     base: VITE_BASE_URL,
     server: {
       port: Number(VITE_PORT),
+      host: '0.0.0.0',
       proxy: {
         '/api': {
           target: VITE_API_PROXY_URL,
           changeOrigin: true
         }
-      },
-      host: true
+      }
     },
     // 路径别名
     resolve: {
