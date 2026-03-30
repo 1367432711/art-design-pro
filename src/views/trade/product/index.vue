@@ -291,10 +291,12 @@
       .art-table-card {
         :deep(.el-card__body) {
           padding: 12px;
+          overflow-x: auto; // 允许横向滚动
         }
 
         // 表格横向滚动
         .el-table {
+          min-width: 1000px; // 保证表格最小宽度，触发横向滚动
           font-size: 13px;
 
           .el-table__header {
@@ -308,6 +310,13 @@
             td {
               padding: 10px 4px;
             }
+          }
+
+          // 移动端取消固定列，让它正常滚动
+          .el-table__fixed,
+          .el-table__fixed-right {
+            position: static !important;
+            box-shadow: none !important;
           }
         }
 
@@ -331,10 +340,12 @@
       .art-table-card {
         :deep(.el-card__body) {
           padding: 8px;
+          overflow-x: auto;
         }
 
         // 表格字体进一步缩小
         .el-table {
+          min-width: 900px;
           font-size: 12px;
 
           .el-table__header {

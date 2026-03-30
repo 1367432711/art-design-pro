@@ -94,5 +94,61 @@
     :deep(.el-form-item) {
       margin-bottom: 16px;
     }
+
+    // 移动端适配
+    @media screen and (width <= 768px) {
+      :deep(.el-row) {
+        &:first-child {
+          margin-bottom: 0 !important;
+        }
+      }
+
+      :deep(.el-col) {
+        margin-bottom: 8px;
+      }
+
+      :deep(.el-form-item__label) {
+        width: 70px !important;
+        font-size: 13px;
+      }
+
+      :deep(.el-input),
+      :deep(.el-select) {
+        font-size: 13px;
+      }
+
+      :deep(.text-right) {
+        margin-top: 8px;
+        text-align: right !important;
+      }
+
+      :deep(.el-button) {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+    }
+
+    // 小屏手机适配
+    @media screen and (width <= 480px) {
+      :deep(.el-row) {
+        flex-direction: column;
+      }
+
+      :deep(.el-col) {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      :deep(.el-form-item__label) {
+        width: 60px !important;
+        font-size: 12px;
+      }
+
+      :deep(.el-button) {
+        width: auto;
+        min-width: 80px;
+      }
+    }
   }
 </style>
