@@ -145,8 +145,8 @@
 
   // 文字色
   $text-primary: #fff;
-  $text-secondary: #94a3b8;
-  $text-muted: #64748b;
+  $text-secondary: #c1d2e9;
+  $text-muted: #94a3b8;
   $text-accent: #10b981;
 
   // 等级色
@@ -282,10 +282,12 @@
   // 用户信息区（类似用户名 + 职位）
   .user-info-section {
     padding: 16px;
-    background: rgb(255 255 255 / 3%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgb(255 255 255 / 8%);
+    background: rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 58%),
+      0 4px 12px rgb(0 0 0 / 7%);
 
     .user-header {
       display: flex;
@@ -316,7 +318,7 @@
     }
 
     .user-email {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 400;
       line-height: 1.6;
       color: $text-secondary;
@@ -334,8 +336,8 @@
     border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 10%),
-      0 4px 12px rgb(0 0 0 / 20%);
+      inset 0 1px 0 rgb(255 255 255 / 58%),
+      0 4px 12px rgb(0 0 0 / 7%);
 
     .stat-item {
       display: flex;
@@ -346,16 +348,16 @@
       text-align: center;
 
       .stat-value {
-        font-size: 16px;
-        font-weight: 600;
-        color: $text-primary;
+        font-size: 10px;
+        font-weight: 400;
+        color: $text-secondary;
         letter-spacing: 0.3px;
       }
 
       .stat-label {
-        font-size: 11px;
-        font-weight: 400;
-        color: $text-secondary;
+        font-size: 10px;
+        font-weight: 600;
+        color: $text-primary;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -379,8 +381,8 @@
     border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 10%),
-      0 4px 12px rgb(0 0 0 / 20%);
+      inset 0 1px 0 rgb(255 255 255 / 58%),
+      0 4px 12px rgb(0 0 0 / 7%);
 
     .contact-info {
       display: flex;
@@ -390,9 +392,9 @@
 
       .contact-label {
         margin-bottom: 6px;
-        font-size: 11px;
-        font-weight: 500;
-        color: $text-muted;
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-primary;
         text-transform: uppercase;
         letter-spacing: 0.8px;
       }
@@ -401,9 +403,9 @@
         display: flex;
         gap: 8px;
         align-items: center;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 400;
-        color: $text-primary;
+        color: $text-secondary;
         letter-spacing: 0.2px;
 
         .contact-icon {
