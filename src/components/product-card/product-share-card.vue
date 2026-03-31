@@ -93,6 +93,10 @@
     type?: string
     grade?: string
     cartonQuantity?: number
+    material?: string
+    unit?: string
+    salePrice?: number
+    currency?: string
   }
 
   interface UserInfo {

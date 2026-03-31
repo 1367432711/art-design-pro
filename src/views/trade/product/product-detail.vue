@@ -298,11 +298,15 @@
     return {
       image: productData.value.mainImage || '',
       name: productData.value.name || '',
-      sku: productData.value.sku || productData.value.spec || '',
+      sku: productData.value.sku || '',
       spec: productData.value.spec || '',
-      type: productData.value.type,
-      grade: productData.value.grade,
-      cartonQuantity: productData.value.cartonQuantity
+      type: productData.value.type || '',
+      grade: productData.value.grade || '',
+      cartonQuantity: productData.value.cartonQuantity,
+      material: productData.value.material || '',
+      unit: productData.value.unit || '片',
+      salePrice: productData.value.salePrice,
+      currency: productData.value.currency || 'USD'
     }
   })
 
@@ -351,7 +355,6 @@
       const { toPng } = await import('html-to-image')
       const dataUrl = await toPng(shareCardRef.value.shareCardRef, {
         backgroundColor: 'transparent',
-        scale: window.devicePixelRatio || 2,
         cacheBust: true,
         pixelRatio: window.devicePixelRatio || 2,
         // 等待所有图片加载
@@ -379,7 +382,6 @@
       const { toBlob } = await import('html-to-image')
       const blob = await toBlob(shareCardRef.value.shareCardRef, {
         backgroundColor: 'transparent',
-        scale: window.devicePixelRatio || 2,
         cacheBust: true,
         pixelRatio: window.devicePixelRatio || 2,
         fetchRequestInit: {
