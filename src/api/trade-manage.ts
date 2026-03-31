@@ -2,7 +2,6 @@ import request from '@/utils/http'
 import { getCustomerListData, getCustomerDetailById } from '@/mock/temp/customerList'
 import {
   getQuotationListData,
-  getQuotationCountByCustomer,
   getQuotationDetailById,
   createQuotationData as createQuotation,
   updateQuotationData as updateQuotation,
@@ -25,18 +24,10 @@ import {
 export function fetchGetCustomerList(params: Api.Trade.CustomerSearchParams) {
   // 使用模拟数据（开发环境）
   const data = getCustomerListData(params)
-  // 为每个客户添加报价数量
-  const records = data.records.map((customer) => ({
-    ...customer,
-    quotationCount: getQuotationCountByCustomer(customer.id)
-  }))
   return Promise.resolve({
     code: 200,
     msg: 'success',
-    data: {
-      ...data,
-      records
-    }
+    data
   })
 
   // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
