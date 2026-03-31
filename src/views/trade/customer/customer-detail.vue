@@ -153,7 +153,7 @@
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
   import { h } from 'vue'
-  import { fetchGetCustomerDetail, fetchDeleteQuotation } from '@/api/trade-manage'
+  import { fetchDeleteQuotation } from '@/api/trade-manage'
   import CustomerDialog from './modules/customer-dialog.vue'
   import FollowupDialog from './modules/followup-dialog.vue'
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
@@ -431,15 +431,16 @@
     }
 
     try {
-      // 确保导入模拟数据模块进行初始化
-      await import('@/mock/temp/customerList')
+      // 导入模拟数据模块确保初始化
+      const customerModule = await import('@/mock/temp/customerList')
       console.log('[CustomerDetail] 模拟数据模块已加载，customerId:', customerId)
 
-      const res = await fetchGetCustomerDetail(customerId)
-      console.log('[CustomerDetail] 获取到的客户数据:', res)
+      // 直接调用模块中的函数获取数据
+      const customer = customerModule.getCustomerDetailById(customerId)
+      console.log('[CustomerDetail] 获取到的客户数据:', customer)
 
-      if (res && res.data) {
-        customerData.value = res.data
+      if (customer) {
+        customerData.value = customer
       } else {
         ElMessage.warning('未找到该客户信息')
       }

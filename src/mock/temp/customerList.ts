@@ -14,10 +14,13 @@ import customerData from '@/mock/data/customerList.json'
 // 初始化数据（如果 LocalStorage 为空）
 function initCustomerData() {
   const existing = getCustomerList()
+  console.log('[CustomerData] initCustomerData - existing length:', existing.length)
   if (existing.length === 0) {
+    console.log('[CustomerData] 初始化客户数据...')
     customerData.forEach((customer) => {
       addCustomer(customer as Api.Trade.CustomerListItem)
     })
+    console.log('[CustomerData] 初始化完成，当前数据长度:', getCustomerList().length)
   }
 }
 
@@ -95,7 +98,13 @@ export function getCustomerDetailById(id: string): Api.Trade.CustomerListItem | 
   // 确保数据已初始化
   initCustomerData()
 
+  console.log('[CustomerData] getCustomerDetailById - id:', id)
+  const customers = getCustomerList()
+  console.log('[CustomerData] 当前客户列表:', customers)
+
   const customer = getCustomerById(id)
+  console.log('[CustomerData] 查找到的客户:', customer)
+
   if (!customer) return null
 
   return {
