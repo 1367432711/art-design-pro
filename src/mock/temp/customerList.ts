@@ -92,6 +92,9 @@ export function getCustomerListData(
  * @param id 客户 ID
  */
 export function getCustomerDetailById(id: string): Api.Trade.CustomerListItem | null {
+  // 确保数据已初始化
+  initCustomerData()
+
   const customer = getCustomerById(id)
   if (!customer) return null
 

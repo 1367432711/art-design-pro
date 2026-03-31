@@ -425,11 +425,24 @@
   // 加载客户详情
   const loadCustomerDetail = async () => {
     const customerId = route.params.id as string
-    if (!customerId) return
+    if (!customerId) {
+      ElMessage.error('客户 ID 不能为空')
+      return
+    }
 
     try {
+      // 确保导入模拟数据模块进行初始化
+      await import('@/mock/temp/customerList')
+      console.log('[CustomerDetail] 模拟数据模块已加载，customerId:', customerId)
+
       const res = await fetchGetCustomerDetail(customerId)
-      customerData.value = (res as any).data || {}
+      console.log('[CustomerDetail] 获取到的客户数据:', res)
+
+      if (res && res.data) {
+        customerData.value = res.data
+      } else {
+        ElMessage.warning('未找到该客户信息')
+      }
     } catch (error) {
       console.error('加载客户详情失败:', error)
       ElMessage.error('加载客户详情失败')
