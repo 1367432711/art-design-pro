@@ -458,13 +458,14 @@
     loading.value = true
     try {
       // 使用模拟数据
-      const { QUOTATION_LIST_DATA } = await import('@/mock/temp/quotationList')
+      const { getQuotationListData } = await import('@/mock/temp/quotationList')
 
-      // 根据客户 ID 过滤报价数据
-      const filteredData = QUOTATION_LIST_DATA.filter((item) => item.customerId === customerId)
+      // 根据客户 ID 获取报价数据
+      const res = getQuotationListData({ customerId, current: 1, size: 100 })
+      console.log('[CustomerDetail] 报价列表:', res)
 
-      quotationList.value = filteredData as Api.Trade.QuotationListItem[]
-      pagination.total = filteredData.length
+      quotationList.value = res.records as Api.Trade.QuotationListItem[]
+      pagination.total = res.total
     } catch (error) {
       console.error('加载报价列表失败:', error)
     } finally {

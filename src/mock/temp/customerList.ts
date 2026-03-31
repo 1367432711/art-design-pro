@@ -109,7 +109,7 @@ export function getCustomerDetailById(id: string): Api.Trade.CustomerListItem | 
 
   return {
     ...customer,
-    quotationCount: getQuotationCountByCustomerId(id)
+    quotationCount: getQuotationCountByCustomer(id)
   }
 }
 
