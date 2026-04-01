@@ -35,9 +35,13 @@
         <!-- 客户信息 -->
         <ElCard class="art-card mb-3">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:user-business-line" class="mr-2" />
-              <span>客户信息 / Customer Information</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:user-business-line" class="mr-2" />
+                  客户信息 / Customer Information
+                </h4>
+              </div>
             </div>
           </template>
           <ElDescriptions :column="2" border>
@@ -55,9 +59,13 @@
         <!-- 产品信息 -->
         <ElCard class="art-card mb-3">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:package-line" class="mr-2" />
-              <span>产品信息 / Product Information</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:package-line" class="mr-2" />
+                  产品信息 / Product Information
+                </h4>
+              </div>
             </div>
           </template>
           <ElTable :data="productList" border>
@@ -97,9 +105,13 @@
         <!-- 商务条款 -->
         <ElCard class="art-card">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:file-text-line" class="mr-2" />
-              <span>商务条款 / Terms & Conditions</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:file-text-line" class="mr-2" />
+                  商务条款 / Terms & Conditions
+                </h4>
+              </div>
             </div>
           </template>
           <ElDescriptions :column="2" border>
@@ -138,9 +150,13 @@
         <!-- 费用汇总 -->
         <ElCard class="art-card mt-3">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:calculator-line" class="mr-2" />
-              <span>费用汇总 / Cost Summary</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:calculator-line" class="mr-2" />
+                  费用汇总 / Cost Summary
+                </h4>
+              </div>
             </div>
           </template>
           <ElDescriptions :column="3" border>
@@ -203,9 +219,13 @@
       <ElCol :span="8">
         <ElCard class="art-card">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:info-circle-line" class="mr-2" />
-              <span>状态信息 / Status</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:info-circle-line" class="mr-2" />
+                  状态信息 / Status
+                </h4>
+              </div>
             </div>
           </template>
           <div class="status-info">
@@ -423,14 +443,6 @@
 <style lang="scss" scoped>
   .quotation-detail-page {
     padding-bottom: 20px;
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-    }
 
     .total-section {
       border: 1px solid var(--el-border-color-light);

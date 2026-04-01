@@ -1,11 +1,11 @@
 <template>
   <div class="art-card h-82 p-5 mb-5 overflow-hidden max-lg:h-auto max-sm:mb-4">
-    <div class="art-card-header pr-0">
+    <div class="art-card-header">
       <div class="title">
         <h4>今日销售</h4>
         <p>销售总结</p>
       </div>
-      <div class="flex-cc h-7.5 min-w-17 border border-g-300 rounded-lg text-g-500 c-p">
+      <div class="flex-cc h-7.5 min-w-17 border border-g-300 rounded-lg text-g-600 c-p">
         <ArtSvgIcon icon="ri:arrow-up-line" class="text-base mr-1.5" />
         <span class="text-xs">导出</span>
       </div>

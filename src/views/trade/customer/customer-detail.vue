@@ -28,9 +28,13 @@
     <!-- 客户基本信息 -->
     <ElCard class="art-card">
       <template #header>
-        <div class="card-header">
-          <Icon icon="ri:user-business-line" class="mr-2" />
-          <span>基本信息</span>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:user-business-line" class="mr-2" />
+              基本信息
+            </h4>
+          </div>
         </div>
       </template>
       <ElDescriptions :column="3" border v-if="customerData">
@@ -697,14 +701,6 @@
 <style lang="scss" scoped>
   .customer-detail-page {
     padding-bottom: 20px;
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-    }
 
     .remarks-text {
       max-width: 600px;

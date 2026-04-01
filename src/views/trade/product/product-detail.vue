@@ -31,9 +31,13 @@
       <ElCol :span="8">
         <ElCard class="art-card">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:image-line" class="mr-2" />
-              <span>产品图片</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:image-line" class="mr-2" />
+                  产品图片
+                </h4>
+              </div>
             </div>
           </template>
           <div class="product-image-section">
@@ -97,9 +101,13 @@
       <ElCol :span="16">
         <ElCard class="art-card">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:box-3-line" class="mr-2" />
-              <span>基本信息 / Product Information</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:box-3-line" class="mr-2" />
+                  基本信息 / Product Information
+                </h4>
+              </div>
             </div>
           </template>
           <ElDescriptions :column="2" border class="product-info">
@@ -143,9 +151,13 @@
         <!-- 包装信息 -->
         <ElCard class="art-card mt-3">
           <template #header>
-            <div class="card-header">
-              <Icon icon="ri:package-line" class="mr-2" />
-              <span>包装信息 / Packaging Information</span>
+            <div class="art-card-header">
+              <div class="title">
+                <h4>
+                  <Icon icon="ri:package-line" class="mr-2" />
+                  包装信息 / Packaging Information
+                </h4>
+              </div>
             </div>
           </template>
           <ElDescriptions :column="2" border>
@@ -469,14 +481,6 @@
   .product-detail-page {
     padding: 20px;
     padding-bottom: 20px;
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-    }
 
     // 产品图片区域
     .product-image-section {
