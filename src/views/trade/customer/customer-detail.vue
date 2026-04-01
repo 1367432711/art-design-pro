@@ -355,7 +355,7 @@
       formatter: (row: QuotationListItem) =>
         h(
           'span',
-          { class: 'text-g-500' },
+          { class: 'text-g-600' },
           formatAmount(row.costSummary?.subtotal || 0, row.currency)
         )
     },

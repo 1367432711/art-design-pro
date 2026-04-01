@@ -145,7 +145,7 @@
                     })
                   : h('div', { class: 'w-12 h-12 bg-gray-100 rounded flex-c' }, '无图'),
                 row.imageCount
-                  ? h('span', { class: 'text-xs text-g-500' }, `(${row.imageCount})`)
+                  ? h('span', { class: 'text-xs text-g-600' }, `(${row.imageCount})`)
                   : null
               ])
             }

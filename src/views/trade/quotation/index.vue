@@ -194,7 +194,7 @@
           {
             prop: 'operation',
             label: '操作',
-            width: 200,
+            width: 180,
             fixed: 'right',
             formatter: (row: QuotationListItem) =>
               h('div', [

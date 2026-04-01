@@ -141,14 +141,14 @@
             label: '联系电话',
             width: 130,
             formatter: (row: CustomerListItem) =>
-              h('span', { class: 'text-g-500' }, row.contactPhone)
+              h('span', { class: 'text-g-600' }, row.contactPhone)
           },
           {
             prop: 'contactEmail',
             label: '联系邮箱',
             width: 180,
             formatter: (row: CustomerListItem) =>
-              h('span', { class: 'text-g-500' }, row.contactEmail)
+              h('span', { class: 'text-g-600' }, row.contactEmail)
           },
           { prop: 'country', label: '国家', width: 120 },
           {
@@ -167,7 +167,7 @@
             width: 80,
             align: 'center',
             formatter: (row: CustomerListItem) =>
-              h('span', { class: 'text-g-500' }, row.quotationCount || 0)
+              h('span', { class: 'text-g-600' }, row.quotationCount || 0)
           },
           {
             prop: 'createTime',
@@ -178,7 +178,7 @@
           {
             prop: 'operation',
             label: '操作',
-            width: 200,
+            width: 180,
             fixed: 'right', // 固定列
             formatter: (row: CustomerListItem) =>
               h('div', [
