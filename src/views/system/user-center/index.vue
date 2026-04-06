@@ -99,7 +99,6 @@
               <ElButton type="primary" class="w-22.5" v-ripple @click="edit">
                 {{ isEdit ? '保存' : '编辑' }}
               </ElButton>
-              <ElButton v-ripple @click="exportUserInfo">导出数据</ElButton>
             </div>
           </ElForm>
         </div>
@@ -288,34 +287,5 @@
    */
   const editPwd = () => {
     isEditPwd.value = !isEditPwd.value
-  }
-
-  /**
-   * 导出用户信息到 JSON 文件
-   */
-  const exportUserInfo = () => {
-    const userInfo = getUserInfo()
-    const blob = new Blob([JSON.stringify(userInfo, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `userInfo-${new Date().toISOString().split('T')[0]}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-    ElMessage.success('导出成功！将文件保存到 src/mock/data/userInfo.json 即可')
-  }
-
-  /**
-   * 获取用户信息
-   */
-  const getUserInfo = () => {
-    try {
-      const data = localStorage.getItem('user_info')
-      if (!data) return {}
-      return JSON.parse(data)
-    } catch (error) {
-      console.error('读取用户信息失败:', error)
-      return {}
-    }
   }
 </script>
