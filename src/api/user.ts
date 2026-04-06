@@ -1,13 +1,22 @@
-import request from '@/utils/http'
+import { getUserInfoData, updateUserInfoData } from '@/mock/temp/userInfo'
 
 /**
  * 获取用户信息
  * @returns 用户信息
  */
 export function fetchGetUserInfo() {
-  return request.get<Api.Auth.UserInfo>({
-    url: '/api/user/info'
+  // 使用模拟数据（开发环境）
+  const data = getUserInfoData()
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.get<Api.Auth.UserInfo>({
+  //   url: '/api/user/info'
+  // })
 }
 
 /**
@@ -16,8 +25,17 @@ export function fetchGetUserInfo() {
  * @returns 更新后的用户信息
  */
 export function fetchUpdateUserInfo(data: Partial<Api.Auth.UserInfo>) {
-  return request.post<Api.Auth.UserInfo>({
-    url: '/api/user/update',
-    data
+  // 使用模拟数据（开发环境）
+  const updatedData = updateUserInfoData(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedData
   })
+
+  // 真实 API 请求（生产环境请取消下面的注释并删除上面的模拟数据）
+  // return request.post<Api.Auth.UserInfo>({
+  //   url: '/api/user/update',
+  //   data
+  // })
 }

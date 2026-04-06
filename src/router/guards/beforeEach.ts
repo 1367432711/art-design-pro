@@ -52,6 +52,7 @@ import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
+import { getUserInfo as getLocalUserInfo } from '@/utils/storage/db'
 
 // 路由注册器实例
 let routeRegistry: RouteRegistry | null = null
@@ -370,7 +371,18 @@ async function handleDynamicRoutes(
 async function fetchUserInfo(): Promise<void> {
   const userStore = useUserStore()
 
-  // 调用 API 获取用户信息（支持本地 Mock 和远程 Mock）
+  // 开发环境优先使用本地数据
+  if (import.meta.env.DEV) {
+    const localInfo = getLocalUserInfo()
+    if (Object.keys(localInfo).length > 0) {
+      console.log('[RouteGuard] 使用本地用户信息')
+      userStore.setUserInfo(localInfo as Api.Auth.UserInfo)
+      userStore.checkAndClearWorktabs()
+      return
+    }
+  }
+
+  // 生产环境或本地无数据时调用 API
   console.log('[RouteGuard] 调用 API 获取用户信息')
   const data = await fetchGetUserInfo()
   console.log('[RouteGuard] 获取到的用户信息:', data)
