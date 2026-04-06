@@ -149,7 +149,7 @@
   $danger: #ef4444;
 
   // 卡片规格
-  $card-width: 400px;
+  $card-width: 410px;
   $card-radius: 16px;
   $cover-height: 260px;
   $avatar-size: 48px;
