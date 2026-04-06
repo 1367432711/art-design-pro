@@ -9,12 +9,6 @@
       <!-- 渐变遮罩 - 从透明到白色 -->
       <div class="cover-overlay"></div>
 
-      <!-- 产品等级徽章（左上角） -->
-      <div v-if="product.grade" class="grade-badge" :class="gradeClass">
-        <Icon icon="ri:medal-line" class="badge-icon" />
-        <span>{{ product.grade }}</span>
-      </div>
-
       <!-- 内容区（覆盖在图片底部） -->
       <div class="cover-content">
         <!-- 产品名称作为主标题 -->
@@ -119,23 +113,12 @@
     qrCode?: string
   }
 
-  const props = defineProps<{
+  defineProps<{
     product: ProductInfo
     user: UserInfo
   }>()
 
   const shareCardRef = ref<HTMLElement>()
-
-  // 产品等级样式映射
-  const gradeClassMap: Record<string, string> = {
-    'A 级': 'grade-a',
-    'B 级': 'grade-b',
-    'C 级': 'grade-c'
-  }
-
-  const gradeClass = computed(() => {
-    return gradeClassMap[props.product.grade || ''] || ''
-  })
 
   // 格式化价格
   const formatPrice = (price: number | undefined, currency: string = 'USD') => {
@@ -218,41 +201,6 @@
         rgb(255 255 255 / 60%) 70%,
         $white 100%
       );
-    }
-
-    // 产品等级徽章（左上角）
-    .grade-badge {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 10;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      background: rgba(0 0 0 / 60%);
-      backdrop-filter: blur(8px);
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
-
-      &.grade-a {
-        background: linear-gradient(135deg, $success 0%, #059669 100%);
-      }
-
-      &.grade-b {
-        background: linear-gradient(135deg, $primary 0%, #2563eb 100%);
-      }
-
-      &.grade-c {
-        background: linear-gradient(135deg, $warning 0%, #d97706 100%);
-      }
-
-      .badge-icon {
-        font-size: 14px;
-      }
     }
 
     // 内容区（覆盖在图片底部）
