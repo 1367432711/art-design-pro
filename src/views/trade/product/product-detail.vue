@@ -191,7 +191,7 @@
     <ElDialog
       v-model="shareDialogVisible"
       title="分享产品"
-      width="500px"
+      width="445px"
       :close-on-click-modal="true"
       :close-on-press-escape="true"
     >
