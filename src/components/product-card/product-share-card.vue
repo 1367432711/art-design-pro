@@ -69,6 +69,10 @@
             <Icon icon="ri:phone-line" class="contact-icon phone" />
             <span>{{ user.phone }}</span>
           </div>
+          <div class="contact-item">
+            <Icon icon="ri:whatsapp-line" class="contact-icon whatsapp" />
+            <span>{{ user.whatsapp || '+86 151 5393 3164' }}</span>
+          </div>
           <div v-if="user.facebook" class="contact-item">
             <Icon icon="ri:facebook-line" class="contact-icon facebook" />
             <span>{{ user.facebook }}</span>
@@ -110,6 +114,7 @@
     role?: string
     wechat?: string
     phone?: string
+    whatsapp?: string
     facebook?: string
     qrCode?: string
   }
@@ -180,7 +185,6 @@
   // ==================== 主卡片 ====================
   .product-share-card {
     position: relative;
-    width: $card-width;
     overflow: hidden;
     background: $white;
     border-radius: $card-radius;
@@ -434,6 +438,10 @@
             color: $primary;
           }
 
+          &.whatsapp {
+            color: #25d366;
+          }
+
           &.facebook {
             color: #1877f2;
           }
@@ -449,12 +457,12 @@
       align-items: center;
 
       .qr-code-image {
-        width: 68px;
-        height: 68px;
+        width: 80px;
+        height: 80px;
         object-fit: cover;
         background: #fff;
-        border: 1px solid $gray-200;
-        border-radius: 10px;
+        border: 2px solid #fff;
+        border-radius: 8px;
         box-shadow: 0 2px 6px rgb(0 0 0 / 6%);
       }
 
