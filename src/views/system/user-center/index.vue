@@ -74,8 +74,8 @@
             </ElRow>
 
             <ElRow>
-              <ElFormItem label="昵称" prop="nikeName">
-                <ElInput v-model="form.nikeName" :disabled="!isEdit" />
+              <ElFormItem label="昵称" prop="nickName">
+                <ElInput v-model="form.nickName" :disabled="!isEdit" />
               </ElFormItem>
               <ElFormItem label="邮箱" prop="email" class="ml-5">
                 <ElInput v-model="form.email" :disabled="!isEdit" />
@@ -150,9 +150,7 @@
   import { useUserStore } from '@/store/modules/user'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
-  import { updateUserInfoData } from '@/mock/temp/userInfo'
-
-  declare const __APP_VERSION__: string
+  import { fetchUpdateUserInfo } from '@/api/user'
 
   defineOptions({ name: 'UserCenter' })
 
@@ -164,13 +162,26 @@
   const date = ref('')
   const ruleFormRef = ref<FormInstance>()
 
+  /**
+   * 用户信息表单
+   */
+  const form = reactive({
+    realName: 'John Snow',
+    nickName: '皮卡丘',
+    email: '59301283@mall.com',
+    mobile: '18888888888',
+    address: '广东省深圳市宝安区西乡街道 101 栋 201',
+    sex: '2',
+    des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
+  })
+
   // 监听 userInfo 变化，动态更新表单数据
   watch(
     () => userInfo.value,
     (newVal) => {
-      if (newVal) {
+      if (newVal && Object.keys(newVal).length > 0) {
         form.realName = newVal.realName || 'John Snow'
-        form.nikeName = newVal.nickName || '皮卡丘'
+        form.nickName = newVal.nickName || '皮卡丘'
         form.email = newVal.email || '59301283@mall.com'
         form.mobile = newVal.phone || '18888888888'
         form.address = newVal.address || '广东省深圳市宝安区西乡街道 101 栋 201'
@@ -180,19 +191,6 @@
     },
     { immediate: true }
   )
-
-  /**
-   * 用户信息表单
-   */
-  const form = reactive({
-    realName: 'John Snow',
-    nikeName: '皮卡丘',
-    email: '59301283@mall.com',
-    mobile: '18888888888',
-    address: '广东省深圳市宝安区西乡街道 101 栋 201',
-    sex: '2',
-    des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
-  })
 
   /**
    * 密码修改表单
@@ -255,39 +253,31 @@
   /**
    * 切换用户信息编辑状态
    */
-  const edit = () => {
+  const edit = async () => {
     if (isEdit.value) {
-      // 保存到 LocalStorage (user_info)
-      updateUserInfoData({
+      const updatedData = {
         realName: form.realName,
-        nickName: form.nikeName,
+        nickName: form.nickName,
         email: form.email,
-        phone: form.mobile,
-        address: form.address,
-        sex: form.sex,
-        intro: form.des
-      })
-      // 同时更新 Pinia store 的持久化存储
-      const currentInfo = userStore.info
-      const updatedInfo = {
-        userId: currentInfo.userId || 1,
-        userName: currentInfo.userName || 'admin',
-        email: form.email,
-        avatar: currentInfo.avatar,
-        roles: currentInfo.roles || [],
-        buttons: currentInfo.buttons || [],
-        realName: form.realName,
-        nickName: form.nikeName,
         phone: form.mobile,
         address: form.address,
         sex: form.sex,
         intro: form.des
       }
-      // 直接写入 Pinia 持久化存储
-      localStorage.setItem('sys-v' + __APP_VERSION__ + '-user', JSON.stringify(updatedInfo))
-      // 更新当前 store
-      userStore.setUserInfo(updatedInfo)
-      ElMessage.success('保存成功')
+      console.log('[UserCenter] 保存用户信息:', updatedData)
+
+      try {
+        // 调用 API 保存
+        const result = await fetchUpdateUserInfo(updatedData)
+        console.log('[UserCenter] API 返回:', result)
+
+        // 更新 store
+        userStore.setUserInfo(result)
+        ElMessage.success('保存成功')
+      } catch (error) {
+        console.error('[UserCenter] 保存失败:', error)
+        ElMessage.error('保存失败，请稍后重试')
+      }
     }
     isEdit.value = !isEdit.value
   }
