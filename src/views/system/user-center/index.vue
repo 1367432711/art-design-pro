@@ -175,11 +175,13 @@
     des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
   })
 
-  // 监听 userInfo 变化，动态更新表单数据
+  // 监听 userInfo 变化，动态更新表单数据（仅在初始化或用户未编辑时更新）
+  const hasUserEdited = ref(false) // 标记用户是否已编辑过表单
+
   watch(
     () => userInfo.value,
     (newVal) => {
-      if (newVal && Object.keys(newVal).length > 0) {
+      if (newVal && Object.keys(newVal).length > 0 && !hasUserEdited.value) {
         form.realName = newVal.realName || 'John Snow'
         form.nickName = newVal.nickName || '皮卡丘'
         form.email = newVal.email || '59301283@mall.com'
@@ -274,6 +276,9 @@
         // 更新 store
         userStore.setUserInfo(result)
         ElMessage.success('保存成功')
+
+        // 标记用户已编辑过，防止 watch 重置表单
+        hasUserEdited.value = true
       } catch (error) {
         console.error('[UserCenter] 保存失败:', error)
         ElMessage.error('保存失败，请稍后重试')
