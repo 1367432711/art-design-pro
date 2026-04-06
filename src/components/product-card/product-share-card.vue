@@ -29,7 +29,7 @@
         <p class="user-email">{{ user.email || '邮箱' }}</p>
       </div>
 
-      <!-- 统计数据区（三列布局）：产品名称、产品型号、装箱数量 -->
+      <!-- 统计数据区（三列布局）：产品名称、规格型号、装箱数量 -->
       <div class="stats-section">
         <div class="stat-item">
           <div class="stat-label">产品名称</div>
@@ -37,7 +37,7 @@
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-label">产品型号</div>
+          <div class="stat-label">规格型号</div>
           <div class="stat-value">{{ product.spec || '-' }}</div>
         </div>
         <div class="stat-divider"></div>
