@@ -38,17 +38,26 @@
 
       <!-- 产品数据标签组 -->
       <div class="tags-section">
-        <div class="tag-item">
-          <Icon icon="ri:package-line" class="tag-icon" />
-          <span>Blister: {{ product.blisterQuantity ?? '-' }}</span>
+        <div
+          v-if="product.blisterQuantity !== undefined && product.blisterQuantity !== null"
+          class="tag-item"
+        >
+          <Icon icon="ri:inbox-2-line" class="tag-icon" />
+          <span>Blister: {{ product.blisterQuantity }}</span>
         </div>
-        <div class="tag-item">
+        <div
+          v-if="product.innerBoxQuantity !== undefined && product.innerBoxQuantity !== null"
+          class="tag-item"
+        >
           <Icon icon="ri:inbox-line" class="tag-icon" />
-          <span>Inner Box: {{ product.innerBoxQuantity ?? '-' }}</span>
+          <span>Inner Box: {{ product.innerBoxQuantity }}</span>
         </div>
-        <div class="tag-item">
+        <div
+          v-if="product.cartonQuantity !== undefined && product.cartonQuantity !== null"
+          class="tag-item"
+        >
           <Icon icon="ri:box-3-line" class="tag-icon" />
-          <span>Carton: {{ product.cartonQuantity ?? '-' }}</span>
+          <span>Carton: {{ product.cartonQuantity }}</span>
         </div>
       </div>
 
