@@ -162,7 +162,7 @@
   // 卡片规格
   $card-width: 400px;
   $card-radius: 16px;
-  $cover-height: 220px;
+  $cover-height: 260px;
   $avatar-size: 48px;
 
   // ==================== 主卡片 ====================
@@ -244,6 +244,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 0 20px 20px;
+    background: #fff;
   }
 
   // 用户信息区
