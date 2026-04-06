@@ -298,7 +298,7 @@
   .user-info-section {
     padding-top: 14px;
     padding-bottom: 14px;
-    border-bottom: 1px solid $gray-200;
+    border-bottom: 1px solid $gray-300;
 
     .user-header {
       display: flex;
@@ -373,6 +373,7 @@
       font-size: 13px;
       font-weight: 400;
       color: $gray-600;
+      cursor: default;
       background: $gray-50;
       border: 1px solid $gray-200;
       border-radius: 16px;
@@ -406,7 +407,7 @@
     gap: 16px;
     align-items: flex-start;
     padding-top: 14px;
-    border-top: 1px solid $gray-200;
+    border-top: 1px solid $gray-300;
 
     .contact-info {
       display: flex;
