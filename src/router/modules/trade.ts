@@ -16,7 +16,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/customer',
       meta: {
         title: 'menus.trade.customer',
-        icon: 'ri:user-business-line',
+        icon: 'ri:user-line',
         keepAlive: true
       }
     },
