@@ -52,7 +52,6 @@ import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
-import { getUserInfo as getLocalUserInfo } from '@/utils/storage/db'
 
 // 路由注册器实例
 let routeRegistry: RouteRegistry | null = null
@@ -371,12 +370,33 @@ async function handleDynamicRoutes(
 async function fetchUserInfo(): Promise<void> {
   const userStore = useUserStore()
 
-  // 开发环境优先使用本地数据
+  // 开发环境：从本地存储读取用户信息（支持个人中心编辑保存）
   if (import.meta.env.DEV) {
-    const localInfo = getLocalUserInfo()
+    const { getUserInfo } = await import('@/utils/storage/db')
+    const localInfo = getUserInfo()
     if (Object.keys(localInfo).length > 0) {
       console.log('[RouteGuard] 使用本地用户信息')
-      userStore.setUserInfo(localInfo as Api.Auth.UserInfo)
+      // 合并默认字段
+      const fullInfo: Api.Auth.UserInfo = {
+        userId: localInfo.userId || 1,
+        userName: localInfo.userName || 'admin',
+        email: localInfo.email || '',
+        avatar: localInfo.avatar,
+        realName: localInfo.realName,
+        nickName: localInfo.nickName,
+        phone: localInfo.phone,
+        wechat: localInfo.wechat,
+        whatsapp: localInfo.whatsapp,
+        facebook: localInfo.facebook,
+        role: localInfo.role,
+        department: localInfo.department,
+        address: localInfo.address,
+        sex: localInfo.sex,
+        intro: localInfo.intro,
+        roles: localInfo.roles || ['R_ADMIN'],
+        buttons: localInfo.buttons || ['*:*:*']
+      }
+      userStore.setUserInfo(fullInfo)
       userStore.checkAndClearWorktabs()
       return
     }

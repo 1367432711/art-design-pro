@@ -152,6 +152,8 @@
   import { ElMessage } from 'element-plus'
   import { updateUserInfoData } from '@/mock/temp/userInfo'
 
+  declare const __APP_VERSION__: string
+
   defineOptions({ name: 'UserCenter' })
 
   const userStore = useUserStore()
@@ -255,7 +257,7 @@
    */
   const edit = () => {
     if (isEdit.value) {
-      // 保存到 LocalStorage
+      // 保存到 LocalStorage (user_info)
       updateUserInfoData({
         realName: form.realName,
         nickName: form.nikeName,
@@ -265,12 +267,13 @@
         sex: form.sex,
         intro: form.des
       })
-      // 更新 store（保留原有必填字段）
+      // 同时更新 Pinia store 的持久化存储
       const currentInfo = userStore.info
-      userStore.setUserInfo({
+      const updatedInfo = {
         userId: currentInfo.userId || 1,
         userName: currentInfo.userName || 'admin',
-        email: currentInfo.email || '',
+        email: form.email,
+        avatar: currentInfo.avatar,
         roles: currentInfo.roles || [],
         buttons: currentInfo.buttons || [],
         realName: form.realName,
@@ -279,7 +282,11 @@
         address: form.address,
         sex: form.sex,
         intro: form.des
-      })
+      }
+      // 直接写入 Pinia 持久化存储
+      localStorage.setItem('sys-v' + __APP_VERSION__ + '-user', JSON.stringify(updatedInfo))
+      // 更新当前 store
+      userStore.setUserInfo(updatedInfo)
       ElMessage.success('保存成功')
     }
     isEdit.value = !isEdit.value
