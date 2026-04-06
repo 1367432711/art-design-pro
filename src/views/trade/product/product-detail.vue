@@ -332,10 +332,10 @@
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
       role: '销售经理',
-      wechat: userStore.info?.wechat || 'ArtDesignPro',
-      phone: userStore.info?.phone || '+86 138 0000 0000',
+      wechat: userStore.info?.wechat || 'Lovq_201203',
+      phone: userStore.info?.phone || '+86 151 5393 3164',
       whatsapp: '+86 151 5393 3164',
-      facebook: userStore.info?.facebook || 'Art Design Pro',
+      facebook: userStore.info?.facebook || 'Arvin XiaLoncut',
       qrCode: qrCode
     }
   })

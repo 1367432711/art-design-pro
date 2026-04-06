@@ -82,6 +82,17 @@ declare namespace Api {
       userName: string
       email: string
       avatar?: string
+      realName?: string
+      nickName?: string
+      phone?: string
+      wechat?: string
+      whatsapp?: string
+      facebook?: string
+      role?: string
+      department?: string
+      address?: string
+      sex?: string
+      intro?: string
     }
   }
 

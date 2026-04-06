@@ -7,7 +7,8 @@
 const STORAGE_KEYS = {
   CUSTOMER_LIST: 'trade_customer_list',
   PRODUCT_LIST: 'trade_product_list',
-  QUOTATION_LIST: 'trade_quotation_list'
+  QUOTATION_LIST: 'trade_quotation_list',
+  USER_INFO: 'user_info'
 } as const
 
 /**
@@ -288,4 +289,51 @@ export function clearAllData() {
   localStorage.removeItem(STORAGE_KEYS.CUSTOMER_LIST)
   localStorage.removeItem(STORAGE_KEYS.PRODUCT_LIST)
   localStorage.removeItem(STORAGE_KEYS.QUOTATION_LIST)
+}
+
+// ==================== 用户信息数据操作 ====================
+
+/**
+ * 获取用户信息
+ */
+export function getUserInfo(): Partial<Api.Auth.UserInfo> {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.USER_INFO)
+    if (!data) return {}
+    return JSON.parse(data)
+  } catch (error) {
+    console.error('读取用户信息失败:', error)
+    return {}
+  }
+}
+
+/**
+ * 保存用户信息
+ */
+export function saveUserInfo(info: Partial<Api.Auth.UserInfo>) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(info))
+  } catch (error) {
+    console.error('保存用户信息失败:', error)
+  }
+}
+
+/**
+ * 更新用户信息
+ */
+export function updateUserInfo(updates: Partial<Api.Auth.UserInfo>): Partial<Api.Auth.UserInfo> {
+  const current = getUserInfo()
+  const updated = { ...current, ...updates }
+  saveUserInfo(updated)
+  return updated
+}
+
+/**
+ * 初始化用户信息（从 JSON 文件）
+ */
+export function initUserInfoFromJson(jsonData: Partial<Api.Auth.UserInfo>) {
+  const existing = getUserInfo()
+  if (Object.keys(existing).length === 0) {
+    saveUserInfo(jsonData)
+  }
 }

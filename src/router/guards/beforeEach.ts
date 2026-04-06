@@ -52,6 +52,7 @@ import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
+import { getUserInfo as getLocalUserInfo } from '@/utils/storage/db'
 
 // 路由注册器实例
 let routeRegistry: RouteRegistry | null = null
@@ -369,9 +370,22 @@ async function handleDynamicRoutes(
  */
 async function fetchUserInfo(): Promise<void> {
   const userStore = useUserStore()
+
+  // 开发环境优先使用本地数据
+  if (import.meta.env.DEV) {
+    const localInfo = getLocalUserInfo()
+    if (Object.keys(localInfo).length > 0) {
+      console.log('[RouteGuard] 使用本地用户信息')
+      userStore.setUserInfo(localInfo as Api.Auth.UserInfo)
+      userStore.checkAndClearWorktabs()
+      return
+    }
+  }
+
+  // 生产环境或本地无数据时调用 API
+  console.log('[RouteGuard] 调用 API 获取用户信息')
   const data = await fetchGetUserInfo()
   userStore.setUserInfo(data)
-  // 检查并清理工作台标签页（如果是不同用户登录）
   userStore.checkAndClearWorktabs()
 }
 

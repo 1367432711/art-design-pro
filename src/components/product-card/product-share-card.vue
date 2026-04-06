@@ -242,7 +242,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 0 20px 20px;
+    padding: 0 20px 30px;
     background: #fff;
   }
 
@@ -394,8 +394,8 @@
       align-items: center;
 
       .qr-code-image {
-        width: 80px;
-        height: 80px;
+        width: 84px;
+        height: 84px;
         object-fit: cover;
         background: #fff;
         border: 2px solid #fff;

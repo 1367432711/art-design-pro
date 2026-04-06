@@ -7,27 +7,27 @@
           <img class="absolute top-0 left-0 w-full h-50 object-cover" src="@imgs/user/bg.webp" />
           <img
             class="relative z-10 w-20 h-20 mt-30 mx-auto object-cover border-2 border-white rounded-full"
-            src="@imgs/user/avatar.webp"
+            :src="userInfo.avatar || '@imgs/user/avatar.webp'"
           />
-          <h2 class="mt-5 text-xl font-normal">{{ userInfo.userName }}</h2>
-          <p class="mt-5 text-sm">专注于用户体验跟视觉设计</p>
+          <h2 class="mt-5 text-xl font-normal">{{ userInfo.userName || 'Art Design Pro' }}</h2>
+          <p class="mt-5 text-sm">{{ userInfo.role || '专注于用户体验跟视觉设计' }}</p>
 
           <div class="w-75 mx-auto mt-7.5 text-left">
             <div class="mt-2.5">
               <ArtSvgIcon icon="ri:mail-line" class="text-g-700" />
-              <span class="ml-2 text-sm">jdkjjfnndf@mall.com</span>
+              <span class="ml-2 text-sm">{{ userInfo.email || 'info@artdesignpro.com' }}</span>
             </div>
             <div class="mt-2.5">
               <ArtSvgIcon icon="ri:user-3-line" class="text-g-700" />
-              <span class="ml-2 text-sm">交互专家</span>
+              <span class="ml-2 text-sm">{{ userInfo.role || '交互专家' }}</span>
             </div>
             <div class="mt-2.5">
               <ArtSvgIcon icon="ri:map-pin-line" class="text-g-700" />
-              <span class="ml-2 text-sm">广东省深圳市</span>
+              <span class="ml-2 text-sm">{{ userInfo.address || '广东省深圳市' }}</span>
             </div>
             <div class="mt-2.5">
               <ArtSvgIcon icon="ri:dribbble-fill" class="text-g-700" />
-              <span class="ml-2 text-sm">字节跳动－某某平台部－UED</span>
+              <span class="ml-2 text-sm">{{ userInfo.department || 'Art Design Pro Team' }}</span>
             </div>
           </div>
 
@@ -149,6 +149,8 @@
 <script setup lang="ts">
   import { useUserStore } from '@/store/modules/user'
   import type { FormInstance, FormRules } from 'element-plus'
+  import { ElMessage } from 'element-plus'
+  import { updateUserInfoData } from '@/mock/temp/userInfo'
 
   defineOptions({ name: 'UserCenter' })
 
@@ -160,6 +162,23 @@
   const date = ref('')
   const ruleFormRef = ref<FormInstance>()
 
+  // 监听 userInfo 变化，动态更新表单数据
+  watch(
+    () => userInfo.value,
+    (newVal) => {
+      if (newVal) {
+        form.realName = newVal.realName || 'John Snow'
+        form.nikeName = newVal.nickName || '皮卡丘'
+        form.email = newVal.email || '59301283@mall.com'
+        form.mobile = newVal.phone || '18888888888'
+        form.address = newVal.address || '广东省深圳市宝安区西乡街道 101 栋 201'
+        form.sex = newVal.sex || '2'
+        form.des = newVal.intro || 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
+      }
+    },
+    { immediate: true }
+  )
+
   /**
    * 用户信息表单
    */
@@ -168,7 +187,7 @@
     nikeName: '皮卡丘',
     email: '59301283@mall.com',
     mobile: '18888888888',
-    address: '广东省深圳市宝安区西乡街道101栋201',
+    address: '广东省深圳市宝安区西乡街道 101 栋 201',
     sex: '2',
     des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
   })
@@ -235,6 +254,30 @@
    * 切换用户信息编辑状态
    */
   const edit = () => {
+    if (isEdit.value) {
+      // 保存
+      updateUserInfoData({
+        realName: form.realName,
+        nickName: form.nikeName,
+        email: form.email,
+        phone: form.mobile,
+        address: form.address,
+        sex: form.sex,
+        intro: form.des
+      })
+      // 更新 store
+      userStore.setUserInfo({
+        ...userStore.info,
+        realName: form.realName,
+        nickName: form.nikeName,
+        email: form.email,
+        phone: form.mobile,
+        address: form.address,
+        sex: form.sex,
+        intro: form.des
+      })
+      ElMessage.success('保存成功')
+    }
     isEdit.value = !isEdit.value
   }
 
