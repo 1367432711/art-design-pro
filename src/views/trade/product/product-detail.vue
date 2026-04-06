@@ -330,9 +330,10 @@
       userName: userStore.info?.userName || 'Art Design Pro',
       email: userStore.info?.email || 'info@artdesignpro.com',
       role: '销售经理',
-      wechat: '微信号：ArtDesignPro',
-      phone: '手机：+86 138 0000 0000',
-      facebook: 'Facebook: Art Design Pro',
+      wechat: userStore.info?.wechat || 'ArtDesignPro',
+      phone: userStore.info?.phone || '+86 138 0000 0000',
+      whatsapp: '+86 151 5393 3164',
+      facebook: userStore.info?.facebook || 'Art Design Pro',
       qrCode: qrCode
     }
   })
