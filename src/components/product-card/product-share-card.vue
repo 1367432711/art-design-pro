@@ -67,7 +67,7 @@
           </div>
           <div v-if="user.phone" class="contact-item">
             <Icon icon="ri:phone-line" class="contact-icon phone" />
-            <span>{{ user.phone }}</span>
+            <span>Phone: {{ user.phone }}</span>
           </div>
           <div class="contact-item">
             <Icon icon="ri:whatsapp-line" class="contact-icon whatsapp" />
