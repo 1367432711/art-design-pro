@@ -273,12 +273,12 @@
         const result = await fetchUpdateUserInfo(updatedData)
         console.log('[UserCenter] API 返回:', result)
 
-        // 更新 store
+        // 先标记用户已编辑过，防止 watch 重置表单
+        hasUserEdited.value = true
+
+        // 再更新 store
         userStore.setUserInfo(result)
         ElMessage.success('保存成功')
-
-        // 标记用户已编辑过，防止 watch 重置表单
-        hasUserEdited.value = true
       } catch (error) {
         console.error('[UserCenter] 保存失败:', error)
         ElMessage.error('保存失败，请稍后重试')

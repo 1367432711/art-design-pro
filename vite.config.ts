@@ -33,6 +33,10 @@ export default ({ mode }: { mode: string }) => {
           target: VITE_API_PROXY_URL,
           changeOrigin: true
         }
+      },
+      // 忽略 mock 数据文件的变更，避免热更新触发页面刷新
+      watch: {
+        ignored: ['**/src/mock/data/**']
       }
     },
     // 路径别名
