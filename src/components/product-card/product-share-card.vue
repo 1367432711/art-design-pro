@@ -174,7 +174,7 @@
   // 卡片规格
   $card-width: 400px;
   $card-radius: 16px;
-  $cover-height: 260px;
+  $cover-height: 220px;
   $avatar-size: 48px;
 
   // ==================== 主卡片 ====================
@@ -262,18 +262,26 @@
 
       .product-title {
         margin: 0 0 6px;
-        font-size: 20px;
-        font-weight: 700;
-        line-height: 1.4;
+        // 长文本省略
+        overflow: hidden;
+        font-size: 19px;
+        font-weight: 600;
+        line-height: 1.35;
         color: $gray-900;
+        text-overflow: ellipsis;
         letter-spacing: -0.2px;
+        white-space: nowrap;
       }
 
       .product-subtitle {
         margin: 0;
-        font-size: 14px;
+        // 长文本省略
+        overflow: hidden;
+        font-size: 13px;
         line-height: 1.5;
         color: $gray-500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
@@ -288,13 +296,13 @@
 
   // 用户信息区
   .user-info-section {
-    padding-top: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid $gray-100;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid $gray-200;
 
     .user-header {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: flex-start;
       justify-content: space-between;
 
@@ -303,15 +311,17 @@
         flex: 1;
         gap: 12px;
         align-items: flex-start;
+        min-width: 0;
       }
 
       .user-avatar {
+        flex-shrink: 0;
         width: $avatar-size;
         height: $avatar-size;
         object-fit: cover;
         border: 2px solid $white;
         border-radius: 50%;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+        box-shadow: 0 2px 6px rgb(0 0 0 / 10%);
       }
 
       .user-details {
@@ -319,16 +329,19 @@
         min-width: 0;
 
         .user-name {
-          margin: 0 0 4px;
-          font-size: 16px;
+          margin: 0 0 3px;
+          overflow: hidden;
+          font-size: 15px;
           font-weight: 600;
           line-height: 1.3;
           color: $gray-900;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .user-role {
           margin: 0;
-          font-size: 13px;
+          font-size: 12px;
           color: $gray-500;
         }
       }
@@ -336,9 +349,12 @@
       .user-email {
         flex-shrink: 0;
         margin: 0;
-        font-size: 13px;
+        overflow: hidden;
+        font-size: 12px;
         color: $gray-400;
         text-align: right;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
@@ -347,22 +363,23 @@
   .tags-section {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
 
     .tag-item {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       align-items: center;
-      padding: 8px 14px;
+      padding: 6px 12px;
       font-size: 13px;
+      font-weight: 400;
       color: $gray-600;
       background: $gray-50;
       border: 1px solid $gray-200;
-      border-radius: 20px;
+      border-radius: 16px;
       transition: all 0.2s;
 
       .tag-icon {
-        font-size: 16px;
+        font-size: 15px;
         color: $gray-400;
       }
 
@@ -373,8 +390,8 @@
 
       &.price-tag {
         color: $primary;
-        background: rgb(59 130 246 / 8%);
-        border-color: rgb(59 130 246 / 20%);
+        background: rgb(59 130 246 / 6%);
+        border-color: rgb(59 130 246 / 15%);
 
         .tag-icon {
           color: $primary;
@@ -387,25 +404,26 @@
   .contact-section {
     display: flex;
     gap: 16px;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid $gray-100;
+    align-items: flex-start;
+    padding-top: 14px;
+    border-top: 1px solid $gray-200;
 
     .contact-info {
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
 
       .contact-item {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
-        font-size: 14px;
+        font-size: 13px;
         color: $gray-600;
 
         .contact-icon {
-          font-size: 18px;
+          flex-shrink: 0;
+          font-size: 17px;
 
           &.wechat {
             color: #07c160;
@@ -426,21 +444,22 @@
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      gap: 6px;
+      gap: 5px;
       align-items: center;
 
       .qr-code-image {
-        width: 72px;
-        height: 72px;
+        width: 68px;
+        height: 68px;
         object-fit: cover;
-        border: 2px solid $gray-200;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+        background: #fff;
+        border: 1px solid $gray-200;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 6%);
       }
 
       .qr-code-label {
         margin: 0;
-        font-size: 12px;
+        font-size: 11px;
         color: $gray-400;
       }
     }
