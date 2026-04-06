@@ -255,7 +255,7 @@
    */
   const edit = () => {
     if (isEdit.value) {
-      // 保存
+      // 保存到 LocalStorage
       updateUserInfoData({
         realName: form.realName,
         nickName: form.nikeName,
@@ -265,12 +265,16 @@
         sex: form.sex,
         intro: form.des
       })
-      // 更新 store
+      // 更新 store（保留原有必填字段）
+      const currentInfo = userStore.info
       userStore.setUserInfo({
-        ...userStore.info,
+        userId: currentInfo.userId || 1,
+        userName: currentInfo.userName || 'admin',
+        email: currentInfo.email || '',
+        roles: currentInfo.roles || [],
+        buttons: currentInfo.buttons || [],
         realName: form.realName,
         nickName: form.nikeName,
-        email: form.email,
         phone: form.mobile,
         address: form.address,
         sex: form.sex,
