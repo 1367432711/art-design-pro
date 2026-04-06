@@ -5,11 +5,11 @@
     <div class="card-cover-section">
       <!-- 产品图作为封面背景 -->
       <div class="cover-product-image">
-        <ElImage :src="product.image" fit="cover" class="cover-image" />
+        <ElImage :src="product.image" fit="cover" class="cover-image" crossorigin="anonymous" />
       </div>
       <!-- 用户头像（圆形，偏移出封面） -->
       <div class="user-avatar-wrapper">
-        <ElImage :src="user.avatar" fit="cover" class="user-avatar" />
+        <ElImage :src="user.avatar" fit="cover" class="user-avatar" crossorigin="anonymous" />
       </div>
       <!-- 产品等级徽章（类似认证徽章） -->
       <div v-if="product.grade" class="grade-badge" :class="gradeClass">
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div class="qr-code-wrapper">
-            <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" />
+            <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" crossorigin="anonymous" />
             <div class="qr-code-label">扫一扫加微信</div>
           </div>
         </div>

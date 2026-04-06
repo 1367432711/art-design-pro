@@ -364,14 +364,60 @@
     if (!shareCardRef.value?.shareCardRef) return
 
     try {
+      // 等待所有图片加载完成
+      await new Promise((resolve) => {
+        const images = shareCardRef.value?.shareCardRef?.querySelectorAll('img')
+        if (!images || images.length === 0) {
+          resolve(true)
+          return
+        }
+        let loadedCount = 0
+        images.forEach((img) => {
+          if (img.complete) {
+            loadedCount++
+          } else {
+            img.addEventListener('load', () => {
+              loadedCount++
+              if (loadedCount === images.length) {
+                resolve(true)
+              }
+            })
+            img.addEventListener('error', () => {
+              loadedCount++
+              if (loadedCount === images.length) {
+                resolve(true)
+              }
+            })
+          }
+        })
+        if (loadedCount === images.length) {
+          resolve(true)
+        }
+      })
+
       const { toPng } = await import('html-to-image')
-      const dataUrl = await toPng(shareCardRef.value.shareCardRef, {
+      const element = shareCardRef.value.shareCardRef
+      const rect = element.getBoundingClientRect()
+
+      // 高质量配置：放大 3 倍输出，保证清晰度
+      const dataUrl = await toPng(element, {
+        width: rect.width * 3,
+        height: rect.height * 3,
+        style: {
+          transform: 'scale(3)',
+          transformOrigin: 'top left',
+          width: `${rect.width}px`,
+          height: `${rect.height}px`
+        },
         backgroundColor: 'transparent',
         cacheBust: true,
-        pixelRatio: window.devicePixelRatio || 2,
-        // 等待所有图片加载
+        pixelRatio: 3,
+        imagePlaceholder: undefined,
+        skipAutoScale: true,
+        // 跨域配置
         fetchRequestInit: {
-          mode: 'cors'
+          mode: 'cors',
+          credentials: 'omit'
         }
       })
 
@@ -391,13 +437,58 @@
     if (!shareCardRef.value?.shareCardRef) return
 
     try {
+      // 等待所有图片加载完成
+      await new Promise((resolve) => {
+        const images = shareCardRef.value?.shareCardRef?.querySelectorAll('img')
+        if (!images || images.length === 0) {
+          resolve(true)
+          return
+        }
+        let loadedCount = 0
+        images.forEach((img) => {
+          if (img.complete) {
+            loadedCount++
+          } else {
+            img.addEventListener('load', () => {
+              loadedCount++
+              if (loadedCount === images.length) {
+                resolve(true)
+              }
+            })
+            img.addEventListener('error', () => {
+              loadedCount++
+              if (loadedCount === images.length) {
+                resolve(true)
+              }
+            })
+          }
+        })
+        if (loadedCount === images.length) {
+          resolve(true)
+        }
+      })
+
       const { toBlob } = await import('html-to-image')
-      const blob = await toBlob(shareCardRef.value.shareCardRef, {
+      const element = shareCardRef.value.shareCardRef
+      const rect = element.getBoundingClientRect()
+
+      // 高质量配置：放大 3 倍输出
+      const blob = await toBlob(element, {
+        width: rect.width * 3,
+        height: rect.height * 3,
+        style: {
+          transform: 'scale(3)',
+          transformOrigin: 'top left',
+          width: `${rect.width}px`,
+          height: `${rect.height}px`
+        },
         backgroundColor: 'transparent',
         cacheBust: true,
-        pixelRatio: window.devicePixelRatio || 2,
+        pixelRatio: 3,
+        skipAutoScale: true,
         fetchRequestInit: {
-          mode: 'cors'
+          mode: 'cors',
+          credentials: 'omit'
         }
       })
 
