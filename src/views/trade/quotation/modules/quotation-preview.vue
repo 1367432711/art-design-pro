@@ -214,7 +214,7 @@
                   </td>
                   <td class="desc-cell">
                     <div class="variant-desc">{{ variant.desc || 'No description' }}</div>
-                    <div v-if="variant.sku" class="variant-sku">{{ variant.sku }}</div>
+                    <div v-if="variant.spec" class="variant-spec">{{ variant.spec }}</div>
                   </td>
                   <td class="text-right qty-cell"> {{ variant.qty }} {{ variant.unit }} </td>
                   <td class="text-right price-cell">
@@ -878,7 +878,7 @@
         word-break: break-word;
       }
 
-      .variant-sku {
+      .variant-spec {
         margin-top: 2px;
         font-size: 10px;
         color: var(--el-text-color-placeholder);

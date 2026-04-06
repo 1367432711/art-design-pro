@@ -90,12 +90,6 @@
     return row.products[0].name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
   }
 
-  // 获取规格型号（第一个产品）
-  const getProductSpec = (row: QuotationListItem) => {
-    if (!row.products || row.products.length === 0) return '-'
-    return row.products[0].sku || '-'
-  }
-
   const {
     columns,
     columnChecks,
@@ -139,13 +133,6 @@
             label: '产品名称',
             minWidth: 150,
             formatter: (row: QuotationListItem) => h('span', {}, getProductName(row))
-          },
-          {
-            prop: 'products',
-            label: '规格型号',
-            minWidth: 150,
-            showOverflowTooltip: true,
-            formatter: (row: QuotationListItem) => h('span', {}, getProductSpec(row))
           },
           {
             prop: 'currency',

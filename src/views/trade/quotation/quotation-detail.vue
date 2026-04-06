@@ -70,7 +70,7 @@
           </template>
           <ElTable :data="productList" border>
             <ElTableColumn prop="name" label="产品名称" min-width="180" />
-            <ElTableColumn prop="sku" label="型号/SKU" min-width="150" />
+            <ElTableColumn prop="spec" label="规格型号" min-width="120" />
             <ElTableColumn prop="type" label="类型" width="100" align="center" />
             <ElTableColumn prop="grade" label="等级" width="100" align="center" />
             <ElTableColumn prop="qty" label="数量" width="100" align="center" />

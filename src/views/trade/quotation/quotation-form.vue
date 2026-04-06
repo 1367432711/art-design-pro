@@ -195,10 +195,10 @@
           </template>
         </ElTableColumn>
 
-        <!-- 产品型号 -->
-        <ElTableColumn min-width="90" label="型号/SKU" align="center">
+        <!-- 规格型号 -->
+        <ElTableColumn min-width="120" label="规格型号" align="center">
           <template #default="{ row }">
-            <ElInput v-model="row.sku" placeholder="型号" class="compact-input" />
+            <ElInput v-model="row.spec" placeholder="规格型号" class="compact-input" />
           </template>
         </ElTableColumn>
 
@@ -480,7 +480,7 @@
       id: string
       selectedProductId?: string // 关联的产品库 ID
       image?: string // 产品图片
-      sku: string // 型号
+      spec: string // 规格型号
       name: string // 产品名称
       type: string // 产品类型
       grade: string // 产品等级
@@ -579,7 +579,7 @@
       ...formData.value.products[index],
       selectedProductId: product.id,
       image: product.mainImage || '',
-      sku: product.sku || '',
+      spec: product.spec || '',
       name: product.name,
       type: product.type,
       grade: product.grade,
@@ -636,7 +636,7 @@
       id: Date.now().toString(),
       selectedProductId: '',
       image: '',
-      sku: '',
+      spec: '',
       name: '',
       type: '',
       grade: '',
