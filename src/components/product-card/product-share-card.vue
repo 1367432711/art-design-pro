@@ -39,16 +39,16 @@
       <!-- 产品数据标签组 -->
       <div class="tags-section">
         <div class="tag-item">
+          <Icon icon="ri:package-line" class="tag-icon" />
+          <span>Blister: {{ product.blisterQuantity ?? '-' }}</span>
+        </div>
+        <div class="tag-item">
+          <Icon icon="ri:inbox-line" class="tag-icon" />
+          <span>Inner Box: {{ product.innerBoxQuantity ?? '-' }}</span>
+        </div>
+        <div class="tag-item">
           <Icon icon="ri:box-3-line" class="tag-icon" />
-          <span>装箱：{{ product.cartonQuantity ?? '-' }}</span>
-        </div>
-        <div v-if="product.material" class="tag-item">
-          <Icon icon="ri:leaf-line" class="tag-icon" />
-          <span>{{ product.material }}</span>
-        </div>
-        <div v-if="product.salePrice" class="tag-item price-tag">
-          <Icon icon="ri:price-tag-line" class="tag-icon" />
-          <span>{{ formatPrice(product.salePrice, product.currency) }}</span>
+          <span>Carton: {{ product.cartonQuantity ?? '-' }}</span>
         </div>
       </div>
 
@@ -95,6 +95,8 @@
     type?: string
     grade?: string
     cartonQuantity?: number
+    blisterQuantity?: number
+    innerBoxQuantity?: number
     material?: string
     unit?: string
     salePrice?: number
@@ -119,19 +121,6 @@
   }>()
 
   const shareCardRef = ref<HTMLElement>()
-
-  // 格式化价格
-  const formatPrice = (price: number | undefined, currency: string = 'USD') => {
-    if (!price) return '-'
-    const symbols: Record<string, string> = {
-      USD: '$',
-      EUR: '€',
-      CNY: '¥',
-      GBP: '£'
-    }
-    const symbol = symbols[currency] || currency
-    return `${symbol}${price.toFixed(2)}`
-  }
 
   // 暴露卡片引用给父组件用于 html2canvas
   defineExpose({
@@ -251,7 +240,6 @@
   .user-info-section {
     padding-top: 14px;
     padding-bottom: 14px;
-    border-bottom: 1px solid $gray-300;
 
     .user-header {
       display: flex;
@@ -340,16 +328,6 @@
       &:hover {
         background: $gray-100;
         border-color: $gray-300;
-      }
-
-      &.price-tag {
-        color: $primary;
-        background: rgb(59 130 246 / 6%);
-        border-color: rgb(59 130 246 / 15%);
-
-        .tag-icon {
-          color: $primary;
-        }
       }
     }
   }
