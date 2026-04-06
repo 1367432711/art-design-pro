@@ -8,7 +8,7 @@ import {
   deleteCustomer,
   getCustomerById
 } from '@/utils/storage/db'
-import { getQuotationCountByCustomerId } from '@/utils/storage/db'
+import { getQuotationCountByCustomerId as getQuotationCountByCustomer } from '@/utils/storage/db'
 import customerData from '@/mock/data/customerList.json'
 
 // 初始化数据（如果 LocalStorage 为空）
@@ -79,7 +79,7 @@ export function getCustomerListData(
   const endIndex = startIndex + size
   const records = filteredData.slice(startIndex, endIndex).map((item) => ({
     ...item,
-    quotationCount: getQuotationCountByCustomerId(item.id)
+    quotationCount: getQuotationCountByCustomer(item.id)
   }))
 
   return {
