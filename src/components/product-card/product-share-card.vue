@@ -71,7 +71,7 @@
           </div>
           <div class="contact-item">
             <Icon icon="ri:whatsapp-line" class="contact-icon whatsapp" />
-            <span>{{ user.whatsapp || '+86 151 5393 3164' }}</span>
+            <span>WhatsApp: {{ user.whatsapp || '+86 151 5393 3164' }}</span>
           </div>
           <div v-if="user.facebook" class="contact-item">
             <Icon icon="ri:facebook-line" class="contact-icon facebook" />
