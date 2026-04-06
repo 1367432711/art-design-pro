@@ -74,7 +74,22 @@ export default ({ mode }: { mode: string }) => {
       syncMockData({
         dataPath: 'src/mock/data/userInfo.json',
         storageKey: 'user_info',
-        syncOnStart: true
+        dataType: '用户信息'
+      }),
+      syncMockData({
+        dataPath: 'src/mock/data/customerList.json',
+        storageKey: 'trade_customer_list',
+        dataType: '客户列表'
+      }),
+      syncMockData({
+        dataPath: 'src/mock/data/productList.json',
+        storageKey: 'trade_product_list',
+        dataType: '产品列表'
+      }),
+      syncMockData({
+        dataPath: 'src/mock/data/quotationList.json',
+        storageKey: 'trade_quotation_list',
+        dataType: '报价记录'
       }),
       // 自动按需导入 API
       AutoImport({

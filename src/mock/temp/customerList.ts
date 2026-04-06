@@ -1,5 +1,9 @@
 /**
  * 客户列表数据 - 基于 LocalStorage 存储
+ *
+ * 开发环境下：
+ * - 每次页面加载时都会从 JSON 文件重新加载数据
+ * - 数据修改后自动同步回 JSON 文件（通过 Vite 插件）
  */
 import {
   getCustomerList,
@@ -11,16 +15,30 @@ import {
 import { getQuotationCountByCustomerId as getQuotationCountByCustomer } from '@/utils/storage/db'
 import customerData from '@/mock/data/customerList.json'
 
-// 初始化数据（如果 LocalStorage 为空）
+// 初始化数据（开发环境每次从 JSON 重新加载）
 function initCustomerData() {
-  const existing = getCustomerList()
-  console.log('[CustomerData] initCustomerData - existing length:', existing.length)
-  if (existing.length === 0) {
-    console.log('[CustomerData] 初始化客户数据...')
+  // 开发环境：每次从 JSON 文件重新加载
+  if (import.meta.env.DEV && customerData && customerData.length > 0) {
+    // 清空 LocalStorage 中的旧数据，用 JSON 文件的数据替换
+    const existing = getCustomerList()
+    if (existing.length > 0) {
+      // 如果已有数据，清空后重新导入
+      existing.forEach((item) => deleteCustomer(item.id))
+    }
+    console.log('[CustomerData] 从 JSON 文件初始化客户数据...')
     customerData.forEach((customer) => {
       addCustomer(customer as Api.Trade.CustomerListItem)
     })
     console.log('[CustomerData] 初始化完成，当前数据长度:', getCustomerList().length)
+    return
+  }
+
+  // 生产环境或 JSON 无数据：检查 LocalStorage
+  const existing = getCustomerList()
+  if (existing.length === 0) {
+    customerData.forEach((customer) => {
+      addCustomer(customer as Api.Trade.CustomerListItem)
+    })
   }
 }
 

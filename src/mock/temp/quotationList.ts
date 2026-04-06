@@ -1,5 +1,9 @@
 /**
  * 报价记录数据 - 基于 LocalStorage 存储（支持多产品结构）
+ *
+ * 开发环境下：
+ * - 每次页面加载时都会从 JSON 文件重新加载数据
+ * - 数据修改后自动同步回 JSON 文件（通过 Vite 插件）
  */
 import {
   getQuotationList,
@@ -11,8 +15,24 @@ import {
 } from '@/utils/storage/db'
 import quotationData from '@/mock/data/quotationList.json'
 
-// 初始化数据（如果 LocalStorage 为空）
+// 初始化数据（开发环境每次从 JSON 重新加载）
 function initQuotationData() {
+  // 开发环境：每次从 JSON 文件重新加载
+  if (import.meta.env.DEV && quotationData && quotationData.length > 0) {
+    // 清空 LocalStorage 中的旧数据，用 JSON 文件的数据替换
+    const existing = getQuotationList()
+    if (existing.length > 0) {
+      existing.forEach((item) => deleteQuotation(item.id))
+    }
+    console.log('[QuotationData] 从 JSON 文件初始化报价数据...')
+    quotationData.forEach((quotation) => {
+      addQuotation(quotation as Api.Trade.QuotationListItem)
+    })
+    console.log('[QuotationData] 初始化完成，当前数据长度:', getQuotationList().length)
+    return
+  }
+
+  // 生产环境或 JSON 无数据：检查 LocalStorage
   const existing = getQuotationList()
   if (existing.length === 0) {
     quotationData.forEach((quotation) => {

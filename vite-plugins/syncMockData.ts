@@ -2,7 +2,7 @@
  * Vite 插件：自动同步 Mock 用户数据到 JSON 文件
  *
  * 在开发环境下，当用户信息在浏览器中被更新时，
- * 自动将数据同步到 src/mock/data/userInfo.json 文件中
+ * 自动将数据同步到 src/mock/data/ 目录下的 JSON 文件中
  *
  * 使用方法：
  * 1. 启动开发服务器（pnpm dev）
@@ -19,10 +19,12 @@ interface SyncMockDataOptions {
   dataPath: string
   /** LocalStorage key 名称 */
   storageKey: string
+  /** 数据类型名称（用于日志输出） */
+  dataType: string
 }
 
 export function syncMockData(options: SyncMockDataOptions): Plugin {
-  const { dataPath, storageKey } = options
+  const { dataPath, storageKey, dataType } = options
   let jsonFilePath: string
   let isDev = false
 
@@ -37,7 +39,7 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
     configResolved(config: any) {
       jsonFilePath = path.resolve(config.root, dataPath)
       if (isDev) {
-        console.log(`[SyncMockData] 已启用 - 同步到：${jsonFilePath}`)
+        console.log(`[SyncMockData][${dataType}] 已启用 - 同步到：${jsonFilePath}`)
       }
     },
 
@@ -49,9 +51,10 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
         '</head>',
         `
   <script>
-    // 监听 LocalStorage 用户信息变更并同步到服务器
+    // 监听 LocalStorage ${dataType} 变更并同步到服务器
     (function() {
       const STORAGE_KEY = '${storageKey}'
+      const DATA_TYPE = '${dataType}'
       let lastSyncedData = null
 
       // 初始化时记录当前数据
@@ -66,20 +69,24 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
           if (currentData && currentData !== lastSyncedData) {
             lastSyncedData = currentData
             // 发送到 Vite 服务器进行同步
-            fetch('/__sync_user_info__', {
+            fetch('/__sync_mock__', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ data: JSON.parse(currentData) })
+              body: JSON.stringify({
+                key: STORAGE_KEY,
+                data: JSON.parse(currentData),
+                type: DATA_TYPE
+              })
             }).then(function(res) {
               if (res.ok) {
-                console.log('[SyncMockData] 用户信息已同步到 JSON 文件')
+                console.log('[SyncMockData][' + DATA_TYPE + '] 数据已同步到 JSON 文件')
               }
             }).catch(function(err) {
-              console.error('[SyncMockData] 同步失败:', err)
+              console.error('[SyncMockData][' + DATA_TYPE + '] 同步失败:', err)
             })
           }
         } catch(e) {
-          console.error('[SyncMockData] 检查变化失败:', e)
+          console.error('[SyncMockData][' + DATA_TYPE + '] 检查变化失败:', e)
         }
       }, 1000) // 每秒检查一次
     })()
@@ -93,7 +100,7 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
     configureServer(server) {
       if (!isDev) return
 
-      server.middlewares.use('/__sync_user_info__', async (req, res) => {
+      server.middlewares.use('/__sync_mock__', async (req, res) => {
         if (req.method === 'POST') {
           let body = ''
           req.on('data', (chunk) => {
@@ -101,22 +108,34 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
           })
           req.on('end', () => {
             try {
-              const { data } = JSON.parse(body)
+              const { key, data, type } = JSON.parse(body)
+              const currentPath = path.resolve(
+                server.config.root,
+                'src/mock/data',
+                key.replace('trade_', '').replace('user_info', 'userInfo') + '.json'
+              )
 
               // 读取当前 JSON 文件内容
               let currentData = {}
-              if (fs.existsSync(jsonFilePath)) {
-                currentData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
+              if (fs.existsSync(currentPath)) {
+                const content = fs.readFileSync(currentPath, 'utf-8')
+                currentData = Array.isArray(data) ? JSON.parse(content) : JSON.parse(content)
               }
 
               // 合并数据（保留原有字段，更新变化的字段）
-              const updatedData = { ...currentData, ...data }
+              let updatedData
+              if (Array.isArray(data)) {
+                // 数组类型（客户/产品/报价）：直接替换
+                updatedData = data
+              } else {
+                // 对象类型（用户信息）：合并更新
+                updatedData = { ...currentData, ...data }
+              }
 
               // 写回文件
-              fs.writeFileSync(jsonFilePath, JSON.stringify(updatedData, null, 2), 'utf-8')
+              fs.writeFileSync(currentPath, JSON.stringify(updatedData, null, 2), 'utf-8')
 
-              console.log('[SyncMockData] ✅ 用户信息已同步到', dataPath)
-              console.log('[SyncMockData] 更新的数据:', JSON.stringify(data, null, 2))
+              console.log(`[SyncMockData][${type || dataType}] ✅ 数据已同步到`, currentPath)
 
               res.writeHead(200, { 'Content-Type': 'application/json' })
               res.end(JSON.stringify({ success: true }))

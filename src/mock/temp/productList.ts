@@ -1,5 +1,9 @@
 /**
  * 产品列表数据 - 基于 LocalStorage 存储
+ *
+ * 开发环境下：
+ * - 每次页面加载时都会从 JSON 文件重新加载数据
+ * - 数据修改后自动同步回 JSON 文件（通过 Vite 插件）
  */
 import {
   getProductList,
@@ -10,8 +14,24 @@ import {
 } from '@/utils/storage/db'
 import productData from '@/mock/data/productList.json'
 
-// 初始化数据（如果 LocalStorage 为空）
+// 初始化数据（开发环境每次从 JSON 重新加载）
 function initProductData() {
+  // 开发环境：每次从 JSON 文件重新加载
+  if (import.meta.env.DEV && productData && productData.length > 0) {
+    // 清空 LocalStorage 中的旧数据，用 JSON 文件的数据替换
+    const existing = getProductList()
+    if (existing.length > 0) {
+      existing.forEach((item) => deleteProduct(item.id))
+    }
+    console.log('[ProductData] 从 JSON 文件初始化产品数据...')
+    productData.forEach((product) => {
+      addProduct(product as Api.Trade.ProductListItem)
+    })
+    console.log('[ProductData] 初始化完成，当前数据长度:', getProductList().length)
+    return
+  }
+
+  // 生产环境或 JSON 无数据：检查 LocalStorage
   const existing = getProductList()
   if (existing.length === 0) {
     productData.forEach((product) => {

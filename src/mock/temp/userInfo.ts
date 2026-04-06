@@ -1,23 +1,28 @@
 /**
  * 用户信息数据 - 基于 LocalStorage 存储
+ *
+ * 开发环境下：
+ * - 每次页面加载时都会从 JSON 文件重新加载数据
+ * - 数据修改后自动同步回 JSON 文件（通过 Vite 插件）
  */
-import { getUserInfo, saveUserInfo, updateUserInfo, initUserInfoFromJson } from '@/utils/storage/db'
+import { getUserInfo, saveUserInfo, updateUserInfo } from '@/utils/storage/db'
 import userData from '@/mock/data/userInfo.json'
 
-// 初始化标志，防止重复初始化
-let initialized = false
-
-// 初始化数据（如果 LocalStorage 为空）
+// 初始化数据（开发环境每次从 JSON 重新加载）
 function initUserInfo() {
-  if (initialized) return
-  const existing = getUserInfo()
-  console.log('[UserInfo] initUserInfo - existing:', existing)
-  if (Object.keys(existing).length === 0) {
-    console.log('[UserInfo] 初始化用户信息...')
-    initUserInfoFromJson(userData as Partial<Api.Auth.UserInfo>)
-    console.log('[UserInfo] 初始化完成，当前用户信息:', getUserInfo())
+  // 开发环境：如果 JSON 文件有数据，优先使用 JSON 文件的数据
+  if (import.meta.env.DEV && userData && Object.keys(userData).length > 0) {
+    console.log('[UserInfo] 从 JSON 文件初始化用户信息...')
+    saveUserInfo(userData as Partial<Api.Auth.UserInfo>)
+    return
   }
-  initialized = true
+
+  // 生产环境或 JSON 无数据：检查 LocalStorage
+  const existing = getUserInfo()
+  if (Object.keys(existing).length === 0) {
+    console.log('[UserInfo] LocalStorage 为空，初始化默认数据...')
+    saveUserInfo(userData as Partial<Api.Auth.UserInfo>)
+  }
 }
 
 // 页面加载时自动初始化
