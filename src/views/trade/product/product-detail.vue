@@ -315,6 +315,8 @@
       type: productData.value.type || '',
       grade: productData.value.grade || '',
       cartonQuantity: productData.value.cartonQuantity,
+      blisterQuantity: productData.value.blisterQuantity,
+      innerBoxQuantity: productData.value.innerBoxQuantity,
       material: productData.value.material || '',
       unit: productData.value.unit || '片',
       salePrice: productData.value.salePrice,
