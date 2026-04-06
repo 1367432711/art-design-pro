@@ -249,13 +249,14 @@ export function deleteQuotation(id: string) {
 // ==================== 数据导出/导入 ====================
 
 /**
- * 导出数据为 JSON 文件
+ * 导出所有数据为 JSON 文件
  */
-export function exportData(filename: string) {
+export function exportAllData(filename: string) {
   const data = {
     customers: getCustomerList(),
     products: getProductList(),
-    quotations: getQuotationList()
+    quotations: getQuotationList(),
+    userInfo: getUserInfo()
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -267,17 +268,92 @@ export function exportData(filename: string) {
 }
 
 /**
- * 从 JSON 文件导入数据
+ * 导出单个模块数据为 JSON 文件
  */
-export function importData(jsonString: string) {
+export function exportModuleData(
+  module: 'customer' | 'product' | 'quotation' | 'user',
+  filename?: string
+) {
+  let data: any
+  let defaultFilename: string
+
+  switch (module) {
+    case 'customer':
+      data = getCustomerList()
+      defaultFilename = 'customerList'
+      break
+    case 'product':
+      data = getProductList()
+      defaultFilename = 'productList'
+      break
+    case 'quotation':
+      data = getQuotationList()
+      defaultFilename = 'quotationList'
+      break
+    case 'user':
+      data = getUserInfo()
+      defaultFilename = 'userInfo'
+      break
+  }
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${filename || defaultFilename}-${new Date().toISOString().split('T')[0]}.json`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+/**
+ * 从 JSON 文件导入所有数据
+ */
+export function importAllData(jsonString: string) {
   try {
     const data = JSON.parse(jsonString)
     if (data.customers) saveCustomerList(data.customers)
     if (data.products) saveProductList(data.products)
     if (data.quotations) saveQuotationList(data.quotations)
+    if (data.userInfo) saveUserInfo(data.userInfo)
     return true
   } catch (error) {
     console.error('导入数据失败:', error)
+    return false
+  }
+}
+
+/**
+ * 从 JSON 文件导入单个模块数据
+ */
+export function importModuleData(
+  module: 'customer' | 'product' | 'quotation' | 'user',
+  jsonString: string
+) {
+  try {
+    const data = JSON.parse(jsonString)
+    switch (module) {
+      case 'customer':
+        if (Array.isArray(data)) {
+          data.forEach((item) => addCustomer(item as Api.Trade.CustomerListItem))
+        }
+        break
+      case 'product':
+        if (Array.isArray(data)) {
+          data.forEach((item) => addProduct(item as Api.Trade.ProductListItem))
+        }
+        break
+      case 'quotation':
+        if (Array.isArray(data)) {
+          data.forEach((item) => addQuotation(item as Api.Trade.QuotationListItem))
+        }
+        break
+      case 'user':
+        saveUserInfo(data as Partial<Api.Auth.UserInfo>)
+        break
+    }
+    return true
+  } catch (error) {
+    console.error(`导入${module}数据失败:`, error)
     return false
   }
 }
@@ -289,6 +365,27 @@ export function clearAllData() {
   localStorage.removeItem(STORAGE_KEYS.CUSTOMER_LIST)
   localStorage.removeItem(STORAGE_KEYS.PRODUCT_LIST)
   localStorage.removeItem(STORAGE_KEYS.QUOTATION_LIST)
+  localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+}
+
+/**
+ * 清空单个模块数据
+ */
+export function clearModuleData(module: 'customer' | 'product' | 'quotation' | 'user') {
+  switch (module) {
+    case 'customer':
+      localStorage.removeItem(STORAGE_KEYS.CUSTOMER_LIST)
+      break
+    case 'product':
+      localStorage.removeItem(STORAGE_KEYS.PRODUCT_LIST)
+      break
+    case 'quotation':
+      localStorage.removeItem(STORAGE_KEYS.QUOTATION_LIST)
+      break
+    case 'user':
+      localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+      break
+  }
 }
 
 // ==================== 用户信息数据操作 ====================

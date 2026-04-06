@@ -45,6 +45,17 @@ export const systemRoutes: AppRouteRecord = {
       }
     },
     {
+      path: 'data-manage',
+      name: 'DataManage',
+      component: '/system/data-manage',
+      meta: {
+        title: '数据管理',
+        icon: 'ri:database-2-line',
+        keepAlive: true,
+        roles: ['R_SUPER', 'R_ADMIN']
+      }
+    },
+    {
       path: 'menu',
       name: 'Menus',
       component: '/system/menu',

@@ -12,7 +12,7 @@
   "role": "销售经理",
   "department": "外贸部",
   "address": "山东省临沂市",
-  "sex": "2",
+  "sex": "1",
   "intro": "专注于外贸业务跟视觉设计",
   "roles": ["R_SUPER", "R_ADMIN"],
   "buttons": ["*:*:*"]
