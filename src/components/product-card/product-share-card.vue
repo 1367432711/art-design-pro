@@ -149,7 +149,7 @@
   $danger: #ef4444;
 
   // 卡片规格
-  $card-width: 410px;
+  $card-width: 460px;
   $card-radius: 16px;
   $cover-height: 260px;
   $avatar-size: 48px;
@@ -157,6 +157,7 @@
   // ==================== 主卡片 ====================
   .product-share-card {
     position: relative;
+    width: $card-width;
     overflow: hidden;
     background: $white;
     border-radius: $card-radius;
