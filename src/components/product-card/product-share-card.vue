@@ -141,32 +141,40 @@
 </script>
 
 <style lang="scss" scoped>
-  // ==================== 深色毛玻璃配色系统（参考深色财务卡片） ====================
-  // 深色背景渐变
-  $bg-dark-outer: rgb(15 23 42 / 80%);
-  $bg-dark-inner: rgb(30 41 59 / 60%);
-  $bg-card: rgb(255 255 255 / 5%);
-  $bg-card-hover: rgb(255 255 255 / 8%);
+  // ==================== 高级配色系统 ====================
+  // 主色：深邃午夜蓝 + 金属质感
+  $primary-dark: #0f172a; // 深蓝黑基底
+  $primary-mid: #1e293b; // 中层过渡
+  $primary-light: #334155; // 高光区域
 
-  // 边框色 - 白色半透明
-  $border-light: rgb(255 255 255 / 10%);
-  $border-lighter: rgb(255 255 255 / 15%);
-  $border-bright: rgb(255 255 255 / 20%);
+  // 渐变配色：午夜蓝 → 深海蓝 → 紫罗兰（微妙过渡）
+  $gradient-start: #0f172a; // 午夜蓝黑
+  $gradient-mid: #1e3a5f; // 深海蓝
+  $gradient-end: #1e293b; // 深岩灰
 
-  // 文字色
-  $text-primary: #fff;
-  $text-secondary: #c1d2e9;
-  $text-muted: #94a3b8;
-  $text-accent: #10b981;
+  // 金色点缀（提升高级感）
+  $accent-gold: #fbbf24;
+  $accent-gold-light: #fcd34d;
 
-  // 等级色
+  // 毛玻璃效果
+  $glass-bg: rgb(255 255 255 / 6%);
+  $glass-border: rgb(255 255 255 / 12%);
+  $glass-highlight: rgb(255 255 255 / 8%);
+
+  // 边框色
+  $border-subtle: rgb(255 255 255 / 8%);
+  $border-bright: rgb(255 255 255 / 16%);
+
+  // 文字色（白色系，带冷暖对比）
+  $text-primary: #f8fafc; // 主文字（冷白）
+  $text-secondary: #cbd5e1; // 次要文字
+  $text-muted: #94a3b8; // 弱化文字
+  $text-accent: #7dd3fc; // 强调文字（天空蓝）
+
+  // 等级色（优化饱和度）
   $grade-a: #10b981;
   $grade-b: #3b82f6;
   $grade-c: #f59e0b;
-
-  // 蓝色强调
-  $primary-color: #3b82f6;
-  $primary-glow: rgb(59 130 246 / 40%);
 
   // 卡片规格
   $card-width: 380px;
@@ -179,17 +187,33 @@
     position: relative;
     width: $card-width;
     overflow: hidden;
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
+    // 高级渐变背景 + 微妙纹理
+    background:
+      // 噪点纹理层
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+      // 主渐变层
+      linear-gradient(135deg, $gradient-start 0%, $gradient-mid 45%, $gradient-end 100%);
+    background-blend-mode: overlay;
     border-radius: $card-radius;
-    box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
+    // 多层阴影增强立体感
+    box-shadow:
+      0 0 0 1px $border-subtle,
+      0 4px 24px rgb(0 0 0 / 15%),
+      0 8px 48px rgb(0 0 0 / 12%),
+      inset 0 1px 0 rgb(255 255 255 / 10%);
   }
 
   // ==================== 封面图区域（产品图作为封面） ====================
   .card-cover-section {
     position: relative;
     height: $cover-height;
-    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
+    // 封面区使用浅色渐变，与主体形成对比
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
     border-radius: $card-radius $card-radius 0 0;
+    // 封面边框
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 20%),
+      0 2px 8px rgb(0 0 0 / 8%);
 
     // 产品图作为封面背景
     .cover-product-image {
@@ -198,7 +222,7 @@
       overflow: hidden;
       border-radius: $card-radius $card-radius 0 0;
 
-      // 添加渐变遮罩，让产品图半透明
+      // 渐变遮罩改为更柔和的米白色
       &::after {
         position: absolute;
         inset: 0;
@@ -206,8 +230,8 @@
         content: '';
         background: linear-gradient(
           to bottom,
-          rgb(255 255 255 / 30%) 0%,
-          rgb(255 255 255 / 60%) 100%
+          rgb(248 250 252 / 25%) 0%,
+          rgb(248 250 252 / 55%) 100%
         );
       }
 
@@ -229,11 +253,15 @@
       justify-content: center;
       width: $avatar-size;
       height: $avatar-size;
-      padding: 4px;
-      background: rgb(255 255 255 / 10%);
-      border: 1px solid rgb(255 255 255 / 30%);
+      padding: 5px;
+      // 头像边框：使用金色渐变提升高级感
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border: 2px solid $border-bright;
       border-radius: 50%;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+      // 多层阴影增强立体感
+      box-shadow:
+        0 4px 16px rgb(0 0 0 / 20%),
+        0 0 0 1px rgb(255 255 255 / 6%);
 
       .user-avatar {
         width: 100%;
@@ -286,18 +314,22 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 52px 24px 24px; // 顶部留出头像空间（88px/2 = 44px + 8px 间距）
+    padding: 52px 24px 24px;
   }
 
   // 用户信息区（类似用户名 + 职位）
   .user-info-section {
-    padding: 16px;
-    background: rgb(255 255 255 / 5%);
-    border: 1px solid rgb(255 255 255 / 12%);
+    padding: 18px 20px;
+    // 毛玻璃背景
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    // 边框
+    border: 1px solid $glass-border;
     border-radius: 16px;
+    // 多层阴影 + 内发光
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 58%),
-      0 4px 12px rgb(0 0 0 / 7%);
+      0 4px 24px rgb(0 0 0 / 8%),
+      inset 0 1px 0 $glass-highlight;
 
     .user-header {
       display: flex;
@@ -312,6 +344,8 @@
         font-weight: 600;
         line-height: 1.4;
         color: $text-primary;
+        // 微妙的文字阴影
+        text-shadow: 0 1px 2px rgb(0 0 0 / 20%);
         letter-spacing: 0.3px;
       }
 
@@ -320,9 +354,10 @@
         padding: 5px 12px;
         font-size: 12px;
         font-weight: 500;
-        color: #93c5fd;
-        background: rgb(59 130 246 / 15%);
-        border: 1px solid rgb(59 130 246 / 30%);
+        // 金色主题的角色徽章
+        color: $accent-gold;
+        background: rgb(251 191 36 / 10%);
+        border: 1px solid rgb(251 191 36 / 25%);
         border-radius: 12px;
       }
     }
@@ -341,42 +376,44 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 16px;
-    background: rgb(255 255 255 / 5%);
-    border: 1px solid rgb(255 255 255 / 12%);
+    padding: 20px 18px;
+    // 毛玻璃背景
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: 1px solid $glass-border;
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 58%),
-      0 4px 12px rgb(0 0 0 / 7%);
+      0 4px 24px rgb(0 0 0 / 8%),
+      inset 0 1px 0 $glass-highlight;
 
     .stat-item {
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
       text-align: center;
 
       .stat-value {
-        font-size: 10px;
-        font-weight: 400;
-        color: $text-secondary;
+        font-size: 11px;
+        font-weight: 500;
+        color: $text-accent;
         letter-spacing: 0.3px;
       }
 
       .stat-label {
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 600;
-        color: $text-primary;
+        color: $text-muted;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
       }
     }
 
     .stat-divider {
       width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, transparent, rgb(255 255 255 / 15%), transparent);
+      height: 44px;
+      background: linear-gradient(to bottom, transparent, $border-bright, transparent);
     }
   }
 
@@ -385,13 +422,15 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px;
-    background: rgb(255 255 255 / 5%);
-    border: 1px solid rgb(255 255 255 / 12%);
+    padding: 18px 20px;
+    // 毛玻璃背景
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: 1px solid $glass-border;
     border-radius: 16px;
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 58%),
-      0 4px 12px rgb(0 0 0 / 7%);
+      0 4px 24px rgb(0 0 0 / 8%),
+      inset 0 1px 0 $glass-highlight;
 
     // 标签区域
     .contact-label-wrapper {
@@ -403,7 +442,7 @@
         font-weight: 600;
         color: $text-primary;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 1px;
       }
     }
 
@@ -411,28 +450,29 @@
     .contact-content {
       display: flex;
       gap: 16px;
-      align-items: stretch; // 让左右两侧高度一致
+      align-items: stretch;
 
       // 左侧联系信息
       .contact-info {
         display: flex;
         flex: 1;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
         justify-content: space-around;
 
         .contact-item {
           display: flex;
           gap: 8px;
           align-items: center;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 400;
           color: $text-secondary;
           letter-spacing: 0.2px;
 
           .contact-icon {
-            font-size: 16px;
-            color: $primary-color;
+            font-size: 18px;
+            // 使用天空蓝作为图标颜色
+            color: $text-accent;
           }
         }
       }
@@ -441,23 +481,29 @@
       .qr-code-wrapper {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
         align-items: center;
-        justify-content: center; // 垂直居中
+        justify-content: center;
 
         .qr-code-image {
           width: 80px;
           height: 80px;
-          border: 2px solid rgb(255 255 255);
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+          padding: 4px;
+          background: #fff;
+          // 金色边框提升高级感
+          border: 2px solid $border-bright;
+          border-radius: 10px;
+          // 柔和阴影
+          box-shadow:
+            0 4px 12px rgb(0 0 0 / 20%),
+            0 0 0 1px rgb(255 255 255 / 6%);
         }
 
         .qr-code-label {
           font-size: 11px;
           font-weight: 400;
           color: $text-muted;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.6px;
         }
       }
     }
