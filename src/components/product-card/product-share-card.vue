@@ -63,7 +63,7 @@
         <div class="contact-info">
           <div class="contact-item">
             <Icon icon="ri:wechat-line" class="contact-icon wechat" />
-            <span>{{ user.wechat || '微信号' }}</span>
+            <span>WeChat: {{ user.wechat || 'Please add' }}</span>
           </div>
           <div v-if="user.phone" class="contact-item">
             <Icon icon="ri:phone-line" class="contact-icon phone" />
@@ -75,12 +75,12 @@
           </div>
           <div v-if="user.facebook" class="contact-item">
             <Icon icon="ri:facebook-line" class="contact-icon facebook" />
-            <span>{{ user.facebook }}</span>
+            <span>Facebook: {{ user.facebook }}</span>
           </div>
         </div>
         <div class="qr-code-wrapper">
           <ElImage :src="user.qrCode" fit="cover" class="qr-code-image" crossorigin="anonymous" />
-          <p class="qr-code-label">扫码联系</p>
+          <p class="qr-code-label">Scan to contact</p>
         </div>
       </div>
     </div>
