@@ -327,9 +327,11 @@
   // 用户信息
   const userInfo = computed(() => {
     const userStore = useUserStore()
+    const userName = userStore.info?.userName || 'Art Design Pro'
+    const nickName = userStore.info?.nickName
     return {
       avatar: defaultAvatar,
-      userName: userStore.info?.userName || 'Art Design Pro',
+      userName: nickName ? userName + ' (' + nickName + ')' : userName,
       email: userStore.info?.email || 'info@artdesignpro.com',
       role: '销售经理',
       wechat: userStore.info?.wechat || 'Lovq_201203',

@@ -108,7 +108,6 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
   import { useUserStore } from '@/store/modules/user'
   import { useI18n } from 'vue-i18n'
   import { HttpError } from '@/utils/http/error'
@@ -170,7 +169,6 @@
   const isPassing = ref(false)
   const isClickPass = ref(false)
 
-  const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
@@ -242,8 +240,9 @@
       const userInfo = await fetchGetUserInfo()
       userStore.setUserInfo(userInfo.data)
 
-      // 登录成功处理
-      showLoginSuccessNotice()
+      // 登录成功处理 - 显示欢迎消息，包含用户昵称
+      const userName = userInfo.data?.nickName || userInfo.data?.userName
+      showLoginSuccessNotice(userName)
 
       // 获取 redirect 参数，如果存在则跳转到指定页面，否则跳转到首页
       const redirect = route.query.redirect as string
@@ -290,14 +289,16 @@
   }
 
   // 登录成功提示
-  const showLoginSuccessNotice = () => {
+  const showLoginSuccessNotice = (userName?: string) => {
     setTimeout(() => {
       ElNotification({
         title: t('login.success.title'),
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: userName
+          ? `${t('login.success.message')}, ${userName}!`
+          : `${t('login.success.message')}!`
       })
     }, 1000)
   }

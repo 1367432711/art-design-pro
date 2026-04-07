@@ -180,7 +180,7 @@
     () => userInfo.value,
     (newVal) => {
       if (newVal && Object.keys(newVal).length > 0) {
-        form.realName = newVal.realName || ''
+        form.realName = newVal.userName || '' // 姓名映射到 userName
         form.nickName = newVal.nickName || ''
         form.email = newVal.email || ''
         form.mobile = newVal.phone || ''
