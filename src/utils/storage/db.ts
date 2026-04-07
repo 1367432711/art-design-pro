@@ -349,6 +349,7 @@ export function importModuleData(
         break
       case 'user':
         if (Array.isArray(data)) {
+          const users = getUserList()
           data.forEach((item) => {
             // 如果用户已存在则更新，不存在则添加
             const existingIndex = users.findIndex(
@@ -378,7 +379,7 @@ export function clearAllData() {
   localStorage.removeItem(STORAGE_KEYS.CUSTOMER_LIST)
   localStorage.removeItem(STORAGE_KEYS.PRODUCT_LIST)
   localStorage.removeItem(STORAGE_KEYS.QUOTATION_LIST)
-  localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+  localStorage.removeItem(STORAGE_KEYS.USER_LIST)
 }
 
 /**
@@ -396,7 +397,7 @@ export function clearModuleData(module: 'customer' | 'product' | 'quotation' | '
       localStorage.removeItem(STORAGE_KEYS.QUOTATION_LIST)
       break
     case 'user':
-      localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+      localStorage.removeItem(STORAGE_KEYS.USER_LIST)
       break
   }
 }

@@ -1,5 +1,6 @@
 import { useUserStore } from '@/store/modules/user'
 import { getUserInfoByUserId, updateUserData } from '@/mock/temp/userList'
+import { toUserInfo, toUserListItemUpdates } from '@/utils/user-data-mapper'
 
 /**
  * 获取用户信息
@@ -12,12 +13,14 @@ export function fetchGetUserInfo() {
     const userId = userStore.info?.userId
 
     if (userId) {
-      const data = getUserInfoByUserId(userId)
-      if (data) {
+      const user = getUserInfoByUserId(userId)
+      if (user) {
+        // 字段映射：UserListItem -> UserInfo
+        const userInfo = toUserInfo(user)
         return Promise.resolve({
           code: 200,
           msg: 'success',
-          data
+          data: userInfo
         })
       }
     }
@@ -26,24 +29,21 @@ export function fetchGetUserInfo() {
     return Promise.resolve({
       code: 200,
       msg: 'user not found',
-      data: {}
+      data: {} as Api.Auth.UserInfo
     })
   }
 
   // 生产环境使用真实 API
-  // return request.get<Api.Auth.UserInfo>({
-  //   url: '/api/user/info'
-  // })
   return Promise.resolve({
     code: 200,
     msg: 'success',
-    data: {}
+    data: {} as Api.Auth.UserInfo
   })
 }
 
 /**
  * 更新用户信息
- * @param data 用户信息数据
+ * @param data 用户信息数据（UserInfo 格式）
  * @returns 更新后的用户信息
  */
 export function fetchUpdateUserInfo(data: Partial<Api.Auth.UserInfo>) {
@@ -53,12 +53,16 @@ export function fetchUpdateUserInfo(data: Partial<Api.Auth.UserInfo>) {
     const userId = userStore.info?.userId
 
     if (userId) {
-      const updatedData = updateUserData(userId, data)
-      if (updatedData) {
+      // 将 UserInfo 格式转换为 UserListItem 格式
+      const updates = toUserListItemUpdates(data)
+      const updatedUser = updateUserData(userId, updates)
+      if (updatedUser) {
+        // 返回时转换回 UserInfo 格式
+        const userInfo = toUserInfo(updatedUser)
         return Promise.resolve({
           code: 200,
           msg: 'success',
-          data: updatedData
+          data: userInfo
         })
       }
     }
@@ -67,13 +71,9 @@ export function fetchUpdateUserInfo(data: Partial<Api.Auth.UserInfo>) {
   }
 
   // 生产环境使用真实 API
-  // return request.post<Api.Auth.UserInfo>({
-  //   url: '/api/user/update',
-  //   data
-  // })
   return Promise.resolve({
     code: 200,
     msg: 'success',
-    data: {}
+    data: {} as Api.Auth.UserInfo
   })
 }

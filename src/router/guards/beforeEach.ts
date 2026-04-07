@@ -53,6 +53,7 @@ import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
 import { getUserList } from '@/utils/storage/db'
+import { toUserInfo } from '@/utils/user-data-mapper'
 
 // 路由注册器实例
 let routeRegistry: RouteRegistry | null = null
@@ -373,21 +374,36 @@ async function fetchUserInfo(): Promise<void> {
 
   // 开发环境优先使用本地数据
   if (import.meta.env.DEV) {
+    // 如果 store 中已有用户 ID，从 userList 中查找对应用户
+    const userId = userStore.info?.userId
+    if (userId) {
+      const users = getUserList()
+      const user = users.find((u) => u.id === userId)
+      if (user) {
+        console.log('[RouteGuard] 使用本地用户信息（根据 userId 查找）')
+        // 字段映射：UserListItem -> UserInfo
+        const userInfo = toUserInfo(user)
+        userStore.setUserInfo(userInfo)
+        userStore.checkAndClearWorktabs()
+        return
+      }
+    }
+
+    // 如果 store 中没有用户 ID，尝试从 localStorage 直接读取
     const users = getUserList()
-    const localInfo = users.length > 0 ? users[0] : null
-    if (localInfo) {
-      console.log('[RouteGuard] 使用本地用户信息')
-      userStore.setUserInfo(localInfo as Api.Auth.UserInfo)
+    const user = users.length > 0 ? users[0] : null
+    if (user) {
+      // 字段映射：UserListItem -> UserInfo
+      const userInfo = toUserInfo(user)
+      userStore.setUserInfo(userInfo)
       userStore.checkAndClearWorktabs()
       return
     }
   }
 
   // 生产环境或本地无数据时调用 API
-  console.log('[RouteGuard] 调用 API 获取用户信息')
-  const data = await fetchGetUserInfo()
-  console.log('[RouteGuard] 获取到的用户信息:', data)
-  userStore.setUserInfo(data)
+  const response = await fetchGetUserInfo()
+  userStore.setUserInfo(response.data)
   userStore.checkAndClearWorktabs()
 }
 

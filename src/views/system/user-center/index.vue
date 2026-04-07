@@ -271,12 +271,9 @@
         const result = await fetchUpdateUserInfo(updatedData)
         console.log('[UserCenter] API 返回:', result)
 
-        // 从 LocalStorage 读取最新数据更新 store
-        const { getUserList } = await import('@/utils/storage/db')
-        const users = getUserList()
-        const currentUser = users.find((u) => u.id === userStore.info?.userId)
-        if (currentUser) {
-          userStore.setUserInfo(currentUser as Api.Auth.UserInfo)
+        // 直接使用 API 返回的最新数据更新 store
+        if (result.data) {
+          userStore.setUserInfo(result.data)
         }
 
         ElMessage.success('保存成功')

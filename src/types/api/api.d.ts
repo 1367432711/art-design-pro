@@ -72,6 +72,7 @@ declare namespace Api {
     interface LoginResponse {
       token: string
       refreshToken: string
+      userId?: number
     }
 
     /** 用户信息 */
@@ -116,6 +117,16 @@ declare namespace Api {
       createTime: string
       updateBy: string
       updateTime: string
+      // 扩展字段（用于个人中心等场景）
+      realName?: string
+      sex?: string
+      intro?: string
+      wechat?: string
+      whatsapp?: string
+      facebook?: string
+      role?: string
+      department?: string
+      address?: string
     }
 
     /** 用户搜索参数 */

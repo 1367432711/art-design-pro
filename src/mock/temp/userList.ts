@@ -2,23 +2,16 @@
  * 用户列表数据 - 基于 LocalStorage 存储
  *
  * 开发环境下：
- * - 仅在 LocalStorage 为空时从 JSON 文件初始化
+ * - 每次页面加载都从 JSON 文件同步数据到 LocalStorage
  * - 数据修改后自动同步回 JSON 文件（通过 Vite 插件）
  */
 import { getUserList, saveUserList, updateUser, addUser, deleteUser } from '@/utils/storage/db'
 import userListData from '@/mock/data/userList.json'
 
-// 初始化数据（仅在 LocalStorage 为空时从 JSON 加载）
+// 初始化数据：每次从 JSON 文件同步到 LocalStorage
 function initUserList() {
-  const existing = getUserList()
-
-  if (existing.length === 0) {
-    console.log('[UserList] LocalStorage 为空，从 JSON 文件初始化用户列表...')
-    if (userListData && userListData.length > 0) {
-      saveUserList(userListData as Api.SystemManage.UserListItem[])
-    }
-  } else {
-    console.log('[UserList] LocalStorage 已有用户列表，跳过初始化')
+  if (userListData && userListData.length > 0) {
+    saveUserList(userListData as Api.SystemManage.UserListItem[])
   }
 }
 

@@ -1,6 +1,9 @@
 import request from '@/utils/http'
+// 先导入 userList 模块，确保 initUserList() 被执行
+import '@/mock/temp/userList'
 import { getUserByPhone, getUserInfoByUserId } from '@/mock/temp/userList'
 import { useUserStore } from '@/store/modules/user'
+import { toUserInfo } from '@/utils/user-data-mapper'
 
 /**
  * 登录
@@ -23,27 +26,21 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
 /**
  * Mock 登录实现 - 支持手机号登录
  */
-function mockLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginResponse> {
+async function mockLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginResponse> {
   const { phone, password } = params
 
   // 从 userList 中查找用户
   const user = getUserByPhone(phone)
 
-  console.log('[Mock Login] 请求登录:', { phone, password })
-  console.log('[Mock Login] 查找到的用户:', user)
-
-  // 验证手机号和密码（开发环境宽松验证，只要密码是 123456 就通过）
-  if (password === '123456' && user) {
-    const result = {
+  // 验证用户和密码
+  if (user && user.password === password) {
+    return Promise.resolve({
       token: 'Bearer mock-token-' + Date.now(),
-      refreshToken: 'mock-refresh-token-' + Date.now()
-    }
-    console.log('[Mock Login] 登录成功，返回:', result)
-    return Promise.resolve(result)
+      refreshToken: 'mock-refresh-token-' + Date.now(),
+      userId: user.id
+    })
   }
 
-  // 登录失败
-  console.error('[Mock Login] 登录失败：手机号或密码错误')
   return Promise.reject(new Error('手机号或密码错误'))
 }
 
@@ -58,12 +55,14 @@ export function fetchGetUserInfo() {
     const userId = userStore.info?.userId
 
     if (userId) {
-      const data = getUserInfoByUserId(userId)
-      if (data) {
+      const user = getUserInfoByUserId(userId)
+      if (user) {
+        // 字段映射：UserListItem -> UserInfo
+        const userInfo = toUserInfo(user)
         return Promise.resolve({
           code: 200,
           msg: 'success',
-          data
+          data: userInfo
         })
       }
     }
@@ -72,17 +71,14 @@ export function fetchGetUserInfo() {
     return Promise.resolve({
       code: 200,
       msg: 'success',
-      data: {}
+      data: {} as Api.Auth.UserInfo
     })
   }
 
   // 生产环境使用真实 API
-  // return request.get<Api.Auth.UserInfo>({
-  //   url: '/api/user/info'
-  // })
   return Promise.resolve({
     code: 200,
     msg: 'success',
-    data: {}
+    data: {} as Api.Auth.UserInfo
   })
 }

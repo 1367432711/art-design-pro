@@ -41,7 +41,6 @@
 <script setup lang="ts">
   import { ROLE_LIST_DATA } from '@/mock/temp/formData'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { getUserList, saveUserList } from '@/utils/storage/db'
 
   interface Props {
     visible: boolean
@@ -136,46 +135,48 @@
     await formRef.value.validate((valid) => {
       if (valid) {
         // 保存到 LocalStorage
-        const users = getUserList()
+        import('@/utils/storage/db').then(({ getUserList, saveUserList }) => {
+          const users = getUserList()
 
-        if (dialogType.value === 'add') {
-          // 新增用户
-          const newUser: Api.SystemManage.UserListItem = {
-            id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-            avatar: '/src/assets/images/user/avatar.webp',
-            status: '1',
-            userName: formData.username,
-            userGender: formData.gender,
-            nickName: formData.username,
-            userPhone: formData.phone,
-            userEmail: '',
-            userRoles: formData.role,
-            createBy: 'system',
-            createTime: new Date().toLocaleString('zh-CN'),
-            updateBy: 'system',
-            updateTime: new Date().toLocaleString('zh-CN')
-          }
-          users.push(newUser)
-        } else {
-          // 编辑用户
-          const index = users.findIndex((u) => u.id === props.userData?.id)
-          if (index !== -1) {
-            users[index] = {
-              ...users[index],
+          if (dialogType.value === 'add') {
+            // 新增用户
+            const newUser: Api.SystemManage.UserListItem = {
+              id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
+              avatar: '/src/assets/images/user/avatar.webp',
+              status: '1',
               userName: formData.username,
-              userPhone: formData.phone,
               userGender: formData.gender,
+              nickName: formData.username,
+              userPhone: formData.phone,
+              userEmail: '',
               userRoles: formData.role,
+              createBy: 'system',
+              createTime: new Date().toLocaleString('zh-CN'),
+              updateBy: 'system',
               updateTime: new Date().toLocaleString('zh-CN')
             }
+            users.push(newUser)
+          } else {
+            // 编辑用户
+            const index = users.findIndex((u) => u.id === props.userData?.id)
+            if (index !== -1) {
+              users[index] = {
+                ...users[index],
+                userName: formData.username,
+                userPhone: formData.phone,
+                userGender: formData.gender,
+                userRoles: formData.role,
+                updateTime: new Date().toLocaleString('zh-CN')
+              }
+            }
           }
-        }
 
-        saveUserList(users)
+          saveUserList(users)
 
-        ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
-        dialogVisible.value = false
-        emit('submit')
+          ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
+          dialogVisible.value = false
+          emit('submit')
+        })
       }
     })
   }

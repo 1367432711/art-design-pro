@@ -142,7 +142,7 @@
     {
       key: 'super',
       label: t('login.roles.super'),
-      phone: '151539331641',
+      phone: '15153933164',
       password: '123456',
       roles: ['R_SUPER']
     },
@@ -219,7 +219,7 @@
       // 登录请求 - 使用手机号登录
       const { phone, password } = formData
 
-      const { token, refreshToken } = await fetchLogin({
+      const { token, refreshToken, userId } = await fetchLogin({
         phone,
         password
       })
@@ -232,6 +232,11 @@
       // 存储 token 和登录状态
       userStore.setToken(token, refreshToken)
       userStore.setLoginStatus(true)
+
+      // 先设置 userId 到 store（如果 API 返回了 userId）
+      if (userId) {
+        userStore.setUserInfo({ userId } as Api.Auth.UserInfo)
+      }
 
       // 获取用户信息并设置到 store
       const userInfo = await fetchGetUserInfo()
