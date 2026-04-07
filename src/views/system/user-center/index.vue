@@ -267,15 +267,16 @@
       console.log('[UserCenter] 保存用户信息:', updatedData)
 
       try {
-        // 调用 API 保存
+        // 调用 API 保存（会更新 userList）
         const result = await fetchUpdateUserInfo(updatedData)
         console.log('[UserCenter] API 返回:', result)
 
         // 从 LocalStorage 读取最新数据更新 store
-        const { getUserInfo } = await import('@/utils/storage/db')
-        const latestInfo = getUserInfo()
-        if (Object.keys(latestInfo).length > 0) {
-          userStore.setUserInfo(latestInfo as Api.Auth.UserInfo)
+        const { getUserList } = await import('@/utils/storage/db')
+        const users = getUserList()
+        const currentUser = users.find((u) => u.id === userStore.info?.userId)
+        if (currentUser) {
+          userStore.setUserInfo(currentUser as Api.Auth.UserInfo)
         }
 
         ElMessage.success('保存成功')

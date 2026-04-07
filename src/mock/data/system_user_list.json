@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "avatar": "/src/assets/images/user/avatar.webp",
+    "status": "1",
+    "userName": "admin",
+    "userGender": "female",
+    "nickName": "超级管理员",
+    "userPhone": "15153933164",
+    "userEmail": "admin@example.com",
+    "userRoles": ["R_SUPER"],
+    "createBy": "system",
+    "createTime": "2024-01-01 00:00:00",
+    "updateBy": "system",
+    "updateTime": "2026/4/7 13:40:01"
+  },
+  {
+    "id": 2,
+    "avatar": "/src/assets/images/user/avatar.webp",
+    "status": "1",
+    "userName": "manager",
+    "userGender": "female",
+    "nickName": "管理员",
+    "userPhone": "151539331642",
+    "userEmail": "manager@example.com",
+    "userRoles": ["R_ADMIN"],
+    "createBy": "system",
+    "createTime": "2024-01-02 00:00:00",
+    "updateBy": "system",
+    "updateTime": "2024-01-02 00:00:00"
+  },
+  {
+    "id": 3,
+    "avatar": "/src/assets/images/user/avatar.webp",
+    "status": "1",
+    "userName": "user123",
+    "userGender": "male",
+    "nickName": "普通用户",
+    "userPhone": "151539331643",
+    "userEmail": "user@example.com",
+    "userRoles": ["R_USER"],
+    "createBy": "system",
+    "createTime": "2024-01-03 00:00:00",
+    "updateBy": "system",
+    "updateTime": "2024-01-03 00:00:00"
+  }
+]

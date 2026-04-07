@@ -76,9 +76,9 @@ export default ({ mode }: { mode: string }) => {
       tailwindcss(),
       // 自动同步 Mock 数据到 JSON 文件（开发环境）
       syncMockData({
-        dataPath: 'src/mock/data/userInfo.json',
-        storageKey: 'user_info',
-        dataType: '用户信息'
+        dataPath: 'src/mock/data/userList.json',
+        storageKey: 'system_user_list',
+        dataType: '用户列表'
       }),
       syncMockData({
         dataPath: 'src/mock/data/customerList.json',

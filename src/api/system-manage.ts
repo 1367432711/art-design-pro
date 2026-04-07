@@ -1,72 +1,7 @@
 import request from '@/utils/http'
 import { AppRouteRecord } from '@/types/router'
 import { routeModules } from '@/router/modules'
-
-/**
- * 模拟用户列表数据
- */
-function getMockUserList(params: Api.SystemManage.UserSearchParams) {
-  const mockUsers: Api.SystemManage.UserListItem[] = [
-    {
-      id: 1,
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=1',
-      status: '1',
-      userName: 'admin',
-      userGender: 'male',
-      nickName: '超级管理员',
-      userPhone: '151539331641',
-      userEmail: 'admin@example.com',
-      userRoles: ['R_SUPER'],
-      createBy: 'system',
-      createTime: '2024-01-01 00:00:00',
-      updateBy: 'system',
-      updateTime: '2024-01-01 00:00:00'
-    },
-    {
-      id: 2,
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=2',
-      status: '1',
-      userName: 'manager',
-      userGender: 'female',
-      nickName: '管理员',
-      userPhone: '151539331642',
-      userEmail: 'manager@example.com',
-      userRoles: ['R_ADMIN'],
-      createBy: 'system',
-      createTime: '2024-01-01 00:00:00',
-      updateBy: 'system',
-      updateTime: '2024-01-01 00:00:00'
-    },
-    {
-      id: 3,
-      avatar: 'https://api.dicebear.com/7.x/miniavs/svg?seed=3',
-      status: '1',
-      userName: 'user123',
-      userGender: 'male',
-      nickName: '普通用户',
-      userPhone: '151539331643',
-      userEmail: 'user@example.com',
-      userRoles: ['R_USER'],
-      createBy: 'system',
-      createTime: '2024-01-01 00:00:00',
-      updateBy: 'system',
-      updateTime: '2024-01-01 00:00:00'
-    }
-  ]
-
-  // 简单分页
-  const { current = 1, size = 10 } = params
-  const start = (current - 1) * size
-  const end = start + size
-  const total = mockUsers.length
-
-  return {
-    records: mockUsers.slice(start, end),
-    current,
-    size,
-    total
-  }
-}
+import { getUserListData } from '@/mock/temp/userList'
 
 /**
  * 模拟角色列表数据
@@ -115,9 +50,9 @@ function getMockRoleList(params: Api.SystemManage.RoleSearchParams) {
 
 // 获取用户列表
 export function fetchGetUserList(params: Api.SystemManage.UserSearchParams) {
-  // 开发环境使用 Mock 数据
+  // 开发环境使用 Mock 数据（从 LocalStorage 读取）
   if (import.meta.env.DEV) {
-    const data = getMockUserList(params)
+    const data = getUserListData(params)
     return Promise.resolve({
       code: 200,
       msg: 'success',

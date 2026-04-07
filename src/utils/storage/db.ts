@@ -8,7 +8,7 @@ const STORAGE_KEYS = {
   CUSTOMER_LIST: 'trade_customer_list',
   PRODUCT_LIST: 'trade_product_list',
   QUOTATION_LIST: 'trade_quotation_list',
-  USER_INFO: 'user_info'
+  USER_LIST: 'system_user_list'
 } as const
 
 /**
@@ -256,7 +256,7 @@ export function exportAllData(filename: string) {
     customers: getCustomerList(),
     products: getProductList(),
     quotations: getQuotationList(),
-    userInfo: getUserInfo()
+    userList: getUserList()
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -291,8 +291,8 @@ export function exportModuleData(
       defaultFilename = 'quotationList'
       break
     case 'user':
-      data = getUserInfo()
-      defaultFilename = 'userInfo'
+      data = getUserList()
+      defaultFilename = 'userList'
       break
   }
 
@@ -314,7 +314,7 @@ export function importAllData(jsonString: string) {
     if (data.customers) saveCustomerList(data.customers)
     if (data.products) saveProductList(data.products)
     if (data.quotations) saveQuotationList(data.quotations)
-    if (data.userInfo) saveUserInfo(data.userInfo)
+    if (data.userList) saveUserList(data.userList)
     return true
   } catch (error) {
     console.error('导入数据失败:', error)
@@ -348,7 +348,20 @@ export function importModuleData(
         }
         break
       case 'user':
-        saveUserInfo(data as Partial<Api.Auth.UserInfo>)
+        if (Array.isArray(data)) {
+          data.forEach((item) => {
+            // 如果用户已存在则更新，不存在则添加
+            const existingIndex = users.findIndex(
+              (u) => u.id === (item as Api.SystemManage.UserListItem).id
+            )
+            if (existingIndex !== -1) {
+              users[existingIndex] = { ...users[existingIndex], ...item }
+            } else {
+              users.push(item as Api.SystemManage.UserListItem)
+            }
+          })
+          saveUserList(users)
+        }
         break
     }
     return true
@@ -388,49 +401,90 @@ export function clearModuleData(module: 'customer' | 'product' | 'quotation' | '
   }
 }
 
-// ==================== 用户信息数据操作 ====================
+// ==================== 用户列表数据操作 ====================
 
 /**
- * 获取用户信息
+ * 获取用户列表
  */
-export function getUserInfo(): Partial<Api.Auth.UserInfo> {
+export function getUserList(): Api.SystemManage.UserListItem[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEYS.USER_INFO)
-    if (!data) return {}
+    const data = localStorage.getItem(STORAGE_KEYS.USER_LIST)
+    if (!data) return []
     return JSON.parse(data)
   } catch (error) {
-    console.error('读取用户信息失败:', error)
-    return {}
+    console.error('读取用户列表失败:', error)
+    return []
   }
 }
 
 /**
- * 保存用户信息
+ * 保存用户列表
  */
-export function saveUserInfo(info: Partial<Api.Auth.UserInfo>) {
+export function saveUserList(users: Api.SystemManage.UserListItem[]) {
   try {
-    localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(info))
+    localStorage.setItem(STORAGE_KEYS.USER_LIST, JSON.stringify(users))
   } catch (error) {
-    console.error('保存用户信息失败:', error)
+    console.error('保存用户列表失败:', error)
   }
 }
 
 /**
- * 更新用户信息
+ * 根据 ID 获取用户
  */
-export function updateUserInfo(updates: Partial<Api.Auth.UserInfo>): Partial<Api.Auth.UserInfo> {
-  const current = getUserInfo()
-  const updated = { ...current, ...updates }
-  saveUserInfo(updated)
-  return updated
+export function getUserById(id: number): Api.SystemManage.UserListItem | undefined {
+  const users = getUserList()
+  return users.find((u) => u.id === id)
 }
 
 /**
- * 初始化用户信息（从 JSON 文件）
+ * 添加用户
  */
-export function initUserInfoFromJson(jsonData: Partial<Api.Auth.UserInfo>) {
-  const existing = getUserInfo()
-  if (Object.keys(existing).length === 0) {
-    saveUserInfo(jsonData)
+export function addUser(user: Api.SystemManage.UserListItem) {
+  const users = getUserList()
+  users.push(user)
+  saveUserList(users)
+}
+
+/**
+ * 更新用户
+ */
+export function updateUser(
+  id: number,
+  updates: Partial<Api.SystemManage.UserListItem>
+): Api.SystemManage.UserListItem | null {
+  const users = getUserList()
+  const index = users.findIndex((u) => u.id === id)
+  if (index !== -1) {
+    users[index] = {
+      ...users[index],
+      ...updates,
+      updateTime: new Date().toLocaleString('zh-CN')
+    }
+    saveUserList(users)
+    return users[index]
+  }
+  return null
+}
+
+/**
+ * 删除用户
+ */
+export function deleteUser(id: number): boolean {
+  const users = getUserList()
+  const filtered = users.filter((u) => u.id !== id)
+  if (filtered.length !== users.length) {
+    saveUserList(filtered)
+    return true
+  }
+  return false
+}
+
+/**
+ * 初始化用户列表（从 JSON 文件）
+ */
+export function initUserListFromJson(jsonData: Api.SystemManage.UserListItem[]) {
+  const existing = getUserList()
+  if (existing.length === 0 && jsonData.length > 0) {
+    saveUserList(jsonData)
   }
 }

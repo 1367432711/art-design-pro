@@ -14,8 +14,8 @@
       </ElFormItem>
       <ElFormItem label="性别" prop="gender">
         <ElSelect v-model="formData.gender">
-          <ElOption label="男" value="男" />
-          <ElOption label="女" value="女" />
+          <ElOption label="男" value="male" />
+          <ElOption label="女" value="female" />
         </ElSelect>
       </ElFormItem>
       <ElFormItem label="角色" prop="role">
@@ -41,6 +41,7 @@
 <script setup lang="ts">
   import { ROLE_LIST_DATA } from '@/mock/temp/formData'
   import type { FormInstance, FormRules } from 'element-plus'
+  import { getUserList, saveUserList } from '@/utils/storage/db'
 
   interface Props {
     visible: boolean
@@ -74,7 +75,7 @@
   const formData = reactive({
     username: '',
     phone: '',
-    gender: '男',
+    gender: 'male',
     role: [] as string[]
   })
 
@@ -103,7 +104,7 @@
     Object.assign(formData, {
       username: isEdit && row ? row.userName || '' : '',
       phone: isEdit && row ? row.userPhone || '' : '',
-      gender: isEdit && row ? row.userGender || '男' : '男',
+      gender: isEdit && row ? row.userGender || 'male' : 'male',
       role: isEdit && row ? (Array.isArray(row.userRoles) ? row.userRoles : []) : []
     })
   }
@@ -127,13 +128,51 @@
 
   /**
    * 提交表单
-   * 验证通过后触发提交事件
+   * 验证通过后保存到 LocalStorage
    */
   const handleSubmit = async () => {
     if (!formRef.value) return
 
     await formRef.value.validate((valid) => {
       if (valid) {
+        // 保存到 LocalStorage
+        const users = getUserList()
+
+        if (dialogType.value === 'add') {
+          // 新增用户
+          const newUser: Api.SystemManage.UserListItem = {
+            id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
+            avatar: '/src/assets/images/user/avatar.webp',
+            status: '1',
+            userName: formData.username,
+            userGender: formData.gender,
+            nickName: formData.username,
+            userPhone: formData.phone,
+            userEmail: '',
+            userRoles: formData.role,
+            createBy: 'system',
+            createTime: new Date().toLocaleString('zh-CN'),
+            updateBy: 'system',
+            updateTime: new Date().toLocaleString('zh-CN')
+          }
+          users.push(newUser)
+        } else {
+          // 编辑用户
+          const index = users.findIndex((u) => u.id === props.userData?.id)
+          if (index !== -1) {
+            users[index] = {
+              ...users[index],
+              userName: formData.username,
+              userPhone: formData.phone,
+              userGender: formData.gender,
+              userRoles: formData.role,
+              updateTime: new Date().toLocaleString('zh-CN')
+            }
+          }
+        }
+
+        saveUserList(users)
+
         ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
         dialogVisible.value = false
         emit('submit')
