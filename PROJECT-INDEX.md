@@ -14,6 +14,7 @@
 | 开发规范     | [CLAUDE.md](./CLAUDE.md)                       |
 | 详细开发指南 | [GUIDE.md](./GUIDE.md)                         |
 | API 接口文档 | [API-DOCUMENTATION.md](./API-DOCUMENTATION.md) |
+| 官方文档整合 | [OFFICIAL-GUIDE.md](./OFFICIAL-GUIDE.md)       |
 | 技术栈详情   | [findings.md](./findings.md) - 第 2 节         |
 | 业务模块     | [findings.md](./findings.md) - 第 4 节         |
 | 路由配置     | [findings.md](./findings.md) - 第 8 节         |
