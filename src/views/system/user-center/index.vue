@@ -166,29 +166,27 @@
    * 用户信息表单
    */
   const form = reactive({
-    realName: 'John Snow',
-    nickName: '皮卡丘',
-    email: '59301283@mall.com',
-    mobile: '18888888888',
-    address: '广东省深圳市宝安区西乡街道 101 栋 201',
+    realName: '',
+    nickName: '',
+    email: '',
+    mobile: '',
+    address: '',
     sex: '2',
-    des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
+    des: ''
   })
 
-  // 监听 userInfo 变化，动态更新表单数据（仅在初始化或用户未编辑时更新）
-  const hasUserEdited = ref(false) // 标记用户是否已编辑过表单
-
+  // 监听 userInfo 变化，动态更新表单数据
   watch(
     () => userInfo.value,
     (newVal) => {
-      if (newVal && Object.keys(newVal).length > 0 && !hasUserEdited.value) {
-        form.realName = newVal.realName || 'John Snow'
-        form.nickName = newVal.nickName || '皮卡丘'
-        form.email = newVal.email || '59301283@mall.com'
-        form.mobile = newVal.phone || '18888888888'
-        form.address = newVal.address || '广东省深圳市宝安区西乡街道 101 栋 201'
+      if (newVal && Object.keys(newVal).length > 0) {
+        form.realName = newVal.realName || ''
+        form.nickName = newVal.nickName || ''
+        form.email = newVal.email || ''
+        form.mobile = newVal.phone || ''
+        form.address = newVal.address || ''
         form.sex = newVal.sex || '2'
-        form.des = newVal.intro || 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
+        form.des = newVal.intro || ''
       }
     },
     { immediate: true }
@@ -273,10 +271,7 @@
         const result = await fetchUpdateUserInfo(updatedData)
         console.log('[UserCenter] API 返回:', result)
 
-        // 先标记用户已编辑过，防止 watch 重置表单
-        hasUserEdited.value = true
-
-        // 再更新 store
+        // 更新 store
         userStore.setUserInfo(result)
         ElMessage.success('保存成功')
       } catch (error) {
