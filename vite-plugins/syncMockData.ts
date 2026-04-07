@@ -127,14 +127,17 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
 
               // 正确计算 JSON 文件路径
               let fileName: string
-              if (key === 'user_info') {
+              if (key === 'system_user_list') {
+                fileName = 'userList.json'
+              } else if (key === 'user_info') {
                 fileName = 'userInfo.json'
               } else if (key.startsWith('trade_')) {
                 // trade_customer_list -> customerList.json
                 const moduleName = key.replace('trade_', '').replace('_list', 'List')
                 fileName = moduleName + 'List.json'
               } else {
-                fileName = key + '.json'
+                // 其他情况：system_xxx -> xxx.json
+                fileName = key.replace('system_', '') + '.json'
               }
 
               const currentPath = path.resolve(server.config.root, 'src/mock/data', fileName)
@@ -150,7 +153,7 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
               // 合并数据（保留原有字段，更新变化的字段）
               let updatedData
               if (Array.isArray(data)) {
-                // 数组类型（客户/产品/报价）：直接替换
+                // 数组类型（客户/产品/报价/用户列表）：直接替换
                 updatedData = data
               } else {
                 // 对象类型（用户信息）：合并更新
