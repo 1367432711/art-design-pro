@@ -133,8 +133,10 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
                 fileName = 'userInfo.json'
               } else if (key.startsWith('trade_')) {
                 // trade_customer_list -> customerList.json
-                const moduleName = key.replace('trade_', '').replace('_list', 'List')
-                fileName = moduleName + 'List.json'
+                // trade_product_list -> productList.json
+                // trade_quotation_list -> quotationList.json
+                const moduleName = key.replace('trade_', '') // customer_list, product_list, quotation_list
+                fileName = moduleName + '.json' // customerList.json, productList.json, quotationList.json
               } else {
                 // 其他情况：system_xxx -> xxx.json
                 fileName = key.replace('system_', '') + '.json'
