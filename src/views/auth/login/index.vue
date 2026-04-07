@@ -251,10 +251,31 @@
     } catch (error) {
       // 处理 HttpError
       if (error instanceof HttpError) {
-        // console.log(error.code)
+        ElNotification({
+          title: t('login.error.title'),
+          message: error.message || t('login.error.message'),
+          type: 'error',
+          duration: 3000,
+          zIndex: 10000
+        })
+      } else if (error instanceof Error) {
+        // 处理其他错误（如登录失败、网络错误等）
+        ElNotification({
+          title: t('login.error.title'),
+          message: error.message || t('login.error.message'),
+          type: 'error',
+          duration: 3000,
+          zIndex: 10000
+        })
       } else {
-        // 处理非 HttpError
-        // ElMessage.error('登录失败，请稍后重试')
+        // 未知错误
+        ElNotification({
+          title: t('login.error.title'),
+          message: t('login.error.message'),
+          type: 'error',
+          duration: 3000,
+          zIndex: 10000
+        })
         console.error('[Login] Unexpected error:', error)
       }
     } finally {

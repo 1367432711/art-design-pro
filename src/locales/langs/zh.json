@@ -154,6 +154,10 @@
     "success": {
       "title": "登录成功",
       "message": "欢迎回来"
+    },
+    "error": {
+      "title": "登录失败",
+      "message": "手机号或密码错误，请重试"
     }
   },
   "forgetPassword": {
