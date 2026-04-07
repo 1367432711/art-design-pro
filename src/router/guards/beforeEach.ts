@@ -52,7 +52,7 @@ import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
-import { getUserInfo as getLocalUserInfo } from '@/utils/storage/db'
+import { getUserList } from '@/utils/storage/db'
 
 // 路由注册器实例
 let routeRegistry: RouteRegistry | null = null
@@ -373,8 +373,9 @@ async function fetchUserInfo(): Promise<void> {
 
   // 开发环境优先使用本地数据
   if (import.meta.env.DEV) {
-    const localInfo = getLocalUserInfo()
-    if (Object.keys(localInfo).length > 0) {
+    const users = getUserList()
+    const localInfo = users.length > 0 ? users[0] : null
+    if (localInfo) {
       console.log('[RouteGuard] 使用本地用户信息')
       userStore.setUserInfo(localInfo as Api.Auth.UserInfo)
       userStore.checkAndClearWorktabs()
