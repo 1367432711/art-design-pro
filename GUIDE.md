@@ -1,21 +1,25 @@
-# Art Design Pro 开发指南
+# Art Design Pro - 开发指南
 
-> 📘 完整的开发流程化指南，包含代码规范、开发流程、Mock 数据配置等
+> 📘 面向开发者的完整开发指南，涵盖环境配置、开发规范、Mock 数据配置、最佳实践等内容
 
-**最后更新**: 2026-03-26
+**最后更新**: 2026-04-07
 
 ---
 
 ## 目录
 
 1. [快速开始](#快速开始)
-2. [代码规范](#代码规范)
-3. [页面开发流程](#页面开发流程)
-4. [Mock 数据配置](#mock-数据配置)
-5. [路由配置](#路由配置)
-6. [API 开发规范](#api-开发规范)
-7. [类型定义规范](#类型定义规范)
-8. [提交规范](#提交规范)
+2. [技术栈](#技术栈)
+3. [项目结构](#项目结构)
+4. [开发规范](#开发规范)
+5. [页面开发流程](#页面开发流程)
+6. [路由配置](#路由配置)
+7. [Mock 数据配置](#mock-数据配置)
+8. [核心功能](#核心功能)
+9. [业务模块](#业务模块)
+10. [构建配置](#构建配置)
+11. [最佳实践](#最佳实践)
+12. [常见问题](#常见问题)
 
 ---
 
@@ -23,130 +27,193 @@
 
 ### 环境要求
 
-- Node.js >= 18
-- pnpm >= 8
+- **Node.js**: >= 20.19.0
+- **pnpm**: >= 8.8.0
 
-### 开发启动
+### 安装依赖
 
 ```bash
-# 安装依赖
 pnpm install
+# 如果失败，尝试：
+pnpm install --ignore-scripts
+```
 
-# 启动开发服务器
+### 启动开发服务器
+
+```bash
 pnpm dev
-
-# 访问 http://localhost:5173
 ```
 
-### 项目结构
+### 构建生产版本
 
+```bash
+pnpm build
 ```
-src/
-├── api/              # API 接口
-├── components/       # 公共组件
-├── hooks/           # 组合式函数
-├── locales/         # 国际化
-├── mock/temp/       # Mock 数据
-├── router/modules/  # 路由模块
-├── store/           # Pinia 状态管理
-├── types/api/       # TypeScript 类型定义
-├── utils/           # 工具函数
-└── views/           # 页面组件
+
+### 预览生产构建
+
+```bash
+pnpm serve
+```
+
+### 清理演示数据
+
+```bash
+pnpm clean:dev
 ```
 
 ---
 
-## 代码规范
+## 技术栈
 
-### JavaScript/TypeScript
+| 类别             | 技术         | 版本   |
+| ---------------- | ------------ | ------ |
+| **核心框架**     | Vue 3        | 3.5.21 |
+| **类型系统**     | TypeScript   | 5.6.3  |
+| **构建工具**     | Vite         | 7.1.5  |
+| **UI 组件库**    | Element Plus | 2.11.2 |
+| **状态管理**     | Pinia        | 3.0.3  |
+| **路由管理**     | Vue Router   | 4.5.1  |
+| **HTTP 客户端**  | Axios        | 1.12.2 |
+| **样式方案**     | Tailwind CSS | 4.1.14 |
+| **CSS 预处理器** | Sass         | 1.81.0 |
+| **图表库**       | ECharts      | 6.0.0  |
+| **工具集**       | VueUse       | 13.9.0 |
+| **图标库**       | Iconify      | 5.0.0  |
+
+### 代码质量工具
+
+| 工具        | 用途                           |
+| ----------- | ------------------------------ |
+| ESLint      | JavaScript/TypeScript 代码检查 |
+| Prettier    | 代码格式化                     |
+| Stylelint   | CSS/SCSS 代码检查              |
+| Husky       | Git Hooks 管理                 |
+| Lint-staged | 暂存文件代码检查               |
+| cz-git      | Git 提交规范工具               |
+
+---
+
+## 项目结构
+
+```
+art-design-pro/
+├── scripts/              # 构建脚本
+├── src/
+│   ├── api/              # API 接口定义
+│   ├── assets/           # 静态资源
+│   │   ├── icons/        # SVG 图标
+│   │   └── images/       # 图片资源
+│   ├── components/       # 公共组件
+│   ├── composables/      # 组合式函数
+│   ├── config/           # 配置文件
+│   ├── directives/       # 自定义指令
+│   ├── hooks/            # 自定义 Hooks
+│   ├── layouts/          # 布局组件
+│   ├── mock/             # Mock 数据
+│   │   ├── data/         # JSON 数据文件
+│   │   └── temp/         # Mock 逻辑
+│   ├── router/           # 路由配置
+│   │   └── routes/       # 路由定义
+│   ├── store/            # Pinia 状态管理
+│   │   └── modules/      # 状态模块
+│   ├── styles/           # 全局样式
+│   ├── types/            # TypeScript 类型定义
+│   │   ├── common/       # 通用类型
+│   │   └── import/       # 自动导入类型
+│   ├── utils/            # 工具函数
+│   │   ├── http/         # HTTP 请求封装
+│   │   ├── storage/      # 存储工具
+│   │   ├── table/        # 表格工具
+│   │   └── ui/           # UI 工具
+│   └── views/            # 页面组件
+│       ├── dashboard/    # 仪表盘
+│       ├── trade/        # 外贸管理
+│       └── system/       # 系统管理
+├── .env                  # 环境变量
+├── .eslintrc.js          # ESLint 配置
+├── .prettierrc           # Prettier 配置
+├── .stylelintrc          # Stylelint 配置
+├── package.json          # 项目配置
+├── tsconfig.json         # TypeScript 配置
+└── vite.config.ts        # Vite 配置
+```
+
+---
+
+## 开发规范
+
+### 代码规范
+
+#### 基础语法
 
 ```typescript
 // ✅ 正确
-const name = 'John'
+const name = 'Art Design Pro'
 let count = 0
+console.log('hello')
 
 // ❌ 错误
-var name = 'John' // 禁止使用 var
-const NAME = 'John' // 使用单引号
-count++ // 语句末尾不加分号
+const name = 'Art Design Pro' // 双引号
+var count = 0 // var
+console.log('hello') // 分号
 ```
 
-**核心规则**:
+#### 空行规则
 
-- 使用单引号，不使用双引号
-- 语句末尾不加分号
-- 禁止使用 `var`，使用 `let/const`
-- 不允许多个连续空行
+```typescript
+// ✅ 正确
+const a = 1
 
-### Vue 组件
+const b = 2
 
-```vue
-<!-- ✅ 正确：单个根元素 -->
-<template>
-  <div class="page-container">
-    <h1>标题</h1>
-    <p>内容</p>
-  </div>
-</template>
+// ❌ 错误
+const a = 1
 
-<!-- ❌ 错误：多个根元素 -->
-<template>
-  <h1>标题</h1>
-  <p>内容</p>
-</template>
+const b = 2 // 多个连续空行
 ```
-
-**核心规则**:
-
-- 页面组件必须有单个根元素（路由动画要求）
-- 注释不能放在根元素外部
 
 ### 样式规范
 
-```vue
-<template>
-  <!-- ✅ 正确：使用系统类名 -->
-  <ElCard class="art-card">
-    <div class="custom-section">内容</div>
-  </ElCard>
-</template>
-
-<style lang="scss" scoped>
-  .custom-section {
-    // 使用 CSS 变量
-    color: var(--el-text-color-primary)
-    background: var(--el-bg-color)
-  }
-</style>
-```
-
-**核心规则**:
-
-- 优先使用 `art-card`、`art-table-card`、`art-full-height` 等系统内置类名
-- 使用 Tailwind CSS 工具类优先于自定义 SCSS
-- 使用 CSS 变量保持主题一致性
-
-### 组件使用
+#### 内置类名优先
 
 ```vue
 <template>
   <!-- ✅ 正确 -->
-  <ArtTable :data="list" :columns="columns" />
-  <ArtButtonTable type="edit" @click="handleEdit" />
-  <Icon icon="ri:user-line" />
+  <div class="art-card">
+    <div class="art-card-header">...</div>
+  </div>
 
-  <!-- ❌ 避免 -->
-  <ElTable>...</ElTable>
-  <!-- 除非特殊需求 -->
-  <el-button icon="el-icon-edit">编辑</el-button>
+  <!-- ❌ 不推荐 -->
+  <div class="custom-card">
+    <div class="custom-header">...</div>
+  </div>
 </template>
 ```
 
-**核心规则**:
+#### CSS 变量使用
 
-- 表格使用 `ArtTable` 组件而非原生 `ElTable`
-- 操作按钮使用 `ArtButtonTable` 组件
-- 图标使用 `ArtSvgIcon` 或 `Icon` (Iconify) 组件
+```scss
+.card {
+  background-color: var(--el-bg-color);
+  border-color: var(--default-box-color);
+  color: var(--el-text-color-primary);
+}
+```
+
+### Git 提交规范
+
+使用 `pnpm commit` 调用 cz-git:
+
+```bash
+feat: 新增客户详情页面
+fix: 修复报价单编辑数据无法加载的问题
+refactor: 重构用户信息表单逻辑
+docs: 更新开发文档
+style: 格式化代码
+test: 添加单元测试
+chore: 更新依赖版本
+```
 
 ---
 
@@ -154,53 +221,29 @@ count++ // 语句末尾不加分号
 
 ### 步骤 1: 创建页面组件
 
-在 `src/views/模块名/` 目录下创建页面文件：
+在 `src/views/模块名/` 目录下创建页面文件:
 
 ```
 src/views/trade/product/
 ├── index.vue          # 列表页
-├── product-form.vue   # 表单页
+├── form.vue           # 表单页
 └── product-detail.vue # 详情页
 ```
 
 ### 步骤 2: 注册到路由
 
-编辑 `src/router/modules/模块名.ts`：
+编辑 `src/router/routes/asyncRoutes.ts`:
 
 ```typescript
-import { AppRouteRecord } from '@/types/router'
-
-export const tradeRoutes: AppRouteRecord = {
-  path: '/trade',
-  name: 'Trade',
-  component: '/index/index',
+{
+  path: '/trade/product',
+  name: 'Product',
+  component: '/trade/product',
   meta: {
-    title: 'menus.trade.title',
-    icon: 'ri:global-line',
-    roles: ['R_SUPER', 'R_ADMIN']
-  },
-  children: [
-    {
-      path: 'product',
-      name: 'Product',
-      component: '/trade/product',
-      meta: {
-        title: 'menus.trade.product',
-        icon: 'ri:box-3-line',
-        keepAlive: true
-      }
-    },
-    {
-      path: 'product/detail/:id',
-      name: 'ProductDetail',
-      component: '/trade/product/product-detail',
-      meta: {
-        title: '产品详情',
-        isHide: true,
-        keepAlive: true
-      }
-    }
-  ]
+    title: '产品管理',
+    icon: 'ri:box-3-line',
+    keepAlive: true
+  }
 }
 ```
 
@@ -213,131 +256,32 @@ export const tradeRoutes: AppRouteRecord = {
 ```bash
 git add .
 git commit -m "feat: 新增产品管理模块"
-git push
-```
-
----
-
-## Mock 数据配置
-
-### 步骤 1: 创建 Mock 数据文件
-
-在 `src/mock/temp/` 目录创建数据文件：
-
-```typescript
-// src/mock/temp/productList.ts
-
-import type { Api } from '@/types/api'
-
-// 初始数据
-const PRODUCT_LIST_DATA: Api.Trade.ProductListItem[] = [
-  {
-    id: '1',
-    name: '树脂切割片',
-    type: '切割片',
-    sku: 'QT-001',
-    spec: '100×16×3mm',
-    grade: 'A 级',
-    salePrice: 5.0,
-    currency: 'USD'
-    // ... 其他字段
-  }
-]
-
-// CRUD 函数
-export function getProductListData(params: Api.Trade.ProductSearchParams) {
-  // 实现分页和搜索逻辑
-  return { records: PRODUCT_LIST_DATA, total: PRODUCT_LIST_DATA.length }
-}
-
-export function getProductDetailById(id: string) {
-  return PRODUCT_LIST_DATA.find((item) => item.id === id)
-}
-
-export function createProduct(product: Partial<Api.Trade.ProductListItem>) {
-  const newProduct = {
-    ...product,
-    id: String(Date.now()),
-    createTime: new Date().toLocaleString(),
-    updateTime: new Date().toLocaleString()
-  } as Api.Trade.ProductListItem
-  PRODUCT_LIST_DATA.unshift(newProduct)
-  return newProduct
-}
-
-export function updateProduct(id: string, data: Partial<Api.Trade.ProductListItem>) {
-  const index = PRODUCT_LIST_DATA.findIndex((item) => item.id === id)
-  if (index === -1) return null
-  PRODUCT_LIST_DATA[index] = {
-    ...PRODUCT_LIST_DATA[index],
-    ...data,
-    updateTime: new Date().toLocaleString()
-  }
-  return PRODUCT_LIST_DATA[index]
-}
-
-export function deleteProduct(id: string) {
-  const index = PRODUCT_LIST_DATA.findIndex((item) => item.id === id)
-  if (index === -1) return null
-  PRODUCT_LIST_DATA.splice(index, 1)
-  return true
-}
-```
-
-### 步骤 2: 在 API 中引用
-
-```typescript
-// src/api/trade-manage.ts
-
-import {
-  getProductListData,
-  getProductDetailById,
-  createProduct,
-  updateProduct,
-  deleteProduct
-} from '@/mock/temp/productList'
-
-export function fetchGetProductList(params: Api.Trade.ProductSearchParams) {
-  // 使用模拟数据（开发环境）
-  const data = getProductListData(params)
-  return Promise.resolve({
-    code: 200,
-    msg: 'success',
-    data
-  })
-
-  // 真实 API 请求（生产环境）
-  // return request.get<Api.Trade.ProductList>({
-  //   url: '/api/trade/product/list',
-  //   params
-  // })
-}
-
-export function fetchCreateProduct(data: Partial<Api.Trade.ProductListItem>) {
-  const newProduct = createProduct(data)
-  return Promise.resolve({
-    code: 200,
-    msg: 'success',
-    data: newProduct
-  })
-}
 ```
 
 ---
 
 ## 路由配置
 
-### 路由参数说明
+### 路由类型
 
-| 参数           | 类型    | 必填 | 说明                     |
-| -------------- | ------- | ---- | ------------------------ |
-| path           | string  | ✅   | 路由路径                 |
-| name           | string  | ✅   | 路由名称（唯一）         |
-| component      | string  | ✅   | 组件路径（相对于 views） |
-| meta.title     | string  | ✅   | 菜单标题                 |
-| meta.icon      | string  | -    | 菜单图标                 |
-| meta.keepAlive | boolean | -    | 是否缓存页面             |
-| meta.isHide    | boolean | -    | 是否隐藏菜单             |
+| 类型     | 配置位置                            | 说明                         |
+| -------- | ----------------------------------- | ---------------------------- |
+| 静态路由 | `src/router/routes/staticRoutes.ts` | 登录/注册/404/500 等公共页面 |
+| 动态路由 | `src/router/routes/asyncRoutes.ts`  | 需要权限的业务页面           |
+
+### Meta 属性说明
+
+| 属性         | 类型     | 说明                       |
+| ------------ | -------- | -------------------------- |
+| `title`      | string   | 路由标题                   |
+| `icon`       | string   | 路由图标 (iconify 格式)    |
+| `keepAlive`  | boolean  | 是否缓存页面               |
+| `fixedTab`   | boolean  | 是否固定标签页             |
+| `isHideTab`  | boolean  | 是否在标签页中隐藏         |
+| `isIframe`   | boolean  | 是否为 iframe 内嵌页面     |
+| `link`       | string   | 外部链接地址               |
+| `roles`      | string[] | 角色权限 (前端模式)        |
+| `activePath` | string   | 手动指定激活的父级菜单路径 |
 
 ### KeepAlive 配置
 
@@ -352,286 +296,216 @@ export function fetchCreateProduct(data: Partial<Api.Trade.ProductListItem>) {
 }
 ```
 
-**注意**: 开启 KeepAlive 后，使用 `onActivated` hook 处理数据刷新：
+---
+
+## Mock 数据配置
+
+### LocalStorage 存储
+
+开发环境下使用 LocalStorage 存储 Mock 数据。
+
+| 数据     | Storage Key            | JSON 文件                      |
+| -------- | ---------------------- | ------------------------------ |
+| 用户信息 | `user_info`            | `mock/data/userInfo.json`      |
+| 客户列表 | `trade_customer_list`  | `mock/data/customerList.json`  |
+| 产品列表 | `trade_product_list`   | `mock/data/productList.json`   |
+| 报价列表 | `trade_quotation_list` | `mock/data/quotationList.json` |
+
+### Vite 插件自动同步
+
+`syncMockData` 插件会在开发环境下自动将 LocalStorage 的变更同步回 JSON 文件。
+
+---
+
+## 核心功能
+
+### HTTP 请求封装
+
+#### 基础响应结构
 
 ```typescript
-onMounted(() => {
-  getData() // 首次加载
+interface BaseResponse<T = unknown> {
+  code: number
+  msg: string
+  data: T
+}
+```
+
+#### 请求示例
+
+```typescript
+const { token, refreshToken } = await fetchLogin({
+  userName: username,
+  password
 })
+```
 
-onActivated(() => {
-  refreshData() // 从缓存返回时刷新
+### 表格 Hook (useTable)
+
+```typescript
+const {
+  data,
+  loading,
+  pagination,
+  searchParams,
+  getData,
+  refreshData,
+  refreshCreate,
+  refreshUpdate,
+  refreshRemove,
+  resetSearchParams
+} = useTable({
+  core: {
+    apiFn: fetchUserList,
+    immediate: true
+  },
+  performance: {
+    enableCache: true
+  }
 })
 ```
 
----
+### 图标系统
 
-## API 开发规范
+#### 已注册图标集
 
-### 文件结构
+- `ri` - Remix Icon (系统必要)
+- `svg-spinners` - SVG 旋转动画
+- `line-md` - Line MD 图标
 
-```typescript
-// src/api/trade-manage.ts
+#### 使用方式
 
-import request from '@/utils/http'
-
-// ==================== 客户管理 ====================
-
-/**
- * 获取客户列表
- * @param params 搜索参数
- */
-export function fetchGetCustomerList(params: Api.Trade.CustomerSearchParams) {
-  return request.get<Api.Trade.CustomerList>({
-    url: '/api/trade/customer/list',
-    params
-  })
-}
-
-// ==================== 报价管理 ====================
-// ==================== 产品管理 ====================
+```vue
+<template>
+  <ArtSvgIcon icon="ri:mail-line" />
+  <Icon icon="ri:user-line" />
+</template>
 ```
 
-### 响应格式
-
-所有 API 返回遵循 `BaseResponse<T>` 格式：
-
-```typescript
-interface BaseResponse<T> {
-  code: number // 状态码
-  msg: string // 消息
-  data: T // 数据
-}
-```
-
-### 错误处理
-
-```typescript
-try {
-  const res = await fetchGetProductList(params)
-  const data = res.data
-} catch (error) {
-  console.error('获取产品列表失败:', error)
-  ElMessage.error('获取产品列表失败')
-}
-```
-
----
-
-## 类型定义规范
-
-### 文件位置
-
-`src/types/api/api.d.ts`
-
-### 命名空间结构
-
-```typescript
-declare namespace Api {
-  /** 通用类型 */
-  namespace Common {
-    interface PaginationParams {
-      current: number
-      size: number
-      total: number
-    }
-  }
-
-  /** 贸易管理 */
-  namespace Trade {
-    // 客户
-    interface CustomerListItem {
-      id: string
-      customerName: string
-      contactPerson: string
-      status: string
-    }
-
-    // 产品
-    interface ProductListItem {
-      id: string
-      name: string
-      type: string
-      spec: string
-    }
-
-    // 报价
-    interface QuotationListItem {
-      id: string
-      quotationNo: string
-      customerName: string
-      totalPrice: number
-    }
-
-    // 搜索参数
-    interface ProductSearchParams extends PaginationParams {
-      keyword?: string
-      type?: string
-      grade?: string
-    }
-  }
-}
-```
-
-### 使用方式
-
-```typescript
-// 在 .vue 文件中直接使用（全局命名空间）
-const params: Api.Trade.ProductSearchParams = {
-  current: 1,
-  size: 20,
-  keyword: '切割片'
-}
-
-// 在 .ts 文件中同样直接使用
-function fetchData(params: Api.Trade.ProductSearchParams) {
-  // ...
-}
-```
-
----
-
-## 提交规范
-
-### Commit 格式
-
-```
-<type>: <subject>
-
-[optional body]
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-```
-
-### Type 类型
-
-| 类型     | 说明          |
-| -------- | ------------- |
-| feat     | 新功能        |
-| fix      | Bug 修复      |
-| docs     | 文档更新      |
-| style    | 代码格式调整  |
-| refactor | 代码重构      |
-| perf     | 性能优化      |
-| chore    | 构建/工具配置 |
-
-### 示例
+#### 添加新图标集
 
 ```bash
-# 新功能
-git commit -m "feat: 新增产品管理模块"
-
-# Bug 修复
-git commit -m "fix: 修复报价表单计算错误"
-
-# 文档更新
-git commit -m "docs: 更新开发手册"
-
-# 完整格式
-git commit -m "$(cat <<'EOF'
-feat: 完成产品管理和报价管理模块
-
-新增功能:
-- 产品管理列表页
-- 产品管理表单页
-- 产品管理详情页
-- 报价管理列表页
-- 报价管理表单页
-- 报价管理详情页
-
-功能特性:
-- 支持多产品报价
-- 自动计算总价
-- Mock 数据支持
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-EOF
-)"
+pnpm add -D @iconify-json/[icon-set-name]
 ```
+
+然后在 `src/utils/ui/iconify-loader.ts` 中注册。
+
+---
+
+## 业务模块
+
+### 客户管理 (`/trade/customer`)
+
+| 页面     | 路由                  | 组件                           | 状态 |
+| -------- | --------------------- | ------------------------------ | ---- |
+| 客户列表 | `/trade/customer`     | `customer/index.vue`           | ✅   |
+| 客户详情 | `/trade/customer/:id` | `customer/customer-detail.vue` | ✅   |
+
+**核心字段**: 名称、联系人、邮箱、电话、国家、来源、等级、状态
+
+### 产品管理 (`/trade/product`)
+
+| 页面     | 路由                      | 组件                         | 状态 |
+| -------- | ------------------------- | ---------------------------- | ---- |
+| 产品列表 | `/trade/product`          | `product/index.vue`          | ✅   |
+| 新增产品 | `/trade/product/new`      | `product/form.vue`           | ✅   |
+| 产品详情 | `/trade/product/:id`      | `product/product-detail.vue` | ✅   |
+| 编辑产品 | `/trade/product/edit/:id` | `product/form.vue`           | ✅   |
+
+**产品类型**: 切割片、百叶片、磨光片、其他  
+**产品等级**: A 级、B 级、C 级
+
+### 报价管理 (`/trade/quotation`)
+
+| 页面     | 路由                          | 组件                             | 状态 |
+| -------- | ----------------------------- | -------------------------------- | ---- |
+| 报价列表 | `/trade/quotation`            | `quotation/index.vue`            | ✅   |
+| 新增报价 | `/trade/quotation/form`       | `quotation/form.vue`             | ✅   |
+| 编辑报价 | `/trade/quotation/form/:id`   | `quotation/form.vue`             | ✅   |
+| 报价详情 | `/trade/quotation/detail/:id` | `quotation/quotation-detail.vue` | ✅   |
+
+**报价单号规则**: `CI-YYYYMMDD-NNN` (如 `CI-20260325-001`)  
+**状态**: 草稿、待发送、已发送、已确认、已拒绝
+
+---
+
+## 构建配置
+
+### 环境变量
+
+| 变量                 | 说明         | 默认值    |
+| -------------------- | ------------ | --------- |
+| `VITE_VERSION`       | 应用版本     | `0.0.0`   |
+| `VITE_PORT`          | 开发端口     | `5173`    |
+| `VITE_BASE_URL`      | 基础路径     | `/`       |
+| `VITE_API_URL`       | API 地址     | -         |
+| `VITE_API_PROXY_URL` | API 代理地址 | -         |
+| `VITE_ACCESS_MODE`   | 权限模式     | `backend` |
+
+### 构建优化
+
+- **代码压缩**: Terser (去除 console、debugger)
+- **Gzip 压缩**: 大于 10KB 的文件自动压缩
+- **按需导入**: 组件和 API 自动按需导入
+- **依赖预构建**: echarts、xlsx、xgplayer 等大图依赖
+
+---
+
+## 最佳实践
+
+### 组件开发
+
+1. **单一职责**: 每个组件只负责一个功能
+2. **Props 定义**: 使用 TypeScript 定义 Props 类型
+3. **Emits 定义**: 明确定义组件触发的事件
+4. **Slots 使用**: 合理使用插槽提高组件灵活性
+
+### API 开发
+
+1. **统一路径**: API 文件放在 `src/api/` 目录下
+2. **类型定义**: 为请求和响应定义 TypeScript 类型
+3. **错误处理**: 使用 try-catch 处理请求错误
+4. **响应解构**: 直接解构 `data` 中的数据
+
+### 样式开发
+
+1. **Tailwind 优先**: 优先使用 Tailwind 工具类
+2. **CSS 变量**: 使用 CSS 变量保持主题一致性
+3. **响应式**: 使用 `max-md:` 等前缀处理移动端
+4. **避免嵌套**: 避免过深的 CSS 嵌套
 
 ---
 
 ## 常见问题
 
-### 页面空白
+### 页面切换空白
 
-**问题**: 页面刷新后空白
+**原因**: 页面组件没有单个根元素
 
-**原因**: `<template>` 有多个根元素或注释在外部
+**解决**: 将所有内容包裹在单个容器中
 
-**解决**: 确保单个根元素，注释放在内部
+### 点击菜单页面刷新
 
-```vue
-<!-- ❌ 错误 -->
-<template>
-  <!-- 头部 -->
-  <div>头部</div>
-  <div>内容</div>
-</template>
+**原因**: Vite 依赖预构建优化
 
-<!-- ✅ 正确 -->
-<template>
-  <div>
-    <!-- 头部 -->
-    <div>头部</div>
-    <div>内容</div>
-  </div>
-</template>
-```
+**解决**: 在 `vite.config.ts` 中添加依赖到 `optimizeDeps.include`
 
-### ESLint 报错
+### LocalStorage 数据被重置
 
-**问题**: `no-unused-vars` 报错
+**原因**: `userInfo.ts` 每次页面加载都从 JSON 重置
 
-**解决**: 删除未使用的变量，或使用 `_` 前缀
-
-```typescript
-// ❌ 错误
-const handleSuccess = (response: any, uploadFile: any) => {
-  // uploadFile 未使用
-}
-
-// ✅ 正确
-const handleSuccess = (response: any) => {
-  // ...
-}
-```
-
-### Mock 数据不生效
-
-**检查清单**:
-
-1. Mock 文件路径是否正确 (`src/mock/temp/`)
-2. API 文件是否正确引用 Mock 函数
-3. 是否返回了 `Promise.resolve` 格式
-4. 数据结构是否符合类型定义
+**解决**: 仅在 LocalStorage 为空时从 JSON 初始化
 
 ---
 
-## 开发工具
+## 技术支持
 
-### VS Code 推荐插件
-
-- Vue Language Features (Volar)
-- TypeScript Vue Plugin (Volar)
-- ESLint
-- Prettier
-- Tailwind CSS IntelliSense
-
-### 快捷命令
-
-```bash
-pnpm dev          # 启动开发服务器
-pnpm build        # 生产打包
-pnpm preview      # 预览生产构建
-pnpm lint         # 代码检查
-pnpm format       # 代码格式化
-pnpm commit       # Git 提交 (cz-git)
-```
+- **官方文档**: https://www.artd.pro/docs
+- **演示地址**: https://www.artd.pro
+- **QQ 群**: 1038930070
 
 ---
 
 <div align="center">
-  <p>📚 本文档持续更新，请及时同步最新规范</p>
   <p>Art Design Pro © 2024-2026</p>
 </div>

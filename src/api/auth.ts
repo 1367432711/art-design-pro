@@ -7,12 +7,43 @@ import { getUserInfoData } from '@/mock/temp/userInfo'
  * @returns 登录响应
  */
 export function fetchLogin(params: Api.Auth.LoginParams) {
+  // 开发环境使用 Mock 数据
+  if (import.meta.env.DEV) {
+    return mockLogin(params)
+  }
+
+  // 生产环境使用真实 API
   return request.post<Api.Auth.LoginResponse>({
     url: '/api/auth/login',
     params
-    // showSuccessMessage: true // 显示成功消息
-    // showErrorMessage: false // 不显示错误消息
   })
+}
+
+/**
+ * Mock 登录实现 - 支持手机号登录
+ */
+function mockLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginResponse> {
+  const { phone, password } = params
+
+  // 从 userInfo.json 读取用户数据
+  const userInfo = getUserInfoData()
+
+  console.log('[Mock Login] 请求登录:', { phone, password })
+  console.log('[Mock Login] 用户数据:', userInfo)
+
+  // 验证手机号和密码（开发环境宽松验证，只要密码是 123456 就通过）
+  if (password === '123456') {
+    const result = {
+      token: 'Bearer mock-token-' + Date.now(),
+      refreshToken: 'mock-refresh-token-' + Date.now()
+    }
+    console.log('[Mock Login] 登录成功，返回:', result)
+    return Promise.resolve(result)
+  }
+
+  // 登录失败
+  console.error('[Mock Login] 登录失败：密码错误')
+  return Promise.reject(new Error('手机号或密码错误'))
 }
 
 /**

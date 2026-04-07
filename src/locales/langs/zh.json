@@ -140,7 +140,7 @@
       "user": "普通用户"
     },
     "placeholder": {
-      "username": "请输入账号",
+      "phone": "请输入手机号",
       "password": "请输入密码",
       "slider": "请拖动滑块完成验证"
     },

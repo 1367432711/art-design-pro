@@ -30,11 +30,11 @@
                 </ElOption>
               </ElSelect>
             </ElFormItem>
-            <ElFormItem prop="username">
+            <ElFormItem prop="phone">
               <ElInput
                 class="custom-height"
-                :placeholder="$t('login.placeholder.username')"
-                v-model.trim="formData.username"
+                :placeholder="$t('login.placeholder.phone')"
+                v-model.trim="formData.phone"
               />
             </ElFormItem>
             <ElFormItem prop="password">
@@ -133,7 +133,7 @@
   export interface Account {
     key: AccountKey
     label: string
-    userName: string
+    phone: string
     password: string
     roles: string[]
   }
@@ -142,21 +142,21 @@
     {
       key: 'super',
       label: t('login.roles.super'),
-      userName: 'Super',
+      phone: '151539331641',
       password: '123456',
       roles: ['R_SUPER']
     },
     {
       key: 'admin',
       label: t('login.roles.admin'),
-      userName: 'Admin',
+      phone: '151539331642',
       password: '123456',
       roles: ['R_ADMIN']
     },
     {
       key: 'user',
       label: t('login.roles.user'),
-      userName: 'User',
+      phone: '151539331643',
       password: '123456',
       roles: ['R_USER']
     }
@@ -175,13 +175,13 @@
 
   const formData = reactive({
     account: '',
-    username: '',
+    phone: '',
     password: '',
     rememberPassword: true
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: t('login.placeholder.username'), trigger: 'blur' }],
+    phone: [{ required: true, message: t('login.placeholder.phone'), trigger: 'blur' }],
     password: [{ required: true, message: t('login.placeholder.password'), trigger: 'blur' }]
   }))
 
@@ -195,7 +195,7 @@
   const setupAccount = (key: AccountKey) => {
     const selectedAccount = accounts.value.find((account: Account) => account.key === key)
     formData.account = key
-    formData.username = selectedAccount?.userName ?? ''
+    formData.phone = selectedAccount?.phone ?? ''
     formData.password = selectedAccount?.password ?? ''
   }
 
@@ -216,11 +216,11 @@
 
       loading.value = true
 
-      // 登录请求
-      const { username, password } = formData
+      // 登录请求 - 使用手机号登录
+      const { phone, password } = formData
 
       const { token, refreshToken } = await fetchLogin({
-        userName: username,
+        phone,
         password
       })
 

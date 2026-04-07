@@ -64,7 +64,7 @@ declare namespace Api {
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      userName: string
+      phone: string
       password: string
     }
 

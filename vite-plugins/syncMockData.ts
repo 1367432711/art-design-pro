@@ -67,6 +67,7 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
         try {
           const currentData = localStorage.getItem(STORAGE_KEY)
           if (currentData && currentData !== lastSyncedData) {
+            console.log('[SyncMockData][' + DATA_TYPE + '] 检测到数据变化')
             lastSyncedData = currentData
             // 发送到 Vite 服务器进行同步
             fetch('/__sync_mock__', {
@@ -80,9 +81,11 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
             }).then(function(res) {
               if (res.ok) {
                 console.log('[SyncMockData][' + DATA_TYPE + '] 数据已同步到 JSON 文件')
+              } else {
+                console.error('[SyncMockData][' + DATA_TYPE + '] 同步失败，状态码:', res.status)
               }
             }).catch(function(err) {
-              console.error('[SyncMockData][' + DATA_TYPE + '] 同步失败:', err)
+              console.error('[SyncMockData][' + DATA_TYPE + '] 同步请求失败:', err)
             })
           }
         } catch(e) {
@@ -100,7 +103,19 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
     configureServer(server) {
       if (!isDev) return
 
-      server.middlewares.use('/__sync_mock__', async (req, res) => {
+      server.middlewares.use('/__sync_mock__', async (req, res, next) => {
+        // 设置 CORS 允许跨域
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+        // 处理 OPTIONS 预检请求
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204)
+          res.end()
+          return
+        }
+
         if (req.method === 'POST') {
           let body = ''
           req.on('data', (chunk) => {
@@ -109,11 +124,21 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
           req.on('end', () => {
             try {
               const { key, data, type } = JSON.parse(body)
-              const currentPath = path.resolve(
-                server.config.root,
-                'src/mock/data',
-                key.replace('trade_', '').replace('user_info', 'userInfo') + '.json'
-              )
+
+              // 正确计算 JSON 文件路径
+              let fileName: string
+              if (key === 'user_info') {
+                fileName = 'userInfo.json'
+              } else if (key.startsWith('trade_')) {
+                // trade_customer_list -> customerList.json
+                const moduleName = key.replace('trade_', '').replace('_list', 'List')
+                fileName = moduleName + 'List.json'
+              } else {
+                fileName = key + '.json'
+              }
+
+              const currentPath = path.resolve(server.config.root, 'src/mock/data', fileName)
+              console.log(`[SyncMockData][${type || key}] 目标路径：${currentPath}`)
 
               // 读取当前 JSON 文件内容
               let currentData = {}
@@ -135,17 +160,18 @@ export function syncMockData(options: SyncMockDataOptions): Plugin {
               // 写回文件
               fs.writeFileSync(currentPath, JSON.stringify(updatedData, null, 2), 'utf-8')
 
-              console.log(`[SyncMockData][${type || dataType}] ✅ 数据已同步到`, currentPath)
+              console.log(`[SyncMockData][${type || key}] ✅ 数据已同步到`, currentPath)
 
               res.writeHead(200, { 'Content-Type': 'application/json' })
-              res.end(JSON.stringify({ success: true }))
-            } catch (error) {
+              res.end(JSON.stringify({ success: true, path: currentPath }))
+            } catch (error: any) {
               console.error('[SyncMockData] ❌ 同步失败:', error)
               res.writeHead(500, { 'Content-Type': 'application/json' })
-              res.end(JSON.stringify({ error: error.message }))
+              res.end(JSON.stringify({ error: error.message, stack: error.stack }))
             }
           })
         } else {
+          next()
           res.writeHead(405)
           res.end()
         }

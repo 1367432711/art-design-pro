@@ -65,7 +65,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore()
-    if (accessToken) request.headers.set('Authorization', accessToken)
+    // 开发环境使用 Mock token，添加 Bearer 前缀
+    if (accessToken) {
+      const authValue = accessToken.startsWith('Bearer ') ? accessToken : `Bearer ${accessToken}`
+      request.headers.set('Authorization', authValue)
+    }
 
     if (request.data && !(request.data instanceof FormData) && !request.headers['Content-Type']) {
       request.headers.set('Content-Type', 'application/json')
