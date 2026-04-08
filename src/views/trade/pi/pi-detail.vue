@@ -1,7 +1,7 @@
 <!-- PI 详情页面 -->
 <template>
   <div class="pi-detail-page art-full-height">
-    <ArtPageHeader title="PI 详情" :status-text="piData.status" @back="$router.back()">
+    <ArtPageHeader title="PI 详情" :status-text="piData.status" @back="handleBack">
       <ElSpace>
         <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
@@ -66,6 +66,11 @@
 
   const route = useRoute()
   const router = useRouter()
+
+  // 返回 PI 列表
+  const handleBack = () => {
+    router.push('/trade/pi')
+  }
 
   // 编辑 PI
   const handleEdit = () => {

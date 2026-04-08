@@ -1,7 +1,7 @@
 <!-- PL 详情页面 -->
 <template>
   <div class="pl-detail-page art-full-height">
-    <ArtPageHeader title="PL 详情" :status-text="plData.status" @back="$router.back()">
+    <ArtPageHeader title="PL 详情" :status-text="plData.status" @back="handleBack">
       <ElSpace>
         <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
@@ -63,6 +63,11 @@
 
   const route = useRoute()
   const router = useRouter()
+
+  // 返回 PL 列表
+  const handleBack = () => {
+    router.push('/trade/pl')
+  }
 
   // 编辑 PL
   const handleEdit = () => {

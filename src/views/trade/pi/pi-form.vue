@@ -1,13 +1,13 @@
 <!-- PI 表单页面 -->
 <template>
   <div class="pi-form-page art-full-height">
-    <ArtPageHeader :title="isEdit ? '编辑 PI' : '新增 PI'" @back="$router.back()">
+    <ArtPageHeader :title="isEdit ? '编辑 PI' : '新增 PI'" @back="handleBack">
       <ElSpace>
         <ElButton type="primary" :loading="loading" size="large" @click="handleSubmit">
           <Icon icon="ri:save-line" class="mr-1" />
           保存
         </ElButton>
-        <ElButton size="large" @click="$router.back()">
+        <ElButton size="large" @click="handleBack">
           <Icon icon="ri:close-line" class="mr-1" />
           取消
         </ElButton>
@@ -606,13 +606,18 @@
       try {
         // TODO: 调用保存 API
         ElMessage.success('保存成功')
-        router.back()
+        handleBack()
       } catch {
         ElMessage.error('保存失败')
       } finally {
         loading.value = false
       }
     })
+  }
+
+  // 返回列表页
+  const handleBack = () => {
+    router.push('/trade/pi')
   }
 
   onMounted(async () => {
