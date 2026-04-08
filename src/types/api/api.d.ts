@@ -252,9 +252,11 @@ declare namespace Api {
     /** 产品变体/型号 */
     interface ProductVariant {
       id: string // 变体 ID
-      sku: string // SKU / 型号
-      desc: string // 产品描述
       spec: string // 规格型号
+      name: string // 产品名称
+      type?: string // 产品类型
+      grade?: string // 产品等级
+      desc: string // 产品描述
       qty: number // 数量
       unit: string // 单位：PCS/SET/KG/BOX 等
       price: number // 单价
