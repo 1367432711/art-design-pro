@@ -79,6 +79,9 @@
       return [createBreadcrumbItem(currentRoute)]
     }
 
+    // 处理隐藏路由的面包屑显示（跨模块导航场景）
+    items = processHiddenRoute(matched, items)
+
     return items
   })
 
@@ -88,6 +91,35 @@
 
   // 辅助函数：创建面包屑项目
   const createBreadcrumbItem = (route: RouteLocationMatched): BreadcrumbItem => ({
+    path: route.path,
+    meta: route.meta
+  })
+
+  // 处理隐藏路由的面包屑显示（跨模块导航场景）
+  const processHiddenRoute = (
+    matched: RouteLocationMatched[],
+    items: BreadcrumbItem[]
+  ): BreadcrumbItem[] => {
+    if (matched.length === 0) return items
+
+    const currentRoute = matched[matched.length - 1]
+    const parentName = currentRoute.meta?.parentName as string | undefined
+
+    if (parentName) {
+      const routes = router.getRoutes()
+      const parentRoute = routes.find((r) => r.name === parentName)
+      if (parentRoute) {
+        // 移除当前路由项，添加父路由和当前路由
+        items.pop()
+        items.push(createBreadcrumbItemFromRouteRecord(parentRoute))
+        items.push(createBreadcrumbItem(currentRoute))
+      }
+    }
+    return items
+  }
+
+  // 从 RouteRecordRaw 创建面包屑项目
+  const createBreadcrumbItemFromRouteRecord = (route: any): BreadcrumbItem => ({
     path: route.path,
     meta: route.meta
   })

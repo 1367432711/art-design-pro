@@ -26,7 +26,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/customer/customer-detail',
       meta: {
         title: '客户详情',
-        isHide: true
+        isHide: true,
+        parentName: 'Customer'
       }
     },
     {
@@ -45,7 +46,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-detail',
       meta: {
         title: '报价详情',
-        isHide: true
+        isHide: true,
+        parentName: 'Quotation'
       }
     },
     {
@@ -54,7 +56,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-form',
       meta: {
         title: '新增报价',
-        isHide: true
+        isHide: true,
+        parentName: 'Quotation'
       }
     },
     {
@@ -63,7 +66,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-form',
       meta: {
         title: '编辑报价',
-        isHide: true
+        isHide: true,
+        parentName: 'Quotation'
       }
     },
     {
@@ -82,7 +86,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-detail',
       meta: {
         title: '产品详情',
-        isHide: true
+        isHide: true,
+        parentName: 'Product'
       }
     },
     {
@@ -91,7 +96,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-form',
       meta: {
         title: '新增产品',
-        isHide: true
+        isHide: true,
+        parentName: 'Product'
       }
     },
     {
@@ -100,7 +106,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-form',
       meta: {
         title: '编辑产品',
-        isHide: true
+        isHide: true,
+        parentName: 'Product'
       }
     },
     {
@@ -119,7 +126,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-detail',
       meta: {
         title: 'PI 详情',
-        isHide: true
+        isHide: true,
+        parentName: 'PI'
       }
     },
     {
@@ -128,7 +136,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-form',
       meta: {
         title: '新增 PI',
-        isHide: true
+        isHide: true,
+        parentName: 'PI'
       }
     },
     {
@@ -137,7 +146,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-form',
       meta: {
         title: '编辑 PI',
-        isHide: true
+        isHide: true,
+        parentName: 'PI'
       }
     },
     {
@@ -156,7 +166,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-detail',
       meta: {
         title: 'PL 详情',
-        isHide: true
+        isHide: true,
+        parentName: 'PL'
       }
     },
     {
@@ -165,7 +176,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-form',
       meta: {
         title: '新增 PL',
-        isHide: true
+        isHide: true,
+        parentName: 'PL'
       }
     },
     {
@@ -174,7 +186,8 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-form',
       meta: {
         title: '编辑 PL',
-        isHide: true
+        isHide: true,
+        parentName: 'PL'
       }
     }
   ]
