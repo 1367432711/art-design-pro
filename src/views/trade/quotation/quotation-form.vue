@@ -510,6 +510,8 @@
   const customerOptions = ref<Api.Trade.CustomerListItem[]>([])
   // 产品列表
   const productOptions = ref<Api.Trade.ProductListItem[]>([])
+  // 提交中状态
+  const submitting = ref(false)
 
   // 表单数据 - 扁平化结构
   const formData = ref({
@@ -748,6 +750,9 @@
 
   // 提交保存
   const handleSubmit = async () => {
+    if (submitting.value) return // 防止重复提交
+
+    submitting.value = true
     try {
       // 验证必填字段
       if (!formData.value.customerId) {
@@ -788,6 +793,8 @@
     } catch (error: any) {
       console.error('保存失败:', error)
       ElMessage.error(error.message || '保存失败，请重试')
+    } finally {
+      submitting.value = false
     }
   }
 

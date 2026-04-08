@@ -698,11 +698,13 @@
   // 加载报价详情
   const loadQuotationDetail = async () => {
     const quotationId = route.params.id as string
+    console.log('[QuotationDetail] 加载报价详情，ID:', quotationId)
     if (!quotationId) return
 
     try {
       const res = await fetchGetQuotationDetail(quotationId)
       const data = (res as any).data
+      console.log('[QuotationDetail] 报价详情数据:', data)
 
       if (!data) {
         ElMessage.error('报价单不存在')
@@ -748,6 +750,7 @@
           grandTotal: 0
         }
       }
+      console.log('[QuotationDetail] 填充后的 quotationData.value.id:', quotationData.value.id)
 
       // 补充产品规格型号数据（从产品库获取最新的 spec）
       supplementProductSpecs()
