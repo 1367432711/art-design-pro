@@ -386,7 +386,7 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 320,
+      width: 220,
       fixed: 'right' as const,
       align: 'center',
       formatter: (row: QuotationListItem) =>
@@ -399,15 +399,6 @@
               onClick: () => handleViewQuotation(row)
             },
             () => [h(Icon, { icon: 'ri:eye-line' }), ' 查看']
-          ),
-          h(
-            ElButton,
-            {
-              type: 'info',
-              size: 'small',
-              onClick: () => handleEditQuotation(row)
-            },
-            () => [h(Icon, { icon: 'ri:edit-line' }), ' 编辑']
           ),
           h(
             ElButton,
@@ -645,18 +636,6 @@
       // TODO: 跳转到订单创建页面或打开创建订单弹窗
       // router.push('/trade/order/create?customerId=' + customerData.value.id)
     })
-  }
-
-  // 导出报价单
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleExportQuotation = (row: Api.Trade.QuotationListItem) => {
-    ElMessage.info(`导出报价单 ${row.quotationNo} 的 PDF 功能开发中...`)
-    // TODO: 实现单个报价单 PDF 导出功能
-  }
-
-  // 编辑报价
-  const handleEditQuotation = (row: Api.Trade.QuotationListItem) => {
-    router.push(`/trade/quotation/form/${row.id}?fromCustomer=true`)
   }
 
   // 查看报价详情
