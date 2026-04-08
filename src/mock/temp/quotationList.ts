@@ -41,8 +41,29 @@ function initQuotationData() {
   }
 }
 
+// 开发环境下强制刷新数据（用于数据结构变更时）
+function forceRefreshData() {
+  if (import.meta.env.DEV && quotationData && quotationData.length > 0) {
+    const existing = getQuotationList()
+    // 检查是否有数据缺失 spec 字段（用于迁移旧数据）
+    const hasMissingSpec = existing.some(
+      (item) => item.products && item.products.some((p: any) => !p.spec && p.sku)
+    )
+    if (hasMissingSpec) {
+      console.log('[QuotationData] 检测到旧数据结构，强制刷新...')
+      existing.forEach((item) => deleteQuotation(item.id))
+      quotationData.forEach((quotation) => {
+        addQuotation(quotation as unknown as Api.Trade.QuotationListItem)
+      })
+      console.log('[QuotationData] 强制刷新完成')
+    }
+  }
+}
+
 // 自动初始化
 initQuotationData()
+// 开发环境下强制刷新数据（用于数据结构变更时）
+forceRefreshData()
 
 /**
  * 报价状态配置
