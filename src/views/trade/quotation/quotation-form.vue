@@ -806,10 +806,15 @@
   // 加载报价单详情
   const loadQuotationDetail = async () => {
     const id = quotationId.value
-    if (!id) return
+    console.log('[QuotationForm] 加载报价详情，ID:', id)
+    if (!id) {
+      console.error('[QuotationForm] 报价 ID 为空')
+      return
+    }
 
     try {
       const res = await fetchGetQuotationDetail(id)
+      console.log('[QuotationForm] 报价详情响应:', res)
       const data = (res as any).data
 
       if (!data) {
@@ -875,8 +880,8 @@
         }
       }
     } catch (error) {
-      console.error('加载报价单详情失败:', error)
-      ElMessage.error('加载报价单详情失败')
+      console.error('[QuotationForm] 加载报价单详情失败:', error)
+      ElMessage.error(`加载报价单详情失败：${error instanceof Error ? error.message : '未知错误'}`)
       setTimeout(() => {
         router.push('/trade/quotation')
       }, 1000)
@@ -927,7 +932,8 @@
         addProduct()
       }
     } catch (error) {
-      console.error('加载数据失败:', error)
+      console.error('[QuotationForm] 加载数据失败:', error)
+      ElMessage.error(`加载数据失败：${error instanceof Error ? error.message : '未知错误'}`)
     }
   }
 

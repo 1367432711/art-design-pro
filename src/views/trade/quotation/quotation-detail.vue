@@ -832,6 +832,11 @@
 
   // 编辑报价
   const handleEdit = () => {
+    console.log('[QuotationDetail] 点击编辑，当前 quotationData.value.id:', quotationData.value.id)
+    if (!quotationData.value.id) {
+      ElMessage.error('数据未加载完成，请稍后再试')
+      return
+    }
     router.push(`/trade/quotation/form/${quotationData.value.id}`)
   }
 
