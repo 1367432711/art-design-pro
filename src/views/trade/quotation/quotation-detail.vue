@@ -248,7 +248,14 @@
         <!-- 产品图片 -->
         <ElTableColumn width="100" align="center" label="产品图">
           <template #default="{ row }">
-            <img v-if="row.image" :src="row.image" class="product-image" />
+            <ElImage
+              v-if="row.image"
+              :src="row.image"
+              class="product-image"
+              fit="cover"
+              :preview-src-list="[row.image]"
+              preview-teleported
+            />
             <div v-else class="no-image">No Image</div>
           </template>
         </ElTableColumn>
