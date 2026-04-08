@@ -84,6 +84,10 @@ export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNorm
  * 判断是否是详情页或表单页的路由
  */
 function isDetailOrFormPath(path: string): boolean {
+  // 客户详情页不自动删除
+  if (path.includes('/customer/detail/')) {
+    return false
+  }
   return path.includes('/detail/') || path.includes('/form/')
 }
 
