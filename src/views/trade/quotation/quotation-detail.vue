@@ -67,16 +67,11 @@
 
       <!-- 通用操作组 -->
       <div class="action-group">
-        <ElButton size="large" @click="handleEdit" :disabled="!quotationData.value.id">
+        <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑
         </ElButton>
-        <ElButton
-          type="primary"
-          size="large"
-          @click="handlePrint"
-          :disabled="!quotationData.value.id"
-        >
+        <ElButton type="primary" size="large" @click="handlePrint">
           <Icon icon="ri:print-line" class="mr-1" />
           打印
         </ElButton>
@@ -699,10 +694,7 @@
   // 加载报价详情
   const loadQuotationDetail = async () => {
     const quotationId = route.params.id as string
-    if (!quotationId) {
-      ElMessage.error('报价单 ID 不能为空')
-      return
-    }
+    if (!quotationId) return
 
     try {
       const res = await fetchGetQuotationDetail(quotationId)
@@ -775,7 +767,7 @@
       }
     } catch (error) {
       console.error('加载报价详情失败:', error)
-      ElMessage.error(`加载报价详情失败：${error instanceof Error ? error.message : '未知错误'}`)
+      ElMessage.error('加载报价详情失败')
     }
   }
 
