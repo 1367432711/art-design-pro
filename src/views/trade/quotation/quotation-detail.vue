@@ -59,31 +59,25 @@
         </ElTag>
       </div>
       <ElSpace>
-        <!-- 待确认状态 -->
-        <template v-if="quotationData.status === '1'">
-          <ElButton type="success" @click="handleConfirm">
-            <Icon icon="ri:checkbox-circle-line" class="mr-1" />
-            确认报价
-          </ElButton>
-          <ElButton type="danger" @click="handleReject">
-            <Icon icon="ri:close-circle-line" class="mr-1" />
-            拒绝
-          </ElButton>
-        </template>
-        <!-- 已确认状态 -->
-        <template v-if="quotationData.status === '2' && !quotationData.piId">
-          <ElButton type="primary" @click="handleCreatePI">
-            <Icon icon="ri:add-line" class="mr-1" />
-            生成 PI
-          </ElButton>
-        </template>
-        <!-- 已转 PI 状态 -->
-        <template v-if="quotationData.piId">
-          <ElButton @click="viewPI">
-            <Icon icon="ri:file-view-line" class="mr-1" />
-            查看 PI
-          </ElButton>
-        </template>
+        <!-- 确认/拒绝按钮 -->
+        <ElButton type="success" @click="handleConfirm">
+          <Icon icon="ri:checkbox-circle-line" class="mr-1" />
+          确认报价
+        </ElButton>
+        <ElButton type="danger" @click="handleReject">
+          <Icon icon="ri:close-circle-line" class="mr-1" />
+          拒绝
+        </ElButton>
+        <!-- 生成 PI 按钮 -->
+        <ElButton type="primary" @click="handleCreatePI">
+          <Icon icon="ri:add-line" class="mr-1" />
+          生成 PI
+        </ElButton>
+        <!-- 查看 PI 按钮 -->
+        <ElButton v-if="quotationData.piId" @click="viewPI">
+          <Icon icon="ri:file-view-line" class="mr-1" />
+          查看 PI
+        </ElButton>
         <!-- 通用按钮 -->
         <ElButton @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
