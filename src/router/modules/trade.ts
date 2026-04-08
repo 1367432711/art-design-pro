@@ -56,8 +56,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-form',
       meta: {
         title: '新增报价',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -66,8 +65,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-form',
       meta: {
         title: '编辑报价',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -96,8 +94,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-form',
       meta: {
         title: '新增产品',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -106,8 +103,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-form',
       meta: {
         title: '编辑产品',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -136,8 +132,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-form',
       meta: {
         title: '新增 PI',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -146,8 +141,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-form',
       meta: {
         title: '编辑 PI',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -176,8 +170,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-form',
       meta: {
         title: '新增 PL',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -186,8 +179,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-form',
       meta: {
         title: '编辑 PL',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     }
   ]
