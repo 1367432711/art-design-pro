@@ -1,71 +1,105 @@
 <!-- PL 搜索表单 -->
 <template>
-  <div class="art-search-form">
-    <ElForm :model="modelValue" :inline="true">
-      <ElFormItem label="PL 编号">
-        <ElInput
-          v-model="modelValue.plNo"
-          placeholder="请输入 PL 编号"
-          clearable
-          style="width: 160px"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="发票号">
-        <ElInput
-          v-model="modelValue.invoiceNo"
-          placeholder="请输入发票号"
-          clearable
-          style="width: 160px"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="客户名称">
-        <ElInput
-          v-model="modelValue.customerName"
-          placeholder="请输入客户名称"
-          clearable
-          style="width: 160px"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="状态">
-        <ElSelect
-          v-model="modelValue.status"
-          placeholder="请选择状态"
-          clearable
-          style="width: 120px"
-        >
-          <ElOption label="待发货" value="待发货"></ElOption>
-          <ElOption label="部分发货" value="部分发货"></ElOption>
-          <ElOption label="已发货" value="已发货"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem>
-        <ElSpace>
-          <ElButton type="primary" @click="handleSearch">查询</ElButton>
-          <ElButton @click="handleReset">重置</ElButton>
-        </ElSpace>
-      </ElFormItem>
-    </ElForm>
-  </div>
+  <ArtSearchBar
+    ref="searchBarRef"
+    v-model="formData"
+    :items="formItems"
+    :rules="rules"
+    @reset="handleReset"
+    @search="handleSearch"
+  >
+  </ArtSearchBar>
 </template>
 
 <script setup lang="ts">
-  const modelValue = defineModel<Api.Trade.PLSearchParams>({ required: true })
-  const emit = defineEmits<{
-    search: [value: Api.Trade.PLSearchParams]
-    reset: []
-  }>()
+  interface Props {
+    modelValue: Api.Trade.PLSearchParams
+  }
+  interface Emits {
+    (e: 'update:modelValue', value: Api.Trade.PLSearchParams): void
+    (e: 'search', params: Api.Trade.PLSearchParams): void
+    (e: 'reset'): void
+  }
+  const props = defineProps<Props>()
+  const emit = defineEmits<Emits>()
 
-  const handleSearch = () => {
-    emit('search', { ...modelValue.value })
+  // 表单数据双向绑定
+  const searchBarRef = ref()
+  const formData = computed({
+    get: () => props.modelValue,
+    set: (val) => emit('update:modelValue', val)
+  })
+
+  // 校验规则
+  const rules = {}
+
+  // 日期范围临时变量
+  const dateRange = ref<[string, string] | null>(null)
+
+  // 表单配置
+  const formItems = computed(() => [
+    {
+      label: 'PL 编号',
+      key: 'plNo',
+      type: 'input',
+      props: { placeholder: '请输入 PL 编号', clearable: true }
+    },
+    {
+      label: '发票号',
+      key: 'invoiceNo',
+      type: 'input',
+      props: { placeholder: '请输入发票号', clearable: true }
+    },
+    {
+      label: '客户名称',
+      key: 'customerName',
+      type: 'input',
+      props: { placeholder: '请输入客户名称', clearable: true }
+    },
+    {
+      label: '状态',
+      key: 'status',
+      type: 'select',
+      props: {
+        placeholder: '请选择状态',
+        options: [
+          { label: '待发货', value: '待发货' },
+          { label: '部分发货', value: '部分发货' },
+          { label: '已发货', value: '已发货' }
+        ],
+        clearable: true
+      }
+    },
+    {
+      label: '创建日期',
+      key: 'dateRange',
+      type: 'daterange',
+      props: {
+        startPlaceholder: '开始日期',
+        endPlaceholder: '结束日期',
+        valueFormat: 'YYYY-MM-DD',
+        rangeSeparator: '至'
+      }
+    }
+  ])
+
+  // 事件
+  function handleReset() {
+    dateRange.value = null
+    emit('reset')
   }
 
-  const handleReset = () => {
-    modelValue.value.plNo = undefined
-    modelValue.value.invoiceNo = undefined
-    modelValue.value.customerName = undefined
-    modelValue.value.status = undefined
-    modelValue.value.startTime = undefined
-    modelValue.value.endTime = undefined
-    emit('reset')
+  async function handleSearch(params: Api.Trade.PLSearchParams) {
+    await searchBarRef.value.validate()
+    // 将日期范围转换为 startTime 和 endTime
+    const searchParams = { ...params }
+    if (dateRange.value && dateRange.value.length === 2) {
+      searchParams.startTime = dateRange.value[0]
+      searchParams.endTime = dateRange.value[1]
+    } else {
+      searchParams.startTime = undefined
+      searchParams.endTime = undefined
+    }
+    emit('search', searchParams)
   }
 </script>

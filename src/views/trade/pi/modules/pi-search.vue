@@ -1,88 +1,100 @@
 <!-- PI 搜索表单 -->
 <template>
-  <div class="art-search-form">
-    <ElForm :model="modelValue" :inline="true">
-      <ElFormItem label="发票号">
-        <ElInput
-          v-model="modelValue.invoiceNo"
-          placeholder="请输入发票号"
-          clearable
-          style="width: 180px"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="客户名称">
-        <ElInput
-          v-model="modelValue.customerName"
-          placeholder="请输入客户名称"
-          clearable
-          style="width: 180px"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="状态">
-        <ElSelect
-          v-model="modelValue.status"
-          placeholder="请选择状态"
-          clearable
-          style="width: 120px"
-        >
-          <ElOption label="待付款" value="待付款"></ElOption>
-          <ElOption label="部分付款" value="部分付款"></ElOption>
-          <ElOption label="已付款" value="已付款"></ElOption>
-          <ElOption label="已取消" value="已取消"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem label="日期范围">
-        <ElDatePicker
-          v-model="dateRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="YYYY-MM-DD"
-          style="width: 240px"
-          @change="handleDateChange"
-        ></ElDatePicker>
-      </ElFormItem>
-      <ElFormItem>
-        <ElSpace>
-          <ElButton type="primary" @click="handleSearch">查询</ElButton>
-          <ElButton @click="handleReset">重置</ElButton>
-        </ElSpace>
-      </ElFormItem>
-    </ElForm>
-  </div>
+  <ArtSearchBar
+    ref="searchBarRef"
+    v-model="formData"
+    :items="formItems"
+    :rules="rules"
+    @reset="handleReset"
+    @search="handleSearch"
+  >
+  </ArtSearchBar>
 </template>
 
 <script setup lang="ts">
-  const modelValue = defineModel<Api.Trade.PISearchParams>({ required: true })
-  const emit = defineEmits<{
-    search: [value: Api.Trade.PISearchParams]
-    reset: []
-  }>()
+  interface Props {
+    modelValue: Api.Trade.PISearchParams
+  }
+  interface Emits {
+    (e: 'update:modelValue', value: Api.Trade.PISearchParams): void
+    (e: 'search', params: Api.Trade.PISearchParams): void
+    (e: 'reset'): void
+  }
+  const props = defineProps<Props>()
+  const emit = defineEmits<Emits>()
 
+  // 表单数据双向绑定
+  const searchBarRef = ref()
+  const formData = computed({
+    get: () => props.modelValue,
+    set: (val) => emit('update:modelValue', val)
+  })
+
+  // 校验规则
+  const rules = {}
+
+  // 日期范围临时变量
   const dateRange = ref<[string, string] | null>(null)
 
-  const handleDateChange = (dates: [string, string] | null) => {
-    if (dates) {
-      modelValue.value.startTime = dates[0]
-      modelValue.value.endTime = dates[1]
-    } else {
-      modelValue.value.startTime = undefined
-      modelValue.value.endTime = undefined
+  // 表单配置
+  const formItems = computed(() => [
+    {
+      label: '发票号',
+      key: 'invoiceNo',
+      type: 'input',
+      props: { placeholder: '请输入发票号', clearable: true }
+    },
+    {
+      label: '客户名称',
+      key: 'customerName',
+      type: 'input',
+      props: { placeholder: '请输入客户名称', clearable: true }
+    },
+    {
+      label: '状态',
+      key: 'status',
+      type: 'select',
+      props: {
+        placeholder: '请选择状态',
+        options: [
+          { label: '待付款', value: '待付款' },
+          { label: '部分付款', value: '部分付款' },
+          { label: '已付款', value: '已付款' },
+          { label: '已取消', value: '已取消' }
+        ],
+        clearable: true
+      }
+    },
+    {
+      label: '创建日期',
+      key: 'dateRange',
+      type: 'daterange',
+      props: {
+        startPlaceholder: '开始日期',
+        endPlaceholder: '结束日期',
+        valueFormat: 'YYYY-MM-DD',
+        rangeSeparator: '至'
+      }
     }
-  }
+  ])
 
-  const handleSearch = () => {
-    emit('search', { ...modelValue.value })
-  }
-
-  const handleReset = () => {
-    modelValue.value.invoiceNo = undefined
-    modelValue.value.customerName = undefined
-    modelValue.value.status = undefined
-    modelValue.value.startTime = undefined
-    modelValue.value.endTime = undefined
+  // 事件
+  function handleReset() {
     dateRange.value = null
     emit('reset')
+  }
+
+  async function handleSearch(params: Api.Trade.PISearchParams) {
+    await searchBarRef.value.validate()
+    // 将日期范围转换为 startTime 和 endTime
+    const searchParams = { ...params }
+    if (dateRange.value && dateRange.value.length === 2) {
+      searchParams.startTime = dateRange.value[0]
+      searchParams.endTime = dateRange.value[1]
+    } else {
+      searchParams.startTime = undefined
+      searchParams.endTime = undefined
+    }
+    emit('search', searchParams)
   }
 </script>
