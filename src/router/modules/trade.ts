@@ -109,6 +109,86 @@ export const tradeRoutes: AppRouteRecord = {
         isHide: true,
         keepAlive: true
       }
+    },
+    {
+      path: 'pi',
+      name: 'PI',
+      component: '/trade/pi',
+      meta: {
+        title: 'PI 管理',
+        icon: 'ri:receipt-line',
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pi/detail/:id',
+      name: 'PIDetail',
+      component: '/trade/pi/pi-detail',
+      meta: {
+        title: 'PI 详情',
+        isHide: true,
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pi/form',
+      name: 'PIForm',
+      component: '/trade/pi/pi-form',
+      meta: {
+        title: '新增 PI',
+        isHide: true,
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pi/form/:id',
+      name: 'PIFormEdit',
+      component: '/trade/pi/pi-form',
+      meta: {
+        title: '编辑 PI',
+        isHide: true,
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pl',
+      name: 'PL',
+      component: '/trade/pl',
+      meta: {
+        title: 'PL 管理',
+        icon: 'ri:package-line',
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pl/detail/:id',
+      name: 'PLDetail',
+      component: '/trade/pl/pl-detail',
+      meta: {
+        title: 'PL 详情',
+        isHide: true,
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pl/form',
+      name: 'PLForm',
+      component: '/trade/pl/pl-form',
+      meta: {
+        title: '新增 PL',
+        isHide: true,
+        keepAlive: true
+      }
+    },
+    {
+      path: 'pl/form/:id',
+      name: 'PLFormEdit',
+      component: '/trade/pl/pl-form',
+      meta: {
+        title: '编辑 PL',
+        isHide: true,
+        keepAlive: true
+      }
     }
   ]
 }
