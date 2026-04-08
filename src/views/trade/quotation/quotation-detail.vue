@@ -67,10 +67,6 @@
 
       <!-- 通用操作组 -->
       <div class="action-group">
-        <ElButton size="large" @click="handleEdit">
-          <Icon icon="ri:pencil-line" class="mr-1" />
-          编辑
-        </ElButton>
         <ElButton type="primary" size="large" @click="handlePrint">
           <Icon icon="ri:print-line" class="mr-1" />
           打印
@@ -859,21 +855,6 @@
   // 返回报价列表
   const handleBack = () => {
     router.push('/trade/quotation')
-  }
-
-  // 编辑报价
-  const handleEdit = () => {
-    if (!quotationData.value.id) {
-      ElMessage.warning('数据加载中，请稍后再试')
-      return
-    }
-    router.push({
-      path: `/trade/quotation/form/${quotationData.value.id}`,
-      query: {
-        fromDetail: 'true',
-        quotationId: quotationData.value.id
-      }
-    })
   }
 
   // 删除报价
