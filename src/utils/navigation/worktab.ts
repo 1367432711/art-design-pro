@@ -32,21 +32,9 @@ import { useCommon } from '@/hooks/core/useCommon'
  * 根据当前路由信息设置工作标签页（worktab）
  * @param to 当前路由对象
  */
-export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNormalized): void => {
+export const setWorktab = (to: RouteLocationNormalized): void => {
   const worktabStore = useWorktabStore()
   const { meta, path, name, params, query } = to
-
-  // 自动删除标签逻辑：当从详情页/表单页返回列表页时，删除详情页/表单页的标签
-  if (from) {
-    const fromPath = from.path
-    const toPath = to.path
-
-    // 判断是否是返回列表页（从详情/表单页返回）
-    if (isDetailOrFormPath(fromPath) && isListPath(toPath, fromPath)) {
-      // 删除详情页/表单页的标签
-      worktabStore.removeTab(fromPath)
-    }
-  }
 
   if (!meta.isHideTab) {
     // 如果是 iframe 页面，则特殊处理工作标签页
@@ -77,29 +65,4 @@ export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNorm
       })
     }
   }
-}
-
-/**
- * 判断是否是详情页或表单页的路由
- */
-function isDetailOrFormPath(path: string): boolean {
-  return path.includes('/detail/') || path.includes('/form/')
-}
-
-/**
- * 判断目标路径是否是来源路径的列表页
- */
-function isListPath(toPath: string, fromPath: string): boolean {
-  // 提取模块路径，如 /trade/customer
-  const getModulePath = (path: string): string => {
-    const parts = path.split('/').filter(Boolean)
-    // 如果是 detail 或 form，返回上级路径
-    if (parts.includes('detail') || parts.includes('form')) {
-      const index = parts.findIndex((p) => p === 'detail' || p === 'form')
-      return '/' + parts.slice(0, index).join('/')
-    }
-    return path
-  }
-
-  return getModulePath(toPath) === getModulePath(fromPath)
 }
