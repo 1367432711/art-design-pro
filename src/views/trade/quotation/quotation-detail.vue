@@ -511,6 +511,10 @@
   // 数据加载中
   const loading = ref(false)
 
+  // 来源页面追踪（用于返回按钮）
+  const fromCustomer = ref(false)
+  const customerId = ref<string>('')
+
   // 报价状态配置
   const QUOTATION_STATUS_CONFIG = {
     '1': { type: 'warning', text: '待确认' },
@@ -715,6 +719,13 @@
     const quotationId = route.params.id as string
     if (!quotationId) return
 
+    // 读取来源页面信息
+    fromCustomer.value = route.query.fromCustomer === 'true'
+    if (fromCustomer.value) {
+      // 从 URL 参数或报价数据中获取 customerId
+      customerId.value = (route.query.customerId as string) || ''
+    }
+
     try {
       const res = await fetchGetQuotationDetail(quotationId)
       const data = (res as any).data
@@ -762,6 +773,11 @@
           subtotal: 0,
           grandTotal: 0
         }
+      }
+
+      // 如果是从客户详情跳转而来，且没有传入 customerId，使用报价数据中的
+      if (fromCustomer.value && !customerId.value && data.customerId) {
+        customerId.value = data.customerId
       }
 
       // 补充产品规格型号数据（从产品库获取最新的 spec）
@@ -858,7 +874,12 @@
 
   // 返回报价列表
   const handleBack = () => {
-    router.push('/trade/quotation')
+    // 如果是从客户详情页跳转而来，返回客户详情页
+    if (fromCustomer.value && customerId.value) {
+      router.push(`/trade/customer/detail/${customerId.value}`)
+    } else {
+      router.push('/trade/quotation')
+    }
   }
 
   // 编辑报价
