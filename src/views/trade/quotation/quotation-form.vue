@@ -200,17 +200,21 @@
         <ElTableColumn width="100" align="center" label="产品图">
           <template #default="{ row, $index }">
             <ElUpload
-              :file-list="row.image ? [{ name: 'product-image', url: row.image }] : []"
+              :file-list="
+                row.image && getProductImageUrl(row.image)
+                  ? [{ name: 'product-image', url: getProductImageUrl(row.image) }]
+                  : []
+              "
               :limit="1"
               accept="image/*"
               :show-file-list="false"
               :before-upload="handleImageBeforeUpload"
               :on-change="(file) => handleImageChange(file, $index)"
             >
-              <div v-if="!row.image" class="image-upload-btn">
+              <div v-if="!row.image || !getProductImageUrl(row.image)" class="image-upload-btn">
                 <ArtSvgIcon icon="ri:image-add-line" class="text-2xl text-g-300" />
               </div>
-              <img v-else :src="row.image" class="product-image" />
+              <img v-else :src="getProductImageUrl(row.image)" class="product-image" />
             </ElUpload>
           </template>
         </ElTableColumn>
@@ -234,8 +238,8 @@
               >
                 <div class="flex items-center gap-2">
                   <img
-                    v-if="opt.mainImage"
-                    :src="opt.mainImage"
+                    v-if="opt.mainImage && getProductImageUrl(opt.mainImage)"
+                    :src="getProductImageUrl(opt.mainImage)"
                     class="w-8 h-8 rounded object-cover"
                   />
                   <div class="flex-1 min-w-0">
@@ -496,6 +500,7 @@
     fetchCreateQuotation,
     fetchUpdateQuotation
   } from '@/api/trade-manage'
+  import { getProductList } from '@/utils/storage/db'
 
   defineOptions({ name: 'QuotationForm' })
 
@@ -512,6 +517,30 @@
   const productOptions = ref<Api.Trade.ProductListItem[]>([])
   // 提交中状态
   const submitting = ref(false)
+
+  // 预加载产品图片（使用 Vite import.meta.glob）
+  const productImages = import.meta.glob('/src/assets/images/cover/*.webp', {
+    eager: true
+  }) as Record<string, any>
+
+  // 获取产品图片真实 URL
+  const getProductImageUrl = (imagePath: string): string => {
+    if (!imagePath) return ''
+    // 如果已经是 http 开头的完整 URL，直接返回
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath
+    }
+    // 从 glob 导入的图片中查找
+    const fileName = imagePath.split('/').pop()
+    if (fileName) {
+      const matchPath = Object.keys(productImages).find((key) => key.includes(fileName))
+      if (matchPath) {
+        return productImages[matchPath]?.default || ''
+      }
+    }
+    // 如果找不到，尝试直接使用路径（可能是 public 目录或外部 URL）
+    return imagePath
+  }
 
   // 表单数据 - 扁平化结构
   const formData = ref({
@@ -862,6 +891,9 @@
         }
       }
 
+      // 补充产品数据（从产品库获取图片等信息）
+      supplementProductData()
+
       // 如果报价单中客户信息不完整，从客户档案补充
       if (data.customerId && customerOptions.value.length > 0) {
         const customer = customerOptions.value.find((c) => c.id === data.customerId)
@@ -888,6 +920,50 @@
         router.push('/trade/quotation')
       }, 1000)
     }
+  }
+
+  // 补充产品数据（从产品库获取最新的基础属性）
+  const supplementProductData = () => {
+    const products = formData.value.products || []
+    // 获取产品库数据
+    const allProducts = getProductList()
+
+    products.forEach((product: any) => {
+      // 如果有 selectedProductId，从产品库获取最新的基础属性
+      if (product.selectedProductId) {
+        const sourceProduct = allProducts.find((p) => p.id === product.selectedProductId)
+        if (sourceProduct) {
+          // 基础属性总是从产品库读取（确保数据最新）
+          product.spec = sourceProduct.spec
+          product.type = sourceProduct.type
+          product.grade = sourceProduct.grade
+          product.unit = sourceProduct.unit
+
+          // 图片：从产品库覆盖（确保使用正确的图片路径）
+          if (sourceProduct.mainImage) {
+            product.image = sourceProduct.mainImage
+          }
+        } else {
+          // 产品库中找不到，标记警告
+          product._warning = 'product_not_found'
+        }
+      } else {
+        // 没有 selectedProductId，尝试根据产品名称匹配
+        const matchedProduct = allProducts.find(
+          (p) => p.name === product.name && p.spec === product.spec
+        )
+        if (matchedProduct) {
+          product.selectedProductId = matchedProduct.id
+          product.spec = matchedProduct.spec
+          product.type = matchedProduct.type
+          product.grade = matchedProduct.grade
+          product.unit = matchedProduct.unit
+          if (matchedProduct.mainImage) {
+            product.image = matchedProduct.mainImage
+          }
+        }
+      }
+    })
   }
 
   // 加载数据
