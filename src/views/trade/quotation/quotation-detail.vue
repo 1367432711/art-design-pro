@@ -3,36 +3,31 @@
   <div class="quotation-detail-page">
     <!-- 订单状态步骤条 -->
     <ElCard class="art-card mb-4">
-      <ElSteps :active="getOrderStep()" align-center class="order-steps">
-        <ElStep title="报价单" :description="quotationData.quotationNo || '-'">
-          <template #icon>
-            <div class="step-icon">
-              <Icon icon="ri:file-list-3-line" />
-            </div>
-          </template>
-        </ElStep>
-        <ElStep title="PI 形式发票" :description="quotationData.piInvoiceNo || '待生成'">
-          <template #icon>
-            <div class="step-icon">
-              <Icon icon="ri:receipt-line" />
-            </div>
-          </template>
-        </ElStep>
-        <ElStep title="PL 装箱单" :description="quotationData.plNo || '待生成'">
-          <template #icon>
-            <div class="step-icon">
-              <Icon icon="ri:package-line" />
-            </div>
-          </template>
-        </ElStep>
-        <ElStep title="已发货" :description="getShippedDescription()">
-          <template #icon>
-            <div class="step-icon">
-              <Icon icon="ri:truck-line" />
-            </div>
-          </template>
-        </ElStep>
-      </ElSteps>
+      <div class="order-steps-container">
+        <div
+          class="order-step"
+          v-for="(step, index) in orderSteps"
+          :key="index"
+          :class="{
+            'is-active': index === getOrderStep(),
+            'is-finished': index < getOrderStep()
+          }"
+        >
+          <div class="step-icon-wrapper">
+            <Icon :icon="step.icon" class="step-icon" />
+          </div>
+          <div class="step-title">{{ step.title }}</div>
+          <div class="step-description">{{ getStepDescription(index) }}</div>
+          <!-- 连接线 -->
+          <div
+            class="step-line"
+            v-if="index < orderSteps.length - 1"
+            :class="{
+              'is-active': index < getOrderStep()
+            }"
+          ></div>
+        </div>
+      </div>
     </ElCard>
 
     <!-- 头部操作区 -->
@@ -457,20 +452,36 @@
     '4': { type: 'info', text: '已过期' }
   }
 
+  // 订单步骤配置
+  const orderSteps = [
+    { title: '报价单', icon: 'ri:file-list-3-line' },
+    { title: 'PI 形式发票', icon: 'ri:receipt-line' },
+    { title: 'PL 装箱单', icon: 'ri:package-line' },
+    { title: '已发货', icon: 'ri:truck-line' }
+  ]
+
   // 获取订单步骤（用于步骤条）
   const getOrderStep = (): number => {
     if (quotationData.value.plId) return 3 // 已发货
     if (quotationData.value.piId) return 2 // 已转 PI
-    if (quotationData.value.status === '2') return 0 // 已确认，等待转 PI
+    if (quotationData.value.status === '2') return 1 // 已确认，等待转 PI
     return 0 // 报价单阶段
   }
 
-  // 获取已发货描述
-  const getShippedDescription = (): string => {
-    if (quotationData.value.plNo) {
-      return quotationData.value.plNo
+  // 获取步骤描述
+  const getStepDescription = (step: number): string => {
+    switch (step) {
+      case 0: // 报价单
+        return quotationData.value.quotationNo || '待确认'
+      case 1: // PI
+        return quotationData.value.piInvoiceNo || '待生成'
+      case 2: // PL
+        return quotationData.value.plNo || '待生成'
+      case 3: // 已发货
+        return quotationData.value.plNo || '待发货'
+      default:
+        return '-'
     }
-    return '待发货'
   }
 
   // 获取状态类型
@@ -733,32 +744,107 @@
     padding-bottom: 20px;
 
     // 订单步骤条样式
-    .order-steps {
-      :deep(.el-step__head) {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 8px;
-      }
+    .order-steps-container {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 10px;
+    }
 
-      :deep(.el-step__title) {
-        font-size: 14px;
-        font-weight: 600;
-      }
+    .order-step {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
 
-      :deep(.el-step__description) {
-        font-size: 12px;
-        color: var(--el-text-color-secondary);
-      }
-
-      .step-icon {
+      .step-icon-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        margin: 0 auto;
-        font-size: 20px;
-        color: var(--el-color-primary);
+        width: 56px;
+        height: 56px;
+        margin-bottom: 12px;
+        background: var(--el-fill-color);
+        border: 2px solid var(--el-border-color);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+
+        .step-icon {
+          font-size: 24px;
+          color: var(--el-text-color-secondary);
+          transition: all 0.3s ease;
+        }
+      }
+
+      .step-title {
+        margin-bottom: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--el-text-color-regular);
+        transition: all 0.3s ease;
+      }
+
+      .step-description {
+        font-size: 12px;
+        color: var(--el-text-color-placeholder);
+        transition: all 0.3s ease;
+      }
+
+      // 连接线
+      .step-line {
+        position: absolute;
+        top: 26px;
+        left: 50%;
+        z-index: -1;
+        width: 100%;
+        height: 2px;
+        background: var(--el-border-color-light);
+        transition: all 0.3s ease;
+
+        &.is-active {
+          background: var(--el-color-success);
+        }
+      }
+
+      // 激活状态
+      &.is-active {
+        .step-icon-wrapper {
+          background: var(--el-color-primary);
+          border-color: var(--el-color-primary);
+          box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+
+          .step-icon {
+            color: #fff;
+          }
+        }
+
+        .step-title {
+          font-weight: 700;
+          color: var(--el-color-primary);
+        }
+
+        .step-description {
+          color: var(--el-color-primary-light-3);
+        }
+      }
+
+      // 完成状态
+      &.is-finished {
+        .step-icon-wrapper {
+          background: var(--el-color-success);
+          border-color: var(--el-color-success);
+
+          .step-icon {
+            color: #fff;
+          }
+        }
+
+        .step-title {
+          color: var(--el-color-success);
+        }
       }
     }
 
