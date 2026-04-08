@@ -827,14 +827,13 @@
     }
   }
 
-  // 返回报价列表或客户详情页
+  // 返回报价列表或报价详情页
   const handleBack = () => {
-    const fromCustomer = route.query.fromCustomer === 'true'
-    if (fromCustomer) {
-      // 从客户详情页来，返回客户详情页
-      router.back()
+    // 从报价详情页来，返回报价详情页
+    if (route.query.fromDetail === 'true') {
+      router.push(`/trade/quotation/detail/${route.query.quotationId}`)
     } else {
-      // 从报价列表来，返回报价列表
+      // 否则返回报价列表
       router.push('/trade/quotation')
     }
   }

@@ -867,7 +867,13 @@
       ElMessage.warning('数据加载中，请稍后再试')
       return
     }
-    router.push(`/trade/quotation/form/${quotationData.value.id}`)
+    router.push({
+      path: `/trade/quotation/form/${quotationData.value.id}`,
+      query: {
+        fromDetail: 'true',
+        quotationId: quotationData.value.id
+      }
+    })
   }
 
   // 删除报价
