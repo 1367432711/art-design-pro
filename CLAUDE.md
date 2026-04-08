@@ -2,7 +2,7 @@
 
 > 📋 本文档整理了项目的核心开发规则，所有代码修改都应遵循以下规范。
 
-**最后更新**: 2026-04-07
+**最后更新**: 2026-04-08
 
 ---
 
@@ -64,6 +64,7 @@ no-multiple-empty-lines: ['warn', { max: 1 }]
 | 表格     | `ArtTable`            | 企业级表格数据管理组件  |
 | 操作按钮 | `ArtButtonTable`      | 表格操作列按钮组        |
 | 图标     | `ArtSvgIcon` / `Icon` | SVG 图标 / Iconify 图标 |
+| 页头     | `ArtPageHeader`       | 统一页面头部组件        |
 
 ### 图标使用
 
@@ -87,6 +88,72 @@ pnpm add -D @iconify-json/[icon-set-name]
 ```
 
 然后在 `src/utils/ui/iconify-loader.ts` 中注册。
+
+### ArtPageHeader 页头组件
+
+**统一页面头部样式，支持标题、返回按钮、状态标签、操作按钮组。**
+
+```vue
+<template>
+  <ArtPageHeader
+    title="页面标题"
+    :status-text="状态文本"
+    :status-type="success"
+    :show-back="true"
+    @back="handleBack"
+  >
+    <!-- 默认插槽：操作按钮组 -->
+    <div class="action-group">
+      <ElButton type="primary" size="large" @click="handleCreate">
+        <Icon icon="ri:add-line" class="mr-1" />
+        新增
+      </ElButton>
+    </div>
+    <div class="action-group danger-group">
+      <ElDropdown trigger="click" @command="handleCommand">
+        <ElButton type="danger" size="large" plain>更多</ElButton>
+        <template #dropdown>
+          <ElDropdownMenu>
+            <ElDropdownItem command="delete">删除</ElDropdownItem>
+          </ElDropdownMenu>
+        </template>
+      </ElDropdown>
+    </div>
+  </ArtPageHeader>
+</template>
+```
+
+**Props 属性**:
+
+| 属性           | 类型    | 默认值      | 说明                                               |
+| -------------- | ------- | ----------- | -------------------------------------------------- |
+| `title`        | String  | `''`        | 页面标题                                           |
+| `show-back`    | Boolean | `true`      | 是否显示返回按钮                                   |
+| `back-text`    | String  | `'返回'`    | 返回按钮文字                                       |
+| `show-divider` | Boolean | `true`      | 是否显示分隔线                                     |
+| `status-text`  | String  | `''`        | 状态标签文本                                       |
+| `status-type`  | String  | `'primary'` | 状态标签类型 (primary/success/warning/info/danger) |
+| `tag-size`     | String  | `'large'`   | 状态标签尺寸                                       |
+| `custom-class` | String  | `''`        | 自定义类名                                         |
+
+**Events 事件**:
+
+| 事件名 | 参数 | 说明             |
+| ------ | ---- | ---------------- |
+| `back` | -    | 返回按钮点击事件 |
+
+**Slots 插槽**:
+
+| 插槽名    | 说明                           |
+| --------- | ------------------------------ |
+| `default` | 右侧操作按钮组                 |
+| `left`    | 左侧自定义内容（在状态标签后） |
+
+**按钮分组样式类**:
+
+- `.action-group` - 按钮组容器
+- `.action-group.danger-group` - 危险操作组（带左侧红色边框）
+- `.action-group .view-pi-btn` - 查看按钮样式
 
 ---
 
