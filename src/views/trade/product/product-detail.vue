@@ -310,7 +310,6 @@
     return {
       image: productData.value.mainImage || '',
       name: productData.value.name || '',
-      sku: productData.value.sku || '',
       spec: productData.value.spec || '',
       type: productData.value.type || '',
       grade: productData.value.grade || '',

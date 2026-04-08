@@ -332,10 +332,9 @@ declare namespace Api {
     interface ProductListItem {
       id: string
       name: string // 产品名称
-      sku: string // 产品编号
+      spec: string // 规格型号
       type: string // 产品类型：切割片/百叶片/磨光片/其他
       grade: string // 产品等级：A 级/B 级/C 级
-      spec: string // 规格型号
       material: string // 材质
       unit: string // 单位
       costPrice: number // 成本价
@@ -510,7 +509,6 @@ declare namespace Api {
 
       // 产品信息（快照）
       productName: string
-      sku: string
       spec: string
       type: string
       grade: string
@@ -602,7 +600,6 @@ declare namespace Api {
 
       // 产品信息（快照）
       productName: string
-      sku: string
       spec: string
       type: string
       unit: string

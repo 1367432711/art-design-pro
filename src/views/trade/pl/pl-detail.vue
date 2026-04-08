@@ -29,7 +29,6 @@
 
       <ElTable :data="plData.products" border>
         <ElTableColumn prop="productName" label="产品名称" />
-        <ElTableColumn prop="sku" label="SKU" />
         <ElTableColumn prop="spec" label="规格" />
         <ElTableColumn prop="quantity" label="数量" />
         <ElTableColumn prop="cartons" label="箱数" />

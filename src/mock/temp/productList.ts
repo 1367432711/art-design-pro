@@ -51,13 +51,12 @@ export function getProductListData(params: Api.Trade.ProductSearchParams): Api.T
 
   let filteredData = getProductList()
 
-  // 根据关键词搜索（产品名称、SKU、规格型号）
+  // 根据关键词搜索（产品名称、规格型号）
   if (keyword) {
     const keywordLower = keyword.toLowerCase()
     filteredData = filteredData.filter(
       (item) =>
         item.name.toLowerCase().includes(keywordLower) ||
-        item.sku.toLowerCase().includes(keywordLower) ||
         item.spec.toLowerCase().includes(keywordLower)
     )
   }

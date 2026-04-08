@@ -99,7 +99,6 @@
   interface ProductInfo {
     image: string
     name: string
-    sku?: string
     spec?: string
     type?: string
     grade?: string
