@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "bankName": "中国农业银行",
+    "accountName": "SHANDONG NAJU ABRASIVES CO.,LTD.",
+    "accountNumberUSD": "1587321040001043",
+    "accountNumberRMB": "1587321040029744",
+    "swiftCode": "ABOCCNBJ150",
+    "bankAddress": "NO.137,YIHE ROAD,LINYI,SHANDONG PROVINCE,CHINA",
+    "bankCountry": "China",
+    "isDefault": true,
+    "status": "active",
+    "createTime": "2025-01-01 00:00:00",
+    "updateTime": "2025-01-01 00:00:00"
+  },
+  {
+    "id": "2",
+    "bankName": "中国工商银行",
+    "accountName": "SHANDONG NAJU ABRASIVES CO.,LTD.",
+    "accountNumberUSD": "1602001234567890",
+    "accountNumberRMB": "1602001234567891",
+    "swiftCode": "ICBKCNBJSDI",
+    "bankAddress": "NO.88,JIEFANG ROAD,LINYI,SHANDONG PROVINCE,CHINA",
+    "bankCountry": "China",
+    "isDefault": false,
+    "status": "active",
+    "createTime": "2025-01-01 00:00:00",
+    "updateTime": "2025-01-01 00:00:00"
+  }
+]

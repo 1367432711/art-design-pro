@@ -10,14 +10,30 @@
           :key="index"
           :class="{
             'is-active': index === getOrderStep(),
-            'is-finished': index < getOrderStep()
+            'is-finished': index < getOrderStep(),
+            'is-clickable': isStepClickable(index)
           }"
+          @click="handleStepClick(index)"
         >
-          <div class="step-icon-wrapper">
-            <Icon :icon="step.icon" class="step-icon" />
-          </div>
+          <ElTooltip :content="getStepTooltip(index)" placement="top">
+            <div class="step-icon-wrapper">
+              <Icon :icon="step.icon" class="step-icon" />
+            </div>
+          </ElTooltip>
           <div class="step-title">{{ step.title }}</div>
           <div class="step-description">{{ getStepDescription(index) }}</div>
+          <!-- 快捷操作按钮 -->
+          <div class="step-actions" v-if="getStepActions(index).length > 0">
+            <ElButton
+              v-for="(action, actionIndex) in getStepActions(index)"
+              :key="actionIndex"
+              :type="action.type as any"
+              size="small"
+              @click.stop="action.handler"
+            >
+              {{ action.text }}
+            </ElButton>
+          </div>
           <!-- 连接线 -->
           <div
             class="step-line"
@@ -468,6 +484,100 @@
     return 0 // 报价单阶段
   }
 
+  // 判断步骤是否可点击
+  const isStepClickable = (index: number): boolean => {
+    // 已完成的步骤可以点击查看详情
+    if (index < getOrderStep()) return true
+    // 当前步骤可以点击
+    if (index === getOrderStep()) return true
+    // 未来步骤不可点击
+    return false
+  }
+
+  // 获取步骤详情提示
+  const getStepTooltip = (index: number): string => {
+    const descriptions = [
+      `报价单号：${quotationData.value.quotationNo || '待生成'}`,
+      `PI 发票号：${quotationData.value.piInvoiceNo || '待生成'}`,
+      `PL 编号：${quotationData.value.plNo || '待生成'}`,
+      `物流单号：${quotationData.value.shippingNo || '待填写'}`
+    ]
+    return descriptions[index] || ''
+  }
+
+  // 获取步骤操作按钮
+  const getStepActions = (
+    index: number
+  ): Array<{ type: string; text: string; handler: () => void }> => {
+    const actions: Array<{ type: string; text: string; handler: () => void }> = []
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const currentStep = getOrderStep()
+
+    // 步骤 0: 报价单 - 确认/拒绝按钮（仅在待确认时显示）
+    if (index === 0 && quotationData.value.status === '1') {
+      actions.push({ type: 'success', text: '确认', handler: handleConfirm })
+      actions.push({ type: 'danger', text: '拒绝', handler: handleReject })
+    }
+    // 步骤 1: PI - 生成 PI 按钮（仅在已确认且未生成 PI 时显示）
+    if (index === 1 && quotationData.value.status === '2' && !quotationData.value.piId) {
+      actions.push({ type: 'primary', text: '生成 PI', handler: handleCreatePI })
+    }
+    // 步骤 2: PL - 生成 PL 按钮（仅在已转 PI 且未生成 PL 时显示）
+    if (index === 2 && quotationData.value.piId && !quotationData.value.plId) {
+      actions.push({ type: 'primary', text: '生成 PL', handler: handleCreatePL })
+    }
+    // 步骤 3: 已发货 - 查看物流（仅在已发货时显示）
+    if (index === 3 && quotationData.value.plId) {
+      actions.push({ type: 'info', text: '查看物流', handler: handleViewShipping })
+    }
+
+    return actions
+  }
+
+  // 处理步骤点击
+  const handleStepClick = (index: number) => {
+    if (!isStepClickable(index)) return
+
+    const currentStep = getOrderStep()
+
+    // 点击已完成的步骤，查看详情
+    if (index < currentStep || index === currentStep) {
+      switch (index) {
+        case 0:
+          // 报价单详情（当前页面）
+          break
+        case 1:
+          // 查看 PI 详情
+          if (quotationData.value.piId) {
+            router.push(`/trade/pi/detail/${quotationData.value.piId}`)
+          }
+          break
+        case 2:
+          // 查看 PL 详情
+          if (quotationData.value.plId) {
+            router.push(`/trade/pl/detail/${quotationData.value.plId}`)
+          }
+          break
+        case 3:
+          // 查看物流信息
+          if (quotationData.value.plId) {
+            handleViewShipping()
+          }
+          break
+      }
+    }
+  }
+
+  // 生成 PL
+  const handleCreatePL = () => {
+    ElMessage.info('PL 模块开发中，敬请期待')
+  }
+
+  // 查看物流
+  const handleViewShipping = () => {
+    ElMessage.info('物流跟踪功能开发中')
+  }
+
   // 获取步骤描述
   const getStepDescription = (step: number): string => {
     switch (step) {
@@ -759,6 +869,24 @@
       flex: 1;
       flex-direction: column;
       align-items: center;
+      padding: 0 8px;
+      transition: all 0.3s ease;
+
+      // 可点击状态
+      &.is-clickable {
+        cursor: pointer;
+
+        &:hover {
+          .step-icon-wrapper {
+            box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+            transform: scale(1.05);
+          }
+
+          .step-title {
+            color: var(--el-color-primary);
+          }
+        }
+      }
 
       .step-icon-wrapper {
         display: flex;
@@ -788,9 +916,19 @@
       }
 
       .step-description {
+        margin-bottom: 8px;
         font-size: 12px;
         color: var(--el-text-color-placeholder);
         transition: all 0.3s ease;
+      }
+
+      // 快捷操作按钮
+      .step-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-top: 4px;
       }
 
       // 连接线

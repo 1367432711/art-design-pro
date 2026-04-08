@@ -1,0 +1,14 @@
+{
+  "enableAllProjectMcpServers": true,
+  "skills": {
+    "brainstorming": {
+      "enabled": true
+    },
+    "planning-with-files-zh": {
+      "enabled": true
+    },
+    "ui-ux-pro-max": {
+      "enabled": true
+    }
+  }
+}

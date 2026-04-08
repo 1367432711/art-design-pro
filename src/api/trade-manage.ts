@@ -14,6 +14,29 @@ import {
   updateProductData as updateProduct,
   deleteProductData as deleteProduct
 } from '@/mock/temp/productList'
+import {
+  getBankAccountListData,
+  getBankAccountDetailById,
+  createBankAccountData,
+  updateBankAccountData,
+  deleteBankAccountData
+} from '@/mock/temp/bankAccountList'
+import {
+  getPIListData,
+  getPIDetailById,
+  createPIData,
+  updatePIData,
+  deletePIData,
+  createPIFromQuotationData
+} from '@/mock/temp/piList'
+import {
+  getPLListData,
+  getPLDetailById,
+  createPLData,
+  updatePLData,
+  deletePLData,
+  createPLFromPIData
+} from '@/mock/temp/plList'
 
 // ==================== 客户管理 ====================
 
@@ -311,6 +334,268 @@ export function fetchUpdateProduct(data: Partial<Api.Trade.ProductListItem>) {
   //   url: '/api/trade/product',
   //   data
   // })
+}
+
+// ==================== PI/PL 模块 ====================
+
+// ==================== 银行账户管理 ====================
+
+/**
+ * 获取银行账户列表
+ * @param params 搜索参数
+ */
+export function fetchGetBankAccountList(params: Api.Trade.BankAccountSearchParams) {
+  const data = getBankAccountListData(params)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 获取银行账户详情
+ * @param id 账户 ID
+ */
+export function fetchGetBankAccountDetail(id: string) {
+  const data = getBankAccountDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('银行账户不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 创建银行账户
+ * @param data 账户信息
+ */
+export function fetchCreateBankAccount(data: Api.Trade.BankAccount) {
+  const newData = createBankAccountData(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newData
+  })
+}
+
+/**
+ * 更新银行账户
+ * @param data 账户信息
+ */
+export function fetchUpdateBankAccount(data: Partial<Api.Trade.BankAccount>) {
+  const updatedData = updateBankAccountData(data)
+  if (!updatedData) {
+    return Promise.reject(new Error('银行账户不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedData
+  })
+}
+
+/**
+ * 删除银行账户
+ * @param id 账户 ID
+ */
+export function fetchDeleteBankAccount(id: string) {
+  const deleted = deleteBankAccountData(id)
+  if (!deleted) {
+    return Promise.reject(new Error('银行账户不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: null
+  })
+}
+
+// ==================== PI 管理 ====================
+
+/**
+ * 获取 PI 列表
+ * @param params 搜索参数
+ */
+export function fetchGetPIList(params: Api.Trade.PISearchParams) {
+  const data = getPIListData(params)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 获取 PI 详情
+ * @param id PI ID
+ */
+export function fetchGetPIDetail(id: string) {
+  const data = getPIDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('PI 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 创建 PI
+ * @param data PI 信息
+ */
+export function fetchCreatePI(data: Api.Trade.PIListItem) {
+  const newData = createPIData(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newData
+  })
+}
+
+/**
+ * 更新 PI
+ * @param data PI 信息
+ */
+export function fetchUpdatePI(data: Partial<Api.Trade.PIListItem>) {
+  const updatedData = updatePIData(data)
+  if (!updatedData) {
+    return Promise.reject(new Error('PI 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedData
+  })
+}
+
+/**
+ * 删除 PI
+ * @param id PI ID
+ */
+export function fetchDeletePI(id: string) {
+  const deleted = deletePIData(id)
+  if (!deleted) {
+    return Promise.reject(new Error('PI 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: null
+  })
+}
+
+/**
+ * 从报价单生成 PI
+ * @param quotationId 报价单 ID
+ */
+export function fetchCreatePIFromQuotation(quotationId: string) {
+  const newData = createPIFromQuotationData(quotationId)
+  if (!newData) {
+    return Promise.reject(new Error('报价单不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newData
+  })
+}
+
+// ==================== PL 管理 ====================
+
+/**
+ * 获取 PL 列表
+ * @param params 搜索参数
+ */
+export function fetchGetPLList(params: Api.Trade.PLSearchParams) {
+  const data = getPLListData(params)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 获取 PL 详情
+ * @param id PL ID
+ */
+export function fetchGetPLDetail(id: string) {
+  const data = getPLDetailById(id)
+  if (!data) {
+    return Promise.reject(new Error('PL 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data
+  })
+}
+
+/**
+ * 创建 PL
+ * @param data PL 信息
+ */
+export function fetchCreatePL(data: Api.Trade.PLListItem) {
+  const newData = createPLData(data)
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newData
+  })
+}
+
+/**
+ * 更新 PL
+ * @param data PL 信息
+ */
+export function fetchUpdatePL(data: Partial<Api.Trade.PLListItem>) {
+  const updatedData = updatePLData(data)
+  if (!updatedData) {
+    return Promise.reject(new Error('PL 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: updatedData
+  })
+}
+
+/**
+ * 删除 PL
+ * @param id PL ID
+ */
+export function fetchDeletePL(id: string) {
+  const deleted = deletePLData(id)
+  if (!deleted) {
+    return Promise.reject(new Error('PL 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: null
+  })
+}
+
+/**
+ * 从 PI 生成 PL
+ * @param piId PI ID
+ */
+export function fetchCreatePLFromPI(piId: string) {
+  const newData = createPLFromPIData(piId)
+  if (!newData) {
+    return Promise.reject(new Error('PI 不存在'))
+  }
+  return Promise.resolve({
+    code: 200,
+    msg: 'success',
+    data: newData
+  })
 }
 
 /**

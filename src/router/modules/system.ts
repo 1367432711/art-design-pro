@@ -61,6 +61,17 @@ export const systemRoutes: AppRouteRecord = {
       }
     },
     {
+      path: 'bank-account',
+      name: 'BankAccount',
+      component: '/system/bank-account',
+      meta: {
+        title: '银行账户',
+        icon: 'ri:bank-card-line',
+        keepAlive: true,
+        roles: ['R_SUPER', 'R_ADMIN']
+      }
+    },
+    {
       path: 'nested',
       name: 'Nested',
       component: '',

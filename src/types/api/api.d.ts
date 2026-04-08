@@ -397,5 +397,241 @@ declare namespace Api {
         endTime?: string // 结束日期
       } & Api.Common.CommonSearchParams
     >
+
+    // ==================== PI/PL 模块类型定义 ====================
+
+    /** 银行账户列表 */
+    type BankAccountList = Api.Common.PaginatedResponse<BankAccount>
+
+    /** 银行账户 */
+    interface BankAccount {
+      id: string
+      bankName: string // 银行名称
+      accountName: string // 账户名称（受益人）
+      accountNumberUSD: string // 美元账号
+      accountNumberRMB: string // 人民币账号
+      swiftCode: string // SWIFT 代码
+      bankAddress: string // 银行地址
+      bankCountry: string // 银行所在国家
+      isDefault: boolean // 是否默认账户
+      status: 'active' | 'inactive' // 状态
+      createTime: string
+      updateTime: string
+    }
+
+    /** 银行账户搜索参数 */
+    type BankAccountSearchParams = Partial<
+      Pick<BankAccount, 'bankName' | 'accountName' | 'status'>
+    > &
+      Api.Common.CommonSearchParams
+
+    /** PI 列表 */
+    type PIList = Api.Common.PaginatedResponse<PIListItem>
+
+    /** PI 列表项 */
+    interface PIListItem {
+      id: string
+      invoiceNo: string // 发票号（PI-YYYYMMDD-NNN）
+      piDate: string // 开票日期
+      quotationId: string // 关联的报价单 ID
+      customerId: string
+      customerName: string
+
+      // 公司信息
+      companyName: string
+      companyAddress: string
+      companyEmail: string
+      companyPhone: string
+
+      // 客户信息
+      consignee: string // 收货人
+      deliveryAddress: string // 收货地址
+      contactPhone: string // 联系电话
+      contactEmail: string // 联系邮箱
+
+      // 贸易信息
+      tradeTerms: string // 贸易条款（FOB/CIF 等）
+      tradeCountry: string // 贸易国家
+      portOfLoading: string // 装运港
+      portOfDestination: string // 目的港
+      deliveryDate: string // 交货期
+
+      // 物流信息（从产品自动计算）
+      grossWeight: number // 总毛重 (kg)
+      netWeight: number // 总净重 (kg)
+      totalVolume: number // 总体积 (CBM)
+      totalCartons: number // 总箱数
+
+      // 金额信息
+      currency: string // 币种
+      totalAmount: number // 总金额
+      depositAmount: number // 定金金额
+      depositPercent: number // 定金比例 (如 30)
+      balanceAmount: number // 尾款金额
+
+      // 付款条款
+      paymentTerms: string // 付款方式描述
+      depositDueDate: string // 定金截止日期
+      balanceDueDate: string // 尾款截止日期
+
+      // 银行信息
+      bankAccountId: string // 关联的银行账户 ID
+      bankInfo?: BankInfo // 冗余存储银行信息
+
+      // 状态
+      status: '待付款' | '部分付款' | '已付款' | '已取消'
+      paidAmount: number // 已付金额
+
+      // 系统字段
+      createTime: string
+      updateTime: string
+      createBy: string
+      updateBy: string
+
+      // 产品列表
+      products: PIProduct[]
+    }
+
+    /** 银行信息（冗余存储） */
+    interface BankInfo {
+      bankName: string
+      accountName: string
+      accountNumberUSD: string
+      accountNumberRMB: string
+      swiftCode: string
+      bankAddress: string
+      bankCountry: string
+    }
+
+    /** PI 产品明细 */
+    interface PIProduct {
+      id: string // PI 产品 ID
+      productId: string // 关联的产品 ID
+
+      // 产品信息（快照）
+      productName: string
+      sku: string
+      spec: string
+      type: string
+      grade: string
+      material: string
+      unit: string
+
+      // 报价信息（从报价单复制）
+      quantity: number
+      unitPrice: number
+      totalPrice: number
+      currency: string
+
+      // 包装信息（从产品复制）
+      cartonQuantity: number // 每箱数量
+      singleWeight: string // 单片重量
+      blisterQuantity: number // 吸塑数量
+      innerBoxQuantity: number // 内盒数量
+      cartonSize: string // 外箱尺寸
+      grossWeight: number // 每箱毛重
+      netWeight: number // 每箱净重
+
+      // 计算字段
+      totalCartons: number // 总箱数
+      totalGW: number // 总毛重
+      totalNW: number // 总净重
+      totalCBM: number // 总体积
+
+      // 图片
+      mainImage: string
+
+      // 备注
+      remark?: string
+    }
+
+    /** PI 搜索参数 */
+    type PISearchParams = Partial<
+      Pick<PIListItem, 'invoiceNo' | 'customerName' | 'status' | 'currency'>
+    > & {
+      startTime?: string
+      endTime?: string
+    } & Api.Common.CommonSearchParams
+
+    /** PL 列表 */
+    type PLList = Api.Common.PaginatedResponse<PLListItem>
+
+    /** PL 列表项 */
+    interface PLListItem {
+      id: string
+      invoiceNo: string // 关联的 PI 发票号
+      plNo: string // PL 编号（PL-YYYYMMDD-NNN）
+      plDate: string // 开票日期
+      piId: string // 关联的 PI ID
+      customerId: string
+      customerName: string
+
+      // 公司信息
+      companyName: string
+      companyAddress: string
+
+      // 客户信息
+      consignee: string // 收货人
+
+      // 产品包装明细
+      products: PLProduct[]
+
+      // 汇总信息
+      totalQuantity: number // 总数量
+      totalCartons: number // 总箱数
+      totalNW: number // 总净重
+      totalGW: number // 总毛重
+      totalCBM: number // 总体积
+
+      // 状态
+      status: '待发货' | '部分发货' | '已发货'
+      shippedQuantity: number // 已发货数量
+
+      // 系统字段
+      createTime: string
+      updateTime: string
+      createBy: string
+      updateBy: string
+    }
+
+    /** PL 产品明细 */
+    interface PLProduct {
+      id: string // PL 产品 ID
+      piProductId: string // 关联的 PI 产品 ID
+      productId: string // 关联的产品 ID
+
+      // 产品信息（快照）
+      productName: string
+      sku: string
+      spec: string
+      type: string
+      unit: string
+
+      // 数量信息（从 PI 复制）
+      quantity: number
+      unit: string
+
+      // 包装明细（用户填写/确认）
+      cartons: number // 箱数
+      nwPerCarton: number // 每箱净重
+      gwPerCarton: number // 每箱毛重
+      cbmPerCarton: number // 每箱体积
+
+      // 计算字段
+      totalNW: number // 总净重
+      totalGW: number // 总毛重
+      totalCBM: number // 总体积
+
+      // 备注
+      remark?: string
+    }
+
+    /** PL 搜索参数 */
+    type PLSearchParams = Partial<
+      Pick<PLListItem, 'plNo' | 'invoiceNo' | 'customerName' | 'status'>
+    > & {
+      startTime?: string
+      endTime?: string
+    } & Api.Common.CommonSearchParams
   }
 }
