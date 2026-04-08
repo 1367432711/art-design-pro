@@ -32,6 +32,13 @@ async function mockLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginRe
   // 从 userList 中查找用户
   const user = getUserByPhone(phone)
 
+  // 调试日志
+  console.log('[Mock Login] 尝试登录:', { phone, password })
+  console.log('[Mock Login] 查找到的用户:', user)
+  if (user) {
+    console.log('[Mock Login] 用户密码:', user.password, '匹配结果:', user.password === password)
+  }
+
   // 验证用户和密码
   if (user && user.password === password) {
     return Promise.resolve({
