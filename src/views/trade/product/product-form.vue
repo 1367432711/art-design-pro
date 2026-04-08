@@ -2,11 +2,18 @@
 <template>
   <div class="product-form-page">
     <!-- 页头 -->
-    <ElPageHeader class="mb-3" @back="handleBack">
-      <template #title>
-        <span class="text-lg font-semibold">{{ isEdit ? '编辑产品' : '新增产品' }}</span>
-      </template>
-    </ElPageHeader>
+    <ArtPageHeader :title="isEdit ? '编辑产品' : '新增产品'" @back="handleBack">
+      <ElSpace>
+        <ElButton type="primary" size="large" @click="handleSubmit" :loading="submitting">
+          <Icon icon="ri:save-line" class="mr-1" />
+          保存
+        </ElButton>
+        <ElButton size="large" @click="handleBack">
+          <Icon icon="ri:close-line" class="mr-1" />
+          取消
+        </ElButton>
+      </ElSpace>
+    </ArtPageHeader>
 
     <ElCard class="art-card">
       <ElForm ref="formRef" :model="formData" :rules="rules" label-width="140px">
@@ -238,14 +245,6 @@
             </ElFormItem>
           </ElCol>
         </ElRow>
-
-        <!-- 提交按钮 -->
-        <ElFormItem class="mt-6">
-          <ElSpace>
-            <ElButton @click="handleBack">取消</ElButton>
-            <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">保存</ElButton>
-          </ElSpace>
-        </ElFormItem>
       </ElForm>
     </ElCard>
   </div>
@@ -253,8 +252,9 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules, UploadUserFile } from 'element-plus'
-  import { ElMessage, ElPageHeader } from 'element-plus'
+  import { ElMessage } from 'element-plus'
   import { Icon } from '@iconify/vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { useRouter, useRoute } from 'vue-router'
   import { fetchGetProductDetail, fetchCreateProduct, fetchUpdateProduct } from '@/api/trade-manage'
 

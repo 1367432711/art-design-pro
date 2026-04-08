@@ -2,17 +2,18 @@
 <template>
   <div class="quotation-form-page">
     <!-- 头部操作区 -->
-    <div class="mb-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <ElButton type="text" @click="handleBack">
-          <Icon icon="ri:arrow-left-line" class="mr-1" />
-          返回
+    <ArtPageHeader :title="isEdit ? '编辑报价单' : '新增报价单'" @back="handleBack">
+      <ElSpace>
+        <ElButton type="primary" size="large" @click="handleSubmit" :loading="submitting">
+          <Icon icon="ri:save-line" class="mr-1" />
+          保存
         </ElButton>
-        <h2 class="text-xl font-semibold">
-          {{ isEdit ? '编辑报价单' : '新增报价单' }}
-        </h2>
-      </div>
-    </div>
+        <ElButton size="large" @click="handleBack">
+          <Icon icon="ri:close-line" class="mr-1" />
+          取消
+        </ElButton>
+      </ElSpace>
+    </ArtPageHeader>
 
     <!-- 客户信息 -->
     <ElCard class="art-card mb-4">
@@ -479,21 +480,13 @@
         </ElRow>
       </ElForm>
     </ElCard>
-
-    <!-- 操作按钮 -->
-    <div class="form-actions mt-4 flex gap-4">
-      <ElButton type="primary" @click="handleSubmit">
-        <ArtSvgIcon icon="ri:save-line" class="mr-1" />
-        保存报价
-      </ElButton>
-      <ElButton @click="handleCancel">取消</ElButton>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ElMessage } from 'element-plus'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
   import {
@@ -800,11 +793,6 @@
 
   // 返回
   const handleBack = () => {
-    router.back()
-  }
-
-  // 取消
-  const handleCancel = () => {
     router.back()
   }
 

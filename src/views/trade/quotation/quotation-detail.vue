@@ -47,74 +47,63 @@
     </ElCard>
 
     <!-- 头部操作区 -->
-    <div class="action-header mb-6">
-      <!-- 左侧：返回 + 标题 + 状态 -->
-      <div class="action-header-left">
-        <ElButton type="text" @click="handleBack" class="back-btn">
-          <Icon icon="ri:arrow-left-line" class="mr-1" />
-          返回
+    <ArtPageHeader
+      title="报价单详情"
+      :status-text="getStatusText(quotationData.status)"
+      :status-type="getStatusType(quotationData.status)"
+      @back="handleBack"
+    >
+      <!-- 业务操作组 -->
+      <div class="action-group">
+        <ElButton type="primary" size="large" @click="handleCreatePI" :disabled="!canCreatePI">
+          <Icon icon="ri:file-add-line" class="mr-1" />
+          生成 PI
         </ElButton>
-        <div class="title-divider"></div>
-        <h2 class="page-title">报价单详情</h2>
-        <ElTag :type="getStatusType(quotationData.status)" effect="dark" size="large">
-          {{ getStatusText(quotationData.status) }}
-        </ElTag>
+        <ElButton v-if="quotationData.piId" size="large" @click="viewPI" class="view-pi-btn">
+          <Icon icon="ri:external-link-line" class="mr-1" />
+          查看 PI
+        </ElButton>
       </div>
 
-      <!-- 右侧：分组操作按钮 -->
-      <div class="action-header-right">
-        <!-- 业务操作组 -->
-        <div class="action-group">
-          <ElButton type="primary" size="large" @click="handleCreatePI" :disabled="!canCreatePI">
-            <Icon icon="ri:file-add-line" class="mr-1" />
-            生成 PI
-          </ElButton>
-          <ElButton v-if="quotationData.piId" size="large" @click="viewPI" class="view-pi-btn">
-            <Icon icon="ri:external-link-line" class="mr-1" />
-            查看 PI
-          </ElButton>
-        </div>
-
-        <!-- 通用操作组 -->
-        <div class="action-group">
-          <ElButton size="large" @click="handleEdit">
-            <Icon icon="ri:pencil-line" class="mr-1" />
-            编辑
-          </ElButton>
-          <ElButton type="primary" size="large" @click="handlePrint">
-            <Icon icon="ri:print-line" class="mr-1" />
-            打印
-          </ElButton>
-        </div>
-
-        <!-- 危险操作组 -->
-        <div class="action-group danger-group">
-          <ElDropdown trigger="click" @command="handleDangerCommand">
-            <ElButton type="danger" size="large" plain>
-              <Icon icon="ri:more-2-fill" class="mr-1" />
-              更多
-              <Icon icon="ri:arrow-down-s-line" class="ml-1" />
-            </ElButton>
-            <template #dropdown>
-              <ElDropdownMenu>
-                <ElDropdownItem command="confirm" divided>
-                  <Icon icon="ri:checkbox-circle-line" class="mr-2 text-success" />
-                  确认报价
-                </ElDropdownItem>
-                <ElDropdownItem command="reject">
-                  <Icon icon="ri:close-circle-line" class="mr-2 text-danger" />
-                  拒绝报价
-                </ElDropdownItem>
-                <ElDropdownItem command="delete" divided>
-                  <Icon icon="ri:delete-bin-line" class="mr-2 text-danger" />
-                  删除报价单
-                </ElDropdownItem>
-              </ElDropdownMenu>
-            </template>
-          </ElDropdown>
-        </div>
+      <!-- 通用操作组 -->
+      <div class="action-group">
+        <ElButton size="large" @click="handleEdit">
+          <Icon icon="ri:pencil-line" class="mr-1" />
+          编辑
+        </ElButton>
+        <ElButton type="primary" size="large" @click="handlePrint">
+          <Icon icon="ri:print-line" class="mr-1" />
+          打印
+        </ElButton>
       </div>
-    </div>
+
+      <!-- 危险操作组 -->
+      <div class="action-group danger-group">
+        <ElDropdown trigger="click" @command="handleDangerCommand">
+          <ElButton type="danger" size="large" plain>
+            <Icon icon="ri:more-2-fill" class="mr-1" />
+            更多
+            <Icon icon="ri:arrow-down-s-line" class="ml-1" />
+          </ElButton>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem command="confirm" divided>
+                <Icon icon="ri:checkbox-circle-line" class="mr-2 text-success" />
+                确认报价
+              </ElDropdownItem>
+              <ElDropdownItem command="reject">
+                <Icon icon="ri:close-circle-line" class="mr-2 text-danger" />
+                拒绝报价
+              </ElDropdownItem>
+              <ElDropdownItem command="delete" divided>
+                <Icon icon="ri:delete-bin-line" class="mr-2 text-danger" />
+                删除报价单
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
+      </div>
+    </ArtPageHeader>
 
     <!-- 客户信息 -->
     <ElCard class="art-card mb-4">
@@ -457,6 +446,7 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessageBox, ElMessage } from 'element-plus'
   import {
@@ -963,97 +953,6 @@
 <style lang="scss" scoped>
   .quotation-detail-page {
     padding-bottom: 20px;
-
-    // 头部操作区样式
-    .action-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      background: var(--el-bg-color);
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgb(0 0 0 / 5%);
-      transition: box-shadow 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
-      }
-
-      .action-header-left {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-
-        .back-btn {
-          font-size: 14px;
-          color: var(--el-text-color-regular);
-          transition: all 0.2s;
-
-          &:hover {
-            color: var(--el-color-primary);
-            background: var(--el-color-primary-light-9);
-          }
-        }
-
-        .title-divider {
-          width: 2px;
-          height: 20px;
-          background: var(--el-border-color);
-          border-radius: 1px;
-        }
-
-        .page-title {
-          margin: 0;
-          font-size: 18px;
-          font-weight: 600;
-          color: var(--el-text-color-primary);
-          background: linear-gradient(
-            135deg,
-            var(--el-text-color-primary) 0%,
-            var(--el-color-primary) 100%
-          );
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-      }
-
-      .action-header-right {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-
-        .action-group {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-
-          &.danger-group {
-            padding-left: 16px;
-            margin-left: 8px;
-            border-left: 2px solid var(--el-border-color);
-            transition: border-left-color 0.3s ease;
-
-            &:hover {
-              border-left-color: var(--el-color-danger);
-            }
-          }
-
-          .view-pi-btn {
-            color: var(--el-text-color-regular);
-            background: var(--el-fill-color);
-            transition: all 0.2s;
-
-            &:hover {
-              color: var(--el-color-primary);
-              background: var(--el-color-primary-light-9);
-              box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-              transform: translateY(-1px);
-            }
-          }
-        }
-      }
-    }
 
     // 订单步骤条样式
     .order-steps-container {

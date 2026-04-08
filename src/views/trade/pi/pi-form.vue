@@ -1,14 +1,20 @@
 <!-- PI 表单页面 -->
 <template>
   <div class="pi-form-page art-full-height">
-    <ElCard class="art-card">
-      <template #header>
-        <ElSpace>
-          <ElButton @click="$router.back()">返回</ElButton>
-          <span class="text-lg font-medium">{{ isEdit ? '编辑 PI' : '新增 PI' }}</span>
-        </ElSpace>
-      </template>
+    <ArtPageHeader :title="isEdit ? '编辑 PI' : '新增 PI'" @back="$router.back()">
+      <ElSpace>
+        <ElButton type="primary" :loading="loading" size="large" @click="handleSubmit">
+          <Icon icon="ri:save-line" class="mr-1" />
+          保存
+        </ElButton>
+        <ElButton size="large" @click="$router.back()">
+          <Icon icon="ri:close-line" class="mr-1" />
+          取消
+        </ElButton>
+      </ElSpace>
+    </ArtPageHeader>
 
+    <ElCard class="art-card">
       <ElForm
         ref="formRef"
         :model="formData"
@@ -191,13 +197,6 @@
             </ElFormItem>
           </ElCol>
         </ElRow>
-
-        <ElFormItem>
-          <ElSpace>
-            <ElButton type="primary" :loading="loading" @click="handleSubmit">保存</ElButton>
-            <ElButton @click="$router.back()">取消</ElButton>
-          </ElSpace>
-        </ElFormItem>
       </ElForm>
     </ElCard>
   </div>
@@ -208,6 +207,8 @@
   import { useRoute, useRouter } from 'vue-router'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
+  import { Icon } from '@iconify/vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { fetchGetPIDetail, fetchGetQuotationDetail } from '@/api/trade-manage'
 
   defineOptions({ name: 'PIForm' })
