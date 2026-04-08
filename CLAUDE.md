@@ -2,7 +2,7 @@
 
 > 📋 本文档整理了项目的核心开发规则，所有代码修改都应遵循以下规范。
 
-**最后更新**: 2026-04-08
+**最后更新**: 2026-04-09
 
 ---
 
@@ -286,18 +286,79 @@ const { token, refreshToken } = await fetchLogin({
 **报价单号规则**: `CI-YYYYMMDD-NNN` (如 `CI-20260325-001`)  
 **状态**: 草稿、待发送、已发送、已确认、已拒绝
 
+**跨页面导航**:
+
+- 客户详情页 → 报价详情页：传递 `fromCustomer=true` 参数
+- 报价详情页 → 返回：根据来源自动判断（从客户详情来则返回客户详情，否则返回报价列表）
+- 报价详情页 → 编辑报价：传递 `fromDetail=true` 和 `quotationId` 参数
+- 编辑报价 → 返回：根据 `fromDetail` 参数判断返回详情页或列表页
+
 ---
 
 ## 开发进度
 
-| 模块     | 页面数 | 状态      | 备注               |
-| -------- | ------ | --------- | ------------------ |
-| 客户管理 | 2      | ✅ 已完成 | 列表 + 详情        |
-| 产品管理 | 3      | ✅ 已完成 | 列表 + 表单 + 详情 |
-| 报价管理 | 3      | ✅ 已完成 | 列表 + 表单 + 详情 |
-| 订单管理 | 2      | ⏳ 待设计 | 列表 + 表单        |
-| 跟进记录 | 1      | ⏳ 待设计 | 列表 + 表单        |
-| 数据统计 | 1      | ⏳ 待设计 | 统计图表           |
+| 模块     | 页面数 | 状态      | 备注                          |
+| -------- | ------ | --------- | ----------------------------- |
+| 客户管理 | 2      | ✅ 已完成 | 列表 + 详情                   |
+| 产品管理 | 3      | ✅ 已完成 | 列表 + 表单 + 详情            |
+| 报价管理 | 3      | ✅ 已完成 | 列表 + 表单 + 详情 + 跨页导航 |
+| 订单管理 | 2      | ⏳ 待设计 | 列表 + 表单                   |
+| 跟进记录 | 1      | ⏳ 待设计 | 列表 + 表单                   |
+| 数据统计 | 1      | ⏳ 待设计 | 统计图表                      |
+
+---
+
+## 技术实现细节
+
+### 工作标签页 (Worktab) 自动管理
+
+**自动删除标签逻辑**：从表单页/详情页返回列表页时，自动删除表单页/详情页的标签。
+
+```typescript
+// src/utils/navigation/worktab.ts
+// 判断是否是详情页或表单页（客户详情页除外）
+function isDetailOrFormPath(path: string): boolean {
+  // 客户详情页不自动删除
+  if (path.includes('/customer/detail/')) {
+    return false
+  }
+  return path.includes('/detail/') || path.includes('/form/')
+}
+```
+
+**注意**：客户详情页不启用自动删除，因为用户可能需要从客户详情查看多个报价后返回列表。
+
+### 路由参数正则约束
+
+为动态路由参数添加正则约束，避免路由匹配冲突：
+
+```typescript
+// src/router/modules/trade.ts
+{
+  path: 'customer/detail/:id(\\d+)',  // 只匹配数字 ID
+  name: 'CustomerDetail',
+  component: '/trade/customer/customer-detail'
+}
+```
+
+### 跨页面导航参数传递
+
+通过 URL 查询参数追踪页面来源，实现智能返回：
+
+```typescript
+// 客户详情页 → 报价详情页
+router.push(`/trade/quotation/detail/${row.id}?fromCustomer=true`)
+
+// 报价详情页 → 返回
+const handleBack = () => {
+  // 如果是从客户详情页跳转而来，返回客户详情页
+  if (fromCustomer.value && customerId.value) {
+    router.push(`/trade/customer/detail/${customerId.value}`)
+  } else {
+    router.push('/trade/quotation')
+  }
+}
+```
 
 ---
 
