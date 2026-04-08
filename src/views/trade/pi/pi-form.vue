@@ -208,7 +208,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
-  import { fetchGetPIDetail } from '@/api/trade-manage'
+  import { fetchGetPIDetail, fetchGetQuotationDetail } from '@/api/trade-manage'
 
   defineOptions({ name: 'PIForm' })
 
@@ -216,6 +216,7 @@
   const router = useRouter()
 
   const isEdit = computed(() => !!route.params.id)
+  const isFromQuotation = computed(() => route.query.fromQuotation === 'true')
 
   const formRef = ref<FormInstance>()
   const loading = ref(false)
@@ -250,6 +251,65 @@
     currency: [{ required: true, message: '请选择币种', trigger: 'change' }]
   }
 
+  // 生成 PI 发票号
+  const generatePIInvoiceNo = () => {
+    const date = new Date()
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '')
+    const random = Math.floor(Math.random() * 900 + 100)
+    return `PI-${dateStr}-${random}`
+  }
+
+  // 从报价单加载数据
+  const loadQuotationData = async () => {
+    const quotationId = route.query.quotationId as string
+    if (!quotationId || !isFromQuotation.value) return
+
+    try {
+      const res = await fetchGetQuotationDetail(quotationId)
+      const quotation = res.data
+
+      // TODO: 获取产品库数据，用于计算物流信息
+      // const allProducts = getProductList()
+
+      // 填充 PI 表单数据
+      formData.value = {
+        ...formData.value,
+        // 基本信息
+        invoiceNo: generatePIInvoiceNo(),
+        quotationId: quotation.id,
+
+        // 客户信息
+        customerId: quotation.customerId,
+        customerName: quotation.customerName,
+        consignee: quotation.customerName,
+        contactPhone: quotation.clientWhatsapp || '',
+        contactEmail: quotation.clientEmail || '',
+        companyAddress: quotation.address || '',
+
+        // 贸易信息
+        tradeTerms: quotation.tradeTerm || 'FOB',
+        tradeCountry: quotation.country || '',
+        portOfLoading: quotation.shipmentPort || '',
+        deliveryDate: '',
+
+        // 金额信息
+        currency: quotation.currency || 'USD',
+        totalAmount: quotation.costSummary?.grandTotal || 0,
+        depositPercent: 30,
+        depositAmount: (quotation.costSummary?.grandTotal || 0) * 0.3,
+        balanceAmount: (quotation.costSummary?.grandTotal || 0) * 0.7,
+
+        // 状态
+        status: '待付款'
+      }
+
+      ElMessage.success('已从报价单导入数据，请补充完整信息')
+    } catch (error) {
+      console.error('加载报价单数据失败:', error)
+      ElMessage.error('加载报价单数据失败')
+    }
+  }
+
   const loadPIData = async () => {
     if (!isEdit.value) return
 
@@ -281,6 +341,10 @@
   }
 
   onMounted(() => {
-    loadPIData()
+    if (isFromQuotation.value) {
+      loadQuotationData()
+    } else {
+      loadPIData()
+    }
   })
 </script>

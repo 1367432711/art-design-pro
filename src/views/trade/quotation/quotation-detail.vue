@@ -889,9 +889,16 @@
 
   // 生成 PI
   const handleCreatePI = () => {
-    // TODO: PI 模块开发完成后实现
-    ElMessage.info('PI 模块开发中，敬请期待')
-    // 将来实现：router.push(`/trade/pi/form?quotationId=${quotationData.value.id}`)
+    if (!quotationData.value.id) return
+
+    // 携带报价单 ID 跳转到 PI 表单页
+    router.push({
+      path: '/trade/pi/form',
+      query: {
+        fromQuotation: 'true',
+        quotationId: quotationData.value.id
+      }
+    })
   }
 
   // 查看 PI
