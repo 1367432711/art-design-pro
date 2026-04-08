@@ -26,8 +26,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/customer/customer-detail',
       meta: {
         title: '客户详情',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -46,8 +45,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/quotation/quotation-detail',
       meta: {
         title: '报价详情',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -84,8 +82,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/product/product-detail',
       meta: {
         title: '产品详情',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -122,8 +119,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pi/pi-detail',
       meta: {
         title: 'PI 详情',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
@@ -160,8 +156,7 @@ export const tradeRoutes: AppRouteRecord = {
       component: '/trade/pl/pl-detail',
       meta: {
         title: 'PL 详情',
-        isHide: true,
-        keepAlive: true
+        isHide: true
       }
     },
     {
