@@ -656,12 +656,12 @@
 
   // 编辑报价
   const handleEditQuotation = (row: Api.Trade.QuotationListItem) => {
-    router.push(`/trade/quotation/form/${row.id}`)
+    router.push(`/trade/quotation/form/${row.id}?fromCustomer=true`)
   }
 
   // 查看报价详情
   const handleViewQuotation = (row: Api.Trade.QuotationListItem) => {
-    router.push(`/trade/quotation/detail/${row.id}`)
+    router.push(`/trade/quotation/detail/${row.id}?fromCustomer=true`)
   }
 
   // 删除报价

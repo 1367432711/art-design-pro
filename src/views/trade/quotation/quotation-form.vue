@@ -791,9 +791,16 @@
     }
   }
 
-  // 返回
+  // 返回报价列表或客户详情页
   const handleBack = () => {
-    router.back()
+    const fromCustomer = route.query.fromCustomer === 'true'
+    if (fromCustomer) {
+      // 从客户详情页来，返回客户详情页
+      router.back()
+    } else {
+      // 从报价列表来，返回报价列表
+      router.push('/trade/quotation')
+    }
   }
 
   // 加载报价单详情
