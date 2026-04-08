@@ -118,6 +118,7 @@ declare namespace Api {
       updateBy: string
       updateTime: string
       // 扩展字段（用于个人中心等场景）
+      password?: string
       realName?: string
       sex?: string
       intro?: string
@@ -201,19 +202,19 @@ declare namespace Api {
     /** 报价列表 */
     type QuotationList = Api.Common.PaginatedResponse<QuotationListItem>
 
-    /** 报价列表项（简化版，用于列表展示） */
+    /** 报价列表项（支持完整数据结构） */
     interface QuotationListItem {
       id: string
       customerId: string // 关联客户 ID
       customerName: string // 客户名称（冗余字段，方便列表展示）
       quotationNo: string // 报价单号
-      productName: string // 产品名称
-      specification: string // 规格型号
-      quantity: number // 数量
-      unit: string // 单位
-      unitPrice: number // 单价
+      productName: string // 产品名称（兼容旧版：列表模式下的单个产品名）
+      specification: string // 规格型号（兼容旧版）
+      quantity: number // 数量（兼容旧版）
+      unit: string // 单位（兼容旧版）
+      unitPrice: number // 单价（兼容旧版）
       currency: string // 币种
-      totalPrice: number // 总金额
+      totalPrice: number // 总金额（兼容旧版）
       tradeTerm: string // 贸易条款 (FOB/CIF/EXW)
       paymentTerm: string // 付款方式
       validity: string // 报价有效期
@@ -223,6 +224,29 @@ declare namespace Api {
       createTime: string
       updateBy: string
       updateTime: string
+      // 扩展字段（用于完整版报价单）
+      shipmentPort?: string // 装运港口
+      leadTime?: string // 交货期
+      shelfLife?: string // 保质期（如：2 Years）
+      taxRate?: string // 税率（如：Not included）
+      priceUnit?: string // 价格单位（如：RMB）
+      quotationUnit?: string // 报价单位（如：Shan Dong Na Ju）
+      // 客户联系信息（从客户档案带过来，允许临时覆盖）
+      contactPerson?: string // 联系人
+      contactPhone?: string // 联系电话
+      contactEmail?: string // 联系邮箱
+      clientWhatsapp?: string // 客户 WhatsApp
+      country?: string // 国家/地区
+      address?: string // 详细地址
+      customerProducts?: string // 主营产品（客户档案）
+      products?: QuotationProduct[] // 产品列表（完整版）
+      costSummary?: QuotationCostSummary // 费用汇总
+      // 业务流程关联字段（用于步骤条）
+      piId?: string // 关联的 PI ID（已转 PI 时填写）
+      piInvoiceNo?: string // PI 发票号（已转 PI 时填写）
+      plId?: string // 关联的 PL ID（已发货时填写）
+      plNo?: string // PL 编号（已发货时填写）
+      orderStatus?: 'quotation' | 'pi' | 'pl' | 'shipped' // 订单当前阶段
     }
 
     /** 产品变体/型号 */
@@ -230,6 +254,7 @@ declare namespace Api {
       id: string // 变体 ID
       sku: string // SKU / 型号
       desc: string // 产品描述
+      spec: string // 规格型号
       qty: number // 数量
       unit: string // 单位：PCS/SET/KG/BOX 等
       price: number // 单价
@@ -343,6 +368,7 @@ declare namespace Api {
       type?: string // 产品类型
       grade?: string // 产品等级
       material?: string // 材质
+      status?: string // 状态：on_sale-上架 off_sale-下架
     } & Api.Common.CommonSearchParams
 
     /** 跟进记录列表 */

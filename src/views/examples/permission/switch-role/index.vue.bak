@@ -191,7 +191,7 @@
       // 存储token和用户信息
       userStore.setToken(token, refreshToken)
       const userInfo = await fetchGetUserInfo()
-      userStore.setUserInfo(userInfo.data)
+      userStore.setUserInfo(userInfo)
 
       // 延迟刷新页面以应用新权限
       setTimeout(() => {

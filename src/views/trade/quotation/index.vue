@@ -87,7 +87,10 @@
   // 获取产品名称（第一个产品）
   const getProductName = (row: QuotationListItem) => {
     if (!row.products || row.products.length === 0) return '-'
-    return row.products[0].name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+    const firstProduct = row.products[0] as Api.Trade.QuotationProduct
+    // 使用第一个 variant 的 sku 作为产品名称
+    const productName = firstProduct.variants?.[0]?.sku || firstProduct.selectedProductId || '产品'
+    return productName + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
   }
 
   const {

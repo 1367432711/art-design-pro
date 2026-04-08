@@ -2,7 +2,7 @@
 
 > 📋 完整的 API 接口文档，包含所有端点的请求/响应类型和 Mock 数据说明
 
-**最后更新**: 2026-04-07
+**最后更新**: 2026-04-08
 
 ---
 
@@ -14,6 +14,7 @@
 4. [系统管理接口](#4-系统管理接口-system-manage)
 5. [外贸管理接口](#5-外贸管理接口-trade-manage)
 6. [Mock 数据说明](#6-mock 数据说明)
+7. [API 清单总览](#7-api 清单总览)
 
 ---
 
@@ -36,7 +37,7 @@ interface BaseResponse<T = unknown> {
 所有请求默认返回 `data` 字段中的数据:
 
 ```typescript
-const result = await fetchLogin({ userName, password })
+const result = await fetchLogin({ phone, password })
 // result 直接是 { token, refreshToken } 而不是完整响应
 ```
 
@@ -55,15 +56,15 @@ const result = await fetchLogin({ userName, password })
 
 ### 2.1 用户登录
 
-**函数**: `fetchLogin(data: LoginData)`
+**函数**: `fetchLogin(params: LoginParams)`
 
 **接口**: `POST /api/auth/login`
 
 **请求参数**:
 
 ```typescript
-interface LoginData {
-  userName: string // 用户名/手机号
+interface LoginParams {
+  phone: string // 手机号
   password: string // 密码
 }
 ```
@@ -74,20 +75,21 @@ interface LoginData {
 interface LoginResponse {
   token: string // JWT Token
   refreshToken: string // 刷新 Token
+  userId?: number // 用户 ID
 }
 ```
 
 **Mock 逻辑**:
 
 - 验证手机号是否存在于 `userList` Mock 数据中
-- 验证密码是否匹配
-- 成功返回 `token` 和 `refreshToken`
+- 验证密码是否匹配（使用 `user.password` 字段）
+- 成功返回 `token`、`refreshToken` 和 `userId`
 
 **使用示例**:
 
 ```typescript
-const { token, refreshToken } = await fetchLogin({
-  userName: 'admin',
+const { token, refreshToken, userId } = await fetchLogin({
+  phone: '15153933164',
   password: '123456'
 })
 ```
@@ -106,21 +108,29 @@ const { token, refreshToken } = await fetchLogin({
 
 ```typescript
 interface UserInfo {
-  id: string
+  userId: number
+  userName: string // 用户名/真实姓名
   nickName: string // 昵称
-  userName: string // 用户名
   email: string // 邮箱
   phone: string // 手机号
-  role: number // 角色 ID
   avatar: string // 头像 URL
-  createTime: string // 创建时间
+  sex: string // 性别：1-男 2-女
+  role: string // 职位
+  department: string // 部门
+  address: string // 地址
+  intro: string // 个人介绍
+  wechat: string // 微信
+  whatsapp: string // WhatsApp
+  facebook: string // Facebook
+  roles: string[] // 角色列表
+  buttons: string[] // 按钮权限列表
 }
 ```
 
 **Mock 逻辑**:
 
-- 从 `userList` Mock 数据中查找 ID 匹配的用户
-- 返回用户信息对象
+- 从 `userList` Mock 数据中根据 `userId` 查找用户
+- 通过 `user-data-mapper.ts` 转换为 `UserInfo` 格式返回
 
 **使用示例**:
 
@@ -152,13 +162,20 @@ const userInfo = await fetchGetUserInfo()
 
 ```typescript
 interface UserInfo {
-  id?: string
-  nickName?: string
-  userName?: string
-  email?: string
-  phone?: string
-  role?: number
-  avatar?: string
+  userId?: number
+  realName?: string // 姓名
+  nickName?: string // 昵称
+  email?: string // 邮箱
+  phone?: string // 手机号
+  sex?: string // 性别
+  intro?: string // 个人介绍
+  address?: string // 地址
+  avatar?: string // 头像
+  wechat?: string // 微信
+  whatsapp?: string // WhatsApp
+  facebook?: string // Facebook
+  role?: string // 职位
+  department?: string // 部门
 }
 ```
 
@@ -166,8 +183,9 @@ interface UserInfo {
 
 ```typescript
 interface UpdateResponse {
-  message: string // 更新结果消息
-  updatedData: UserInfo // 更新后的数据
+  code: number
+  msg: string
+  data: UserInfo // 更新后的用户信息
 }
 ```
 
@@ -176,13 +194,20 @@ interface UpdateResponse {
 ```typescript
 // UserInfo → UserListItem (用于更新 Mock 数据)
 {
-  id → userId,
+  userId → id,
+  realName → realName,
   nickName → nickName,
-  userName → name,
-  email → email,
-  phone → phone,
+  email → userEmail,
+  phone → userPhone,
+  sex → sex,
+  intro → intro,
+  address → address,
+  avatar → avatar,
+  wechat → wechat,
+  whatsapp → whatsapp,
+  facebook → facebook,
   role → role,
-  avatar → avatar
+  department → department
 }
 ```
 
@@ -191,7 +216,8 @@ interface UpdateResponse {
 ```typescript
 const result = await fetchUpdateUserInfo({
   nickName: '新昵称',
-  email: 'new@email.com'
+  email: 'new@email.com',
+  phone: '15153933164'
 })
 ```
 
@@ -203,17 +229,21 @@ const result = await fetchUpdateUserInfo({
 
 ### 4.1 获取用户列表
 
-**函数**: `fetchGetUserList(query?: UserListQuery)`
+**函数**: `fetchGetUserList(params: UserSearchParams)`
 
 **接口**: `GET /api/user/list`
 
 **请求参数**:
 
 ```typescript
-interface UserListQuery {
-  current?: number // 当前页码
-  size?: number // 每页数量
+interface UserSearchParams {
+  current: number // 当前页码
+  size: number // 每页数量
   userName?: string // 用户名搜索
+  userGender?: string // 性别搜索
+  userPhone?: string // 手机号搜索
+  userEmail?: string // 邮箱搜索
+  status?: string // 状态搜索
 }
 ```
 
@@ -221,29 +251,44 @@ interface UserListQuery {
 
 ```typescript
 interface UserListItem {
-  userId: string // 用户 ID
-  name: string // 姓名
+  id: number
+  userName: string // 用户名/真实姓名
   nickName: string // 昵称
-  email: string // 邮箱
-  phone: string // 手机号
-  role: number // 角色 ID
+  userGender: string // 性别
+  userPhone: string // 手机号
+  userEmail: string // 邮箱
+  userRoles: string[] // 角色列表
   avatar: string // 头像
-  createTime: string // 创建时间
-  updateTime: string // 更新时间
+  status: string // 状态：1-启用 2-禁用
+  realName?: string // 姓名
+  sex?: string // 性别
+  intro?: string // 个人介绍
+  wechat?: string // 微信
+  whatsapp?: string // WhatsApp
+  facebook?: string // Facebook
+  role?: string // 职位
+  department?: string // 部门
+  address?: string // 地址
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
 }
 
 interface UserListResponse {
-  list: UserListItem[]
+  records: UserListItem[]
+  current: number
+  size: number
   total: number
 }
 ```
 
-**Mock 数据**: `mock/data/userInfo.json`
+**Mock 数据**: `mock/data/userList.json`
 
 **使用示例**:
 
 ```typescript
-const { list, total } = await fetchGetUserList({
+const { records, total } = await fetchGetUserList({
   current: 1,
   size: 10
 })
@@ -253,38 +298,54 @@ const { list, total } = await fetchGetUserList({
 
 ### 4.2 获取角色列表
 
-**函数**: `fetchGetRoleList()`
+**函数**: `fetchGetRoleList(params: RoleSearchParams)`
 
-**接口**: `GET /api/system/role/list`
+**接口**: `GET /api/role/list`
 
-**请求参数**: 无
+**请求参数**:
+
+```typescript
+interface RoleSearchParams {
+  current?: number // 当前页码
+  size?: number // 每页数量
+  roleId?: number // 角色 ID
+  roleName?: string // 角色名称
+  roleCode?: string // 角色编码
+  enabled?: boolean // 启用状态
+  startTime?: string | null // 开始时间
+  endTime?: string | null // 结束时间
+}
+```
 
 **响应数据**:
 
 ```typescript
-interface RoleItem {
-  id: number
+interface RoleListItem {
+  roleId: number
   roleName: string
   roleCode: string
-  roleSort: number
-  createTime?: string
+  description: string
+  enabled: boolean
+  createTime: string
+}
+
+interface RoleListResponse {
+  records: RoleListItem[]
+  current: number
+  size: number
+  total: number
 }
 ```
 
-**Mock 数据**:
-
-```json
-[
-  { "id": 1, "roleName": "超级管理员", "roleCode": "super_admin", "roleSort": 1 },
-  { "id": 2, "roleName": "管理员", "roleCode": "admin", "roleSort": 2 },
-  { "id": 3, "roleName": "普通用户", "roleCode": "user", "roleSort": 3 }
-]
-```
+**Mock 数据**: 内置模拟数据（超级管理员、管理员、普通用户）
 
 **使用示例**:
 
 ```typescript
-const roleList = await fetchGetRoleList()
+const { records, total } = await fetchGetRoleList({
+  current: 1,
+  size: 10
+})
 ```
 
 ---
@@ -300,7 +361,6 @@ const roleList = await fetchGetRoleList()
 **响应数据**:
 
 ```typescript
-// 返回动态路由配置数组
 interface RouteModule {
   path: string
   name: string
@@ -317,8 +377,8 @@ interface RouteModule {
 
 **Mock 逻辑**:
 
-- 返回 `src/router/routes/asyncRoutes.ts` 中定义的路由
-- 根据用户角色过滤权限
+- 开发环境：返回 `src/router/routes/asyncRoutes.ts` 中定义的路由
+- 生产环境：调用真实 API 获取菜单配置
 
 **使用示例**:
 
@@ -336,46 +396,53 @@ const menuList = await fetchGetMenuList()
 
 #### 5.1.1 获取客户列表
 
-**函数**: `fetchGetCustomerList(query: CustomerListQuery)`
+**函数**: `fetchGetCustomerList(params: CustomerSearchParams)`
 
 **接口**: `GET /api/trade/customer/list`
 
 **请求参数**:
 
 ```typescript
-interface CustomerListQuery {
+interface CustomerSearchParams {
   current: number // 当前页码
   size: number // 每页数量
-  name?: string // 客户名称搜索
-  country?: string // 国家搜索
-  source?: string // 来源搜索
-  level?: string // 等级搜索
-  status?: string // 状态搜索
+  customerName?: string // 客户名称
+  contactPerson?: string // 联系人
+  contactPhone?: string // 联系电话
+  contactEmail?: string // 联系邮箱
+  country?: string // 国家
+  source?: string // 来源
+  status?: string // 状态：1-活跃 2-潜在 3-流失
+  salesPerson?: string // 业务员
 }
 ```
 
 **响应数据**:
 
 ```typescript
-interface Customer {
-  id: string // 客户 ID
-  name: string // 客户名称
-  contactPerson: string // 联系人
-  email: string // 邮箱
-  phone: string // 电话
-  country: string // 国家
-  source: string // 来源
-  level: string // 等级
-  status: string // 状态
-  address?: string // 地址
-  salesPerson?: string // 销售
-  remarks?: string // 备注
-  createTime: string // 创建时间
-  updateTime: string // 更新时间
+interface CustomerListItem {
+  id: string
+  customerName: string
+  contactPerson: string
+  contactPhone: string
+  contactEmail: string
+  country: string
+  address: string
+  products: string
+  source: string
+  status: string
+  salesPerson: string
+  remarks: string
+  quotationCount: number
+  createTime: string
+  updateBy: string
+  updateTime: string
 }
 
 interface CustomerListResponse {
-  list: Customer[]
+  records: CustomerListItem[]
+  current: number
+  size: number
   total: number
 }
 ```
@@ -385,7 +452,7 @@ interface CustomerListResponse {
 **使用示例**:
 
 ```typescript
-const { list, total } = await fetchGetCustomerList({
+const { records, total } = await fetchGetCustomerList({
   current: 1,
   size: 10,
   country: 'USA'
@@ -406,7 +473,7 @@ const { list, total } = await fetchGetCustomerList({
 | ---- | ------ | ------- |
 | id   | string | 客户 ID |
 
-**响应数据**: `Customer` 对象
+**响应数据**: `CustomerListItem` 对象
 
 **使用示例**:
 
@@ -418,18 +485,19 @@ const customer = await fetchGetCustomerDetail('1')
 
 #### 5.1.3 创建客户
 
-**函数**: `fetchCreateCustomer(data: Customer)`
+**函数**: `fetchCreateCustomer(data: Partial<CustomerListItem>)`
 
 **接口**: `POST /api/trade/customer`
 
-**请求参数**: `Customer` 对象 (不含 `id`、`createTime`、`updateTime`)
+**请求参数**: `CustomerListItem` 对象 (不含 `id`、`createTime`、`updateTime`)
 
 **响应数据**:
 
 ```typescript
 interface CreateResponse {
-  message: string
-  customer: Customer
+  code: number
+  msg: string
+  data: CustomerListItem
 }
 ```
 
@@ -437,12 +505,12 @@ interface CreateResponse {
 
 ```typescript
 const result = await fetchCreateCustomer({
-  name: '新客户',
+  customerName: 'ABC Company',
   contactPerson: 'John Doe',
-  email: 'john@example.com',
+  contactPhone: '+1 234 567 8900',
+  contactEmail: 'john@example.com',
   country: 'USA',
-  level: 'A',
-  status: 'active'
+  status: '1'
 })
 ```
 
@@ -450,31 +518,33 @@ const result = await fetchCreateCustomer({
 
 #### 5.1.4 更新客户
 
-**函数**: `fetchUpdateCustomer(id: string, data: Partial<Customer>)`
+**函数**: `fetchUpdateCustomer(data: Partial<CustomerListItem>)`
 
 **接口**: `PUT /api/trade/customer`
 
 **请求参数**:
 
-| 参数 | 类型     | 说明       |
-| ---- | -------- | ---------- |
-| id   | string   | 客户 ID    |
-| data | Customer | 更新的字段 |
+| 参数 | 类型                      | 说明       |
+| ---- | ------------------------- | ---------- |
+| id   | string                    | 客户 ID    |
+| data | Partial<CustomerListItem> | 更新的字段 |
 
 **响应数据**:
 
 ```typescript
 interface UpdateResponse {
-  message: string
-  customer: Customer
+  code: number
+  msg: string
+  data: CustomerListItem
 }
 ```
 
 **使用示例**:
 
 ```typescript
-const result = await fetchUpdateCustomer('1', {
-  email: 'newemail@example.com'
+const result = await fetchUpdateCustomer({
+  id: '1',
+  contactEmail: 'newemail@example.com'
 })
 ```
 
@@ -496,7 +566,9 @@ const result = await fetchUpdateCustomer('1', {
 
 ```typescript
 interface DeleteResponse {
-  message: string
+  code: number
+  msg: string
+  data: null
 }
 ```
 
@@ -512,43 +584,64 @@ await fetchDeleteCustomer('1')
 
 #### 5.2.1 获取产品列表
 
-**函数**: `fetchGetProductList(query: ProductListQuery)`
+**函数**: `fetchGetProductList(params: ProductSearchParams)`
 
 **接口**: `GET /api/trade/product/list`
 
 **请求参数**:
 
 ```typescript
-interface ProductListQuery {
+interface ProductSearchParams {
   current: number // 当前页码
   size: number // 每页数量
-  name?: string // 产品名称搜索
-  type?: string // 产品类型搜索
-  grade?: string // 产品等级搜索
-  sku?: string // SKU 搜索
+  keyword?: string // 关键词：产品名称/SKU/规格型号
+  type?: string // 产品类型
+  grade?: string // 产品等级
+  material?: string // 材质
+  status?: string // 状态：on_sale-上架 off_sale-下架
 }
 ```
 
 **响应数据**:
 
 ```typescript
-interface Product {
-  id: string // 产品 ID
+interface ProductListItem {
+  id: string
   name: string // 产品名称
-  type: string // 产品类型
-  sku: string // SKU
-  specification: string // 规格
-  grade: string // 等级
+  sku: string // 产品编号
+  type: string // 产品类型：切割片/百叶片/磨光片/其他
+  grade: string // 产品等级：A 级/B 级/C 级
+  spec: string // 规格型号
   material: string // 材质
-  price: number // 价格
-  stock: number // 库存
-  image?: string // 图片 URL
-  createTime: string // 创建时间
-  updateTime: string // 更新时间
+  unit: string // 单位
+  costPrice: number // 成本价
+  salePrice: number // 销售价
+  currency: string // 币种
+  moq: number // 最小起订量
+  stock: number // 库存数量
+  leadTime: string // 交货期
+  mainImage: string // 主图
+  imageCount: number // 图片数量
+  status: string // 状态：on_sale-上架 off_sale-下架
+  description: string // 产品描述
+  notes: string // 内部备注
+  // 包装信息
+  singleWeight: string // 单片重量
+  blisterQuantity: number // 吸塑数量
+  innerBoxQuantity: number // 内盒数量
+  cartonQuantity: number // 每箱数量
+  cartonSize: string // 外箱尺寸
+  grossWeight: number // 每箱毛重
+  netWeight: number // 每箱净重
+  createTime: string
+  updateBy: string
+  updateTime: string
 }
 
 interface ProductListResponse {
-  list: Product[]
+  records: ProductListItem[]
+  current: number
+  size: number
   total: number
 }
 ```
@@ -561,7 +654,7 @@ interface ProductListResponse {
 **使用示例**:
 
 ```typescript
-const { list, total } = await fetchGetProductList({
+const { records, total } = await fetchGetProductList({
   current: 1,
   size: 10,
   type: '切割片'
@@ -582,7 +675,7 @@ const { list, total } = await fetchGetProductList({
 | ---- | ------ | ------- |
 | id   | string | 产品 ID |
 
-**响应数据**: `Product` 对象
+**响应数据**: `ProductListItem` 对象
 
 **使用示例**:
 
@@ -594,18 +687,19 @@ const product = await fetchGetProductDetail('1')
 
 #### 5.2.3 创建产品
 
-**函数**: `fetchCreateProduct(data: Product)`
+**函数**: `fetchCreateProduct(data: Partial<ProductListItem>)`
 
 **接口**: `POST /api/trade/product`
 
-**请求参数**: `Product` 对象 (不含 `id`、`createTime`、`updateTime`)
+**请求参数**: `ProductListItem` 对象 (不含 `id`、`createTime`、`updateTime`)
 
 **响应数据**:
 
 ```typescript
 interface CreateResponse {
-  message: string
-  product: Product
+  code: number
+  msg: string
+  data: ProductListItem
 }
 ```
 
@@ -616,10 +710,10 @@ const result = await fetchCreateProduct({
   name: '切割片 A 型',
   type: '切割片',
   sku: 'CP-A-001',
-  specification: '100mm x 1.2mm',
+  spec: '100mm x 1.2mm',
   grade: 'A 级',
   material: '刚玉',
-  price: 15.5,
+  salePrice: 15.5,
   stock: 1000
 })
 ```
@@ -628,31 +722,33 @@ const result = await fetchCreateProduct({
 
 #### 5.2.4 更新产品
 
-**函数**: `fetchUpdateProduct(id: string, data: Partial<Product>)`
+**函数**: `fetchUpdateProduct(data: Partial<ProductListItem>)`
 
 **接口**: `PUT /api/trade/product`
 
 **请求参数**:
 
-| 参数 | 类型    | 说明       |
-| ---- | ------- | ---------- |
-| id   | string  | 产品 ID    |
-| data | Product | 更新的字段 |
+| 参数 | 类型                     | 说明       |
+| ---- | ------------------------ | ---------- |
+| id   | string                   | 产品 ID    |
+| data | Partial<ProductListItem> | 更新的字段 |
 
 **响应数据**:
 
 ```typescript
 interface UpdateResponse {
-  message: string
-  product: Product
+  code: number
+  msg: string
+  data: ProductListItem
 }
 ```
 
 **使用示例**:
 
 ```typescript
-const result = await fetchUpdateProduct('1', {
-  price: 12.5,
+const result = await fetchUpdateProduct({
+  id: '1',
+  salePrice: 12.5,
   stock: 800
 })
 ```
@@ -675,7 +771,9 @@ const result = await fetchUpdateProduct('1', {
 
 ```typescript
 interface DeleteResponse {
-  message: string
+  code: number
+  msg: string
+  data: null
 }
 ```
 
@@ -691,68 +789,140 @@ await fetchDeleteProduct('1')
 
 #### 5.3.1 获取报价列表
 
-**函数**: `fetchGetQuotationList(query: QuotationListQuery)`
+**函数**: `fetchGetQuotationList(params: QuotationSearchParams)`
 
 **接口**: `GET /api/trade/quotation/list`
 
 **请求参数**:
 
 ```typescript
-interface QuotationListQuery {
+interface QuotationSearchParams {
   current: number // 当前页码
   size: number // 每页数量
-  quotationNo?: string // 报价单号搜索
-  customerId?: string // 客户 ID 搜索
-  status?: string // 状态搜索
-  startDate?: string // 开始日期
-  endDate?: string // 结束日期
+  customerId?: string // 客户 ID
+  customerName?: string // 客户名称
+  quotationNo?: string // 报价单号
+  productName?: string // 产品名称
+  status?: string // 状态
+  currency?: string // 币种
+  startTime?: string // 开始日期
+  endTime?: string // 结束日期
 }
 ```
 
 **响应数据**:
 
 ```typescript
-interface Quotation {
-  id: string // 报价 ID
-  quotationNo: string // 报价单号 (CI-YYYYMMDD-NNN)
+interface QuotationListItem {
+  id: string
   customerId: string // 客户 ID
   customerName: string // 客户名称
-  products: Product[] // 产品数组
-  totalAmount: number // 总金额
+  quotationNo: string // 报价单号
+  productName: string // 产品名称
+  specification: string // 规格型号
+  quantity: number // 数量
+  unit: string // 单位
+  unitPrice: number // 单价
   currency: string // 币种
+  totalPrice: number // 总金额
   tradeTerm: string // 贸易条款
-  paymentTerm: string // 付款条款
+  paymentTerm: string // 付款方式
+  validity: string // 报价有效期
+  remarks: string // 备注
   status: string // 状态
-  validUntil: string // 有效期至
-  remarks?: string // 备注
-  createTime: string // 创建时间
-  updateTime: string // 更新时间
+  quotationDate: string // 报价日期
+  createTime: string
+  updateBy: string
+  updateTime: string
+  // 扩展字段
+  shipmentPort?: string // 装运港口
+  leadTime?: string // 交货期
+  clientWhatsapp?: string // 客户 WhatsApp
+  clientEmail?: string // 客户邮箱
+  products?: QuotationProduct[] // 产品列表
+  costSummary?: QuotationCostSummary // 费用汇总
+}
+
+interface QuotationProduct {
+  id: string
+  selectedProductId?: string
+  variants: ProductVariant[]
+}
+
+interface ProductVariant {
+  id: string
+  sku: string
+  desc: string
+  spec: string
+  qty: number
+  unit: string
+  price: number
+  image?: string
+  total?: number
+}
+
+interface QuotationCostSummary {
+  freightCharges: number // 运费
+  discountValue: number // 折扣值
+  discountType: 'percent' | 'fixed' // 折扣类型
+  taxValue: number // 税费
+  otherCharges: number // 其他费用
+  subtotal: number // 产品小计
+  grandTotal: number // 总计
 }
 
 interface QuotationListResponse {
-  list: Quotation[]
+  records: QuotationListItem[]
+  current: number
+  size: number
   total: number
 }
 ```
 
 **报价单号规则**: `CI-YYYYMMDD-NNN` (如 `CI-20260325-001`)  
-**状态**: 草稿、待发送、已发送、已确认、已拒绝
+**状态**: 待确认、已接受、已拒绝、已过期
 
 **Mock 数据**: `mock/data/quotationList.json`
 
 **使用示例**:
 
 ```typescript
-const { list, total } = await fetchGetQuotationList({
+const { records, total } = await fetchGetQuotationList({
   current: 1,
   size: 10,
-  status: '待发送'
+  status: '1'
 })
 ```
 
 ---
 
-#### 5.3.2 获取报价详情
+#### 5.3.2 获取客户报价记录列表
+
+**函数**: `fetchGetCustomerQuotations(customerId: string, params: CommonSearchParams)`
+
+**接口**: `GET /api/trade/customer/:customerId/quotations`
+
+**请求参数**:
+
+| 参数       | 类型               | 说明     |
+| ---------- | ------------------ | -------- |
+| customerId | string             | 客户 ID  |
+| params     | CommonSearchParams | 分页参数 |
+
+**响应数据**: `QuotationListResponse`
+
+**使用示例**:
+
+```typescript
+const { records, total } = await fetchGetCustomerQuotations('1', {
+  current: 1,
+  size: 10
+})
+```
+
+---
+
+#### 5.3.3 获取报价详情
 
 **函数**: `fetchGetQuotationDetail(id: string)`
 
@@ -764,7 +934,7 @@ const { list, total } = await fetchGetQuotationList({
 | ---- | ------ | ------- |
 | id   | string | 报价 ID |
 
-**响应数据**: `Quotation` 对象
+**响应数据**: `QuotationListItem` 对象（包含完整 `products` 和 `costSummary`）
 
 **使用示例**:
 
@@ -774,20 +944,21 @@ const quotation = await fetchGetQuotationDetail('1')
 
 ---
 
-#### 5.3.3 创建报价
+#### 5.3.4 创建报价
 
-**函数**: `fetchCreateQuotation(data: Quotation)`
+**函数**: `fetchCreateQuotation(data: Partial<QuotationListItem>)`
 
 **接口**: `POST /api/trade/quotation`
 
-**请求参数**: `Quotation` 对象 (不含 `id`、`createTime`、`updateTime`)
+**请求参数**: `QuotationListItem` 对象 (不含 `id`、`createTime`、`updateTime`)
 
 **响应数据**:
 
 ```typescript
 interface CreateResponse {
-  message: string
-  quotation: Quotation
+  code: number
+  msg: string
+  data: QuotationListItem
 }
 ```
 
@@ -795,54 +966,52 @@ interface CreateResponse {
 
 ```typescript
 const result = await fetchCreateQuotation({
-  quotationNo: 'CI-20260407-001',
   customerId: '1',
   customerName: 'ABC Company',
+  quotationNo: 'CI-20260408-001',
+  status: '1',
   products: [...],
-  totalAmount: 5000,
-  currency: 'USD',
-  tradeTerm: 'FOB',
-  paymentTerm: 'T/T',
-  status: '草稿',
-  validUntil: '2026-05-07'
+  costSummary: {...}
 })
 ```
 
 ---
 
-#### 5.3.4 更新报价
+#### 5.3.5 更新报价
 
-**函数**: `fetchUpdateQuotation(id: string, data: Partial<Quotation>)`
+**函数**: `fetchUpdateQuotation(data: Partial<QuotationListItem>)`
 
 **接口**: `PUT /api/trade/quotation`
 
 **请求参数**:
 
-| 参数 | 类型      | 说明       |
-| ---- | --------- | ---------- |
-| id   | string    | 报价 ID    |
-| data | Quotation | 更新的字段 |
+| 参数 | 类型                       | 说明       |
+| ---- | -------------------------- | ---------- |
+| id   | string                     | 报价 ID    |
+| data | Partial<QuotationListItem> | 更新的字段 |
 
 **响应数据**:
 
 ```typescript
 interface UpdateResponse {
-  message: string
-  quotation: Quotation
+  code: number
+  msg: string
+  data: QuotationListItem
 }
 ```
 
 **使用示例**:
 
 ```typescript
-const result = await fetchUpdateQuotation('1', {
-  status: '已发送'
+const result = await fetchUpdateQuotation({
+  id: '1',
+  status: '2'
 })
 ```
 
 ---
 
-#### 5.3.5 删除报价
+#### 5.3.6 删除报价
 
 **函数**: `fetchDeleteQuotation(id: string)`
 
@@ -858,7 +1027,9 @@ const result = await fetchUpdateQuotation('1', {
 
 ```typescript
 interface DeleteResponse {
-  message: string
+  code: number
+  msg: string
+  data: null
 }
 ```
 
@@ -878,7 +1049,7 @@ await fetchDeleteQuotation('1')
 
 | 数据     | Storage Key            | JSON 文件                      |
 | -------- | ---------------------- | ------------------------------ |
-| 用户信息 | `user_info`            | `mock/data/userInfo.json`      |
+| 用户列表 | `system_user_list`     | `mock/data/userList.json`      |
 | 客户列表 | `trade_customer_list`  | `mock/data/customerList.json`  |
 | 产品列表 | `trade_product_list`   | `mock/data/productList.json`   |
 | 报价列表 | `trade_quotation_list` | `mock/data/quotationList.json` |
@@ -902,18 +1073,105 @@ watch(localStorageChanges, () => {
 })
 ```
 
-### 6.3 清理演示数据
+### 6.3 用户数据结构
 
-执行以下命令清理所有 Mock 数据:
+**`userList.json` 字段说明**:
 
-```bash
-pnpm clean:dev
+```typescript
+interface UserListItem {
+  id: number
+  userName: string // 真实姓名（用于显示）
+  nickName: string // 昵称
+  userPhone: string // 手机号（用于登录）
+  userEmail: string // 邮箱
+  password: string // 密码
+  userGender: string // 性别
+  userRoles: string[] // 角色列表：R_SUPER, R_ADMIN, R_USER
+  avatar: string // 头像
+  status: string // 状态：1-启用 2-禁用
+  // 扩展字段
+  realName?: string
+  sex?: string
+  intro?: string
+  wechat?: string
+  whatsapp?: string
+  facebook?: string
+  role?: string // 职位
+  department?: string // 部门
+  address?: string // 地址
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+}
 ```
 
-该命令会:
+### 6.4 清理演示数据
 
-1. 清除所有 LocalStorage 中的 Mock 数据
-2. 重置为初始 JSON 文件中的数据
+在浏览器控制台执行以下命令清理所有 Mock 数据:
+
+```javascript
+localStorage.clear()
+```
+
+然后刷新页面即可重置为初始 JSON 文件中的数据。
+
+---
+
+## 7. API 清单总览
+
+### 7.1 认证模块 (auth.ts)
+
+| 函数名             | 方法 | 说明         |
+| ------------------ | ---- | ------------ |
+| `fetchLogin`       | POST | 用户登录     |
+| `fetchGetUserInfo` | GET  | 获取用户信息 |
+
+### 7.2 用户模块 (user.ts)
+
+| 函数名                | 方法 | 说明         |
+| --------------------- | ---- | ------------ |
+| `fetchGetUserInfo`    | GET  | 获取用户信息 |
+| `fetchUpdateUserInfo` | POST | 更新用户信息 |
+
+### 7.3 系统管理模块 (system-manage.ts)
+
+| 函数名             | 方法 | 说明         |
+| ------------------ | ---- | ------------ |
+| `fetchGetUserList` | GET  | 获取用户列表 |
+| `fetchGetRoleList` | GET  | 获取角色列表 |
+| `fetchGetMenuList` | GET  | 获取菜单列表 |
+
+### 7.4 客户管理模块 (trade-manage.ts)
+
+| 函数名                   | 方法   | 说明         |
+| ------------------------ | ------ | ------------ |
+| `fetchGetCustomerList`   | GET    | 获取客户列表 |
+| `fetchGetCustomerDetail` | GET    | 获取客户详情 |
+| `fetchCreateCustomer`    | POST   | 创建客户     |
+| `fetchUpdateCustomer`    | PUT    | 更新客户     |
+| `fetchDeleteCustomer`    | DELETE | 删除客户     |
+
+### 7.5 产品管理模块 (trade-manage.ts)
+
+| 函数名                  | 方法   | 说明         |
+| ----------------------- | ------ | ------------ |
+| `fetchGetProductList`   | GET    | 获取产品列表 |
+| `fetchGetProductDetail` | GET    | 获取产品详情 |
+| `fetchCreateProduct`    | POST   | 创建产品     |
+| `fetchUpdateProduct`    | PUT    | 更新产品     |
+| `fetchDeleteProduct`    | DELETE | 删除产品     |
+
+### 7.6 报价管理模块 (trade-manage.ts)
+
+| 函数名                       | 方法   | 说明             |
+| ---------------------------- | ------ | ---------------- |
+| `fetchGetQuotationList`      | GET    | 获取报价列表     |
+| `fetchGetCustomerQuotations` | GET    | 获取客户报价记录 |
+| `fetchGetQuotationDetail`    | GET    | 获取报价详情     |
+| `fetchCreateQuotation`       | POST   | 创建报价         |
+| `fetchUpdateQuotation`       | PUT    | 更新报价         |
+| `fetchDeleteQuotation`       | DELETE | 删除报价         |
 
 ---
 
@@ -923,20 +1181,23 @@ pnpm clean:dev
 
 ```typescript
 // 通用分页参数
-interface PageQuery {
+interface CommonSearchParams {
   current: number
   size: number
 }
 
 // 通用分页响应
-interface PageResponse<T> {
-  list: T[]
+interface PaginatedResponse<T> {
+  records: T[]
+  current: number
+  size: number
   total: number
 }
 
 // 通用操作响应
 interface ActionResponse {
-  message: string
+  code: number
+  msg: string
   data?: any
 }
 ```
@@ -956,5 +1217,5 @@ interface ActionResponse {
 
 <div align="center">
   <p>Art Design Pro - API 接口文档</p>
-  <p>最后更新：2026-04-07</p>
+  <p>最后更新：2026-04-08</p>
 </div>

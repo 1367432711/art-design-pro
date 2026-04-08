@@ -26,7 +26,7 @@ function initQuotationData() {
     }
     console.log('[QuotationData] 从 JSON 文件初始化报价数据...')
     quotationData.forEach((quotation) => {
-      addQuotation(quotation as Api.Trade.QuotationListItem)
+      addQuotation(quotation as unknown as Api.Trade.QuotationListItem)
     })
     console.log('[QuotationData] 初始化完成，当前数据长度:', getQuotationList().length)
     return
@@ -36,7 +36,7 @@ function initQuotationData() {
   const existing = getQuotationList()
   if (existing.length === 0) {
     quotationData.forEach((quotation) => {
-      addQuotation(quotation as Api.Trade.QuotationListItem)
+      addQuotation(quotation as unknown as Api.Trade.QuotationListItem)
     })
   }
 }

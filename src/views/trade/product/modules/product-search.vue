@@ -17,7 +17,7 @@
   }
   interface Emits {
     (e: 'update:modelValue', value: Api.Trade.ProductSearchParams): void
-    (e: 'search', params: Api.Trade.ProductSearchParams): void
+    (e: 'search', params: Record<string, any>): void
     (e: 'reset'): void
   }
   const props = defineProps<Props>()
@@ -128,7 +128,7 @@
     emit('reset')
   }
 
-  async function handleSearch(params: Api.Trade.ProductSearchParams) {
+  async function handleSearch(params: Record<string, any>) {
     await searchBarRef.value.validate()
     emit('search', params)
     console.log('表单数据', params)

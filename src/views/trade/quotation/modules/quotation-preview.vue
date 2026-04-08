@@ -1,7 +1,7 @@
 <!-- 报价单预览组件 -->
 <template>
   <ElDialog
-    v-model:modelValue="visible"
+    v-model="dialogVisible"
     width="95%"
     :close-on-click-modal="false"
     class="preview-dialog"
@@ -311,6 +311,15 @@
   const emit = defineEmits<{
     'update:modelValue': [value: boolean]
   }>()
+
+  // 对话框显示状态
+  const dialogVisible = computed({
+    get: () => props.modelValue,
+    set: (value) => emit('update:modelValue', value)
+  })
+
+  // 报价数据（模板中使用 quotationData 名称）
+  const quotationData = computed(() => props.data)
 
   // 当前页码
   const currentPage = ref(1)

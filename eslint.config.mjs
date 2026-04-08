@@ -74,6 +74,7 @@ export default [
       'dist',
       'public',
       '.vscode/**',
+      '.claude/**',
       'src/assets/**',
       'src/utils/console.ts'
     ]

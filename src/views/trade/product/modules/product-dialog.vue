@@ -354,7 +354,7 @@
       if (row.mainImage) {
         imageFileList.value = [
           {
-            uid: Date.now().toString(),
+            uid: Date.now(),
             name: 'main-image.jpg',
             url: row.mainImage
           }

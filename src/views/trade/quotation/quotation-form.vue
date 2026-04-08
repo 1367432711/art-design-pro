@@ -14,7 +14,90 @@
       </div>
     </div>
 
-    <!-- 报价单头部信息 -->
+    <!-- 客户信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="flex-b items-center">
+          <span class="font-semibold text-lg">
+            <ArtSvgIcon icon="ri:user-star-line" class="mr-2 text-primary" />
+            客户信息 / Customer Information
+          </span>
+          <ElTag v-if="isEdit" type="info" size="small">已锁定</ElTag>
+        </div>
+      </template>
+
+      <ElForm :model="formData" label-width="120px" class="customer-info-form">
+        <ElRow :gutter="20">
+          <ElCol :span="6">
+            <ElFormItem label="客户名称">
+              <ElSelect
+                v-model="formData.customerId"
+                placeholder="选择客户"
+                filterable
+                style="width: 100%"
+                :disabled="isEdit"
+                @change="handleCustomerChange"
+              >
+                <ElOption
+                  v-for="opt in customerOptions"
+                  :key="opt.id"
+                  :value="opt.id"
+                  :label="opt.customerName"
+                />
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="联系人">
+              <ElInput v-model="formData.contactPerson" placeholder="联系人" :disabled="isEdit" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="联系电话">
+              <ElInput v-model="formData.contactPhone" placeholder="联系电话" :disabled="isEdit" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="联系邮箱">
+              <ElInput v-model="formData.contactEmail" placeholder="联系邮箱" :disabled="isEdit" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="6">
+            <ElFormItem label="WhatsApp">
+              <ElInput
+                v-model="formData.clientWhatsapp"
+                placeholder="+86 138 0000 0000"
+                :disabled="isEdit"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="国家/地区">
+              <ElInput v-model="formData.country" placeholder="国家/地区" :disabled="isEdit" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="地址">
+              <ElInput v-model="formData.address" placeholder="详细地址" :disabled="isEdit" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="主营产品">
+              <ElInput
+                v-model="formData.customerProducts"
+                placeholder="主营产品"
+                :disabled="isEdit"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+      </ElForm>
+    </ElCard>
+
+    <!-- 报价单信息 -->
     <ElCard class="art-card mb-4">
       <template #header>
         <div class="flex-b items-center">
@@ -33,31 +116,28 @@
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
-            <ElFormItem label="客户">
-              <ElSelect
-                v-model="formData.customerId"
-                placeholder="选择客户"
-                filterable
-                style="width: 100%"
-                @change="handleCustomerChange"
-              >
-                <ElOption
-                  v-for="opt in customerOptions"
-                  :key="opt.id"
-                  :value="opt.id"
-                  :label="opt.customerName"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
             <ElFormItem label="报价日期">
               <ElDatePicker v-model="formData.quotationDate" type="date" style="width: 100%" />
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
-            <ElFormItem label="有效期">
-              <ElInput v-model="formData.validity" placeholder="如：30 天" />
+            <ElFormItem label="有效期至">
+              <ElDatePicker
+                v-model="formData.validity"
+                type="date"
+                placeholder="选择截止日期"
+                style="width: 100%"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="币种">
+              <ElSelect v-model="formData.currency" style="width: 100%">
+                <ElOption label="USD" value="USD" />
+                <ElOption label="EUR" value="EUR" />
+                <ElOption label="CNY" value="CNY" />
+                <ElOption label="GBP" value="GBP" />
+              </ElSelect>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -85,29 +165,6 @@
           <ElCol :span="6">
             <ElFormItem label="交货期">
               <ElInput v-model="formData.leadTime" placeholder="如：30 days" />
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="20">
-          <ElCol :span="6">
-            <ElFormItem label="币种">
-              <ElSelect v-model="formData.currency" style="width: 100%">
-                <ElOption label="USD" value="USD" />
-                <ElOption label="EUR" value="EUR" />
-                <ElOption label="CNY" value="CNY" />
-                <ElOption label="GBP" value="GBP" />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="客户 WhatsApp">
-              <ElInput v-model="formData.clientWhatsapp" placeholder="+86 138 0000 0000" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="客户邮箱">
-              <ElInput v-model="formData.clientEmail" placeholder="client@example.com" />
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -142,7 +199,7 @@
         <ElTableColumn width="100" align="center" label="产品图">
           <template #default="{ row, $index }">
             <ElUpload
-              :file-list="row.image ? [{ url: row.image }] : []"
+              :file-list="row.image ? [{ name: 'product-image', url: row.image }] : []"
               :limit="1"
               accept="image/*"
               :show-file-list="false"
@@ -463,9 +520,19 @@
 
   // 表单数据 - 扁平化结构
   const formData = ref({
-    quotationNo: '',
+    // 客户信息（从客户档案带过来，允许临时覆盖）
     customerId: '',
     customerName: '',
+    contactPerson: '', // 联系人
+    contactPhone: '', // 联系电话
+    contactEmail: '', // 联系邮箱
+    clientWhatsapp: '', // WhatsApp
+    country: '', // 国家/地区
+    address: '', // 详细地址
+    customerProducts: '', // 主营产品（客户档案）
+
+    // 报价单信息
+    quotationNo: '',
     quotationDate: new Date().toISOString().slice(0, 10),
     validity: '',
     currency: 'USD',
@@ -473,9 +540,8 @@
     paymentTerm: '',
     shipmentPort: '',
     leadTime: '',
-    clientWhatsapp: '',
-    clientEmail: '',
-    // 产品列表（扁平化）
+
+    // 报价产品列表（扁平化）
     products: [] as Array<{
       id: string
       selectedProductId?: string // 关联的产品库 ID
@@ -591,11 +657,18 @@
     updateTotal(index)
   }
 
-  // 选择客户
+  // 选择客户（自动填充客户信息）
   const handleCustomerChange = (customerId: string) => {
     const customer = customerOptions.value.find((c) => c.id === customerId)
     if (customer) {
       formData.value.customerName = customer.customerName
+      formData.value.contactPerson = customer.contactPerson || ''
+      formData.value.contactPhone = customer.contactPhone || ''
+      formData.value.contactEmail = customer.contactEmail || ''
+      formData.value.clientWhatsapp = customer.contactPhone || '' // 默认使用联系电话
+      formData.value.country = customer.country || ''
+      formData.value.address = customer.address || ''
+      formData.value.customerProducts = customer.products || ''
     }
   }
 
@@ -705,10 +778,12 @@
         result = await fetchUpdateQuotation({
           id: route.params.id as string,
           ...submitData
-        })
+        } as unknown as Partial<Api.Trade.QuotationListItem>)
       } else {
         // 新增模式
-        result = await fetchCreateQuotation(submitData)
+        result = await fetchCreateQuotation(
+          submitData as unknown as Partial<Api.Trade.QuotationListItem>
+        )
       }
 
       ElMessage.success(result.msg || '保存成功')
@@ -742,64 +817,119 @@
       const res = await fetchGetQuotationDetail(id)
       const data = (res as any).data
 
-      if (data) {
-        // 填充表单数据
-        formData.value = {
-          ...formData.value,
-          quotationNo: data.quotationNo || '',
-          customerId: data.customerId || '',
-          customerName: data.customerName || '',
-          quotationDate: data.quotationDate || new Date().toISOString().slice(0, 10),
-          validity: data.validity || '',
-          currency: data.currency || 'USD',
-          tradeTerm: data.tradeTerm || '',
-          paymentTerm: data.paymentTerm || '',
-          shipmentPort: data.shipmentPort || '',
-          leadTime: data.leadTime || '',
-          clientWhatsapp: data.clientWhatsapp || '',
-          clientEmail: data.clientEmail || '',
-          products: data.products || [],
-          costSummary: data.costSummary || {
-            freightCharges: 0,
-            discountValue: 0,
-            discountType: 'percent',
-            taxValue: 0,
-            otherCharges: 0,
-            subtotal: 0,
-            grandTotal: 0
-          }
+      if (!data) {
+        ElMessage.error('报价单不存在')
+        setTimeout(() => {
+          router.push('/trade/quotation')
+        }, 1000)
+        return
+      }
+
+      // 先填充报价数据
+      formData.value = {
+        ...formData.value,
+        // 客户信息（先填充报价单中已保存的）
+        customerId: data.customerId || '',
+        customerName: data.customerName || '',
+        contactPerson: data.contactPerson || '',
+        contactPhone: data.contactPhone || '',
+        contactEmail: data.contactEmail || '',
+        clientWhatsapp: data.clientWhatsapp || '',
+        country: data.country || '',
+        address: data.address || '',
+        customerProducts: typeof data.products === 'string' ? data.products : '',
+        // 报价信息
+        quotationNo: data.quotationNo || '',
+        quotationDate: data.quotationDate || new Date().toISOString().slice(0, 10),
+        validity: data.validity || '',
+        currency: data.currency || 'USD',
+        tradeTerm: data.tradeTerm || '',
+        paymentTerm: data.paymentTerm || '',
+        shipmentPort: data.shipmentPort || '',
+        leadTime: data.leadTime || '',
+        // 产品列表和费用汇总
+        products: Array.isArray(data.products) ? data.products : [],
+        costSummary: data.costSummary || {
+          freightCharges: 0,
+          discountValue: 0,
+          discountType: 'percent' as const,
+          taxValue: 0,
+          otherCharges: 0,
+          subtotal: 0,
+          grandTotal: 0
+        }
+      }
+
+      // 如果报价单中客户信息不完整，从客户档案补充
+      if (data.customerId && customerOptions.value.length > 0) {
+        const customer = customerOptions.value.find((c) => c.id === data.customerId)
+        if (customer) {
+          // 只补充报价单中为空的字段
+          if (!formData.value.contactPerson)
+            formData.value.contactPerson = customer.contactPerson || ''
+          if (!formData.value.contactPhone)
+            formData.value.contactPhone = customer.contactPhone || ''
+          if (!formData.value.contactEmail)
+            formData.value.contactEmail = customer.contactEmail || ''
+          if (!formData.value.clientWhatsapp)
+            formData.value.clientWhatsapp = customer.contactPhone || ''
+          if (!formData.value.country) formData.value.country = customer.country || ''
+          if (!formData.value.address) formData.value.address = customer.address || ''
+          if (!formData.value.customerProducts)
+            formData.value.customerProducts = customer.products || ''
         }
       }
     } catch (error) {
       console.error('加载报价单详情失败:', error)
       ElMessage.error('加载报价单详情失败')
+      setTimeout(() => {
+        router.push('/trade/quotation')
+      }, 1000)
     }
   }
 
   // 加载数据
   const loadData = async () => {
     try {
+      // 先加载客户和产品选项
       const customerRes = await fetchGetCustomerList({ current: 1, size: 100 })
       customerOptions.value = (customerRes.data as any)?.records || []
 
       const productRes = await fetchGetProductList({ current: 1, size: 100 })
       productOptions.value = (productRes.data as any)?.records || []
 
-      // 检查是否从客户详情页跳转（带 customerId 参数）
-      const customerId = route.query.customerId as string
-      const customerName = route.query.customerName as string
-
-      if (customerId) {
-        formData.value.customerId = customerId
-        formData.value.customerName = decodeURIComponent(customerName || '')
-      }
-
       if (isEdit.value) {
-        // 编辑模式：加载报价单详情
+        // 编辑模式：先加载报价单详情（此时 customerOptions 已加载完成）
         await loadQuotationDetail()
-      } else if (!formData.value.quotationNo) {
-        // 新增模式：生成报价单号
-        formData.value.quotationNo = generateQuotationNo()
+      } else {
+        // 新增模式：检查是否从客户详情页跳转
+        const customerId = route.query.customerId as string
+        const customerName = route.query.customerName as string
+
+        if (customerId) {
+          formData.value.customerId = customerId
+          formData.value.customerName = decodeURIComponent(customerName || '')
+
+          // 自动填充客户档案信息
+          const customer = customerOptions.value.find((c) => c.id === customerId)
+          if (customer) {
+            formData.value.contactPerson = customer.contactPerson || ''
+            formData.value.contactPhone = customer.contactPhone || ''
+            formData.value.contactEmail = customer.contactEmail || ''
+            formData.value.clientWhatsapp = customer.contactPhone || ''
+            formData.value.country = customer.country || ''
+            formData.value.address = customer.address || ''
+            formData.value.customerProducts = customer.products || ''
+          }
+        }
+
+        // 生成报价单号
+        if (!formData.value.quotationNo) {
+          formData.value.quotationNo = generateQuotationNo()
+        }
+
+        // 添加第一行产品
+        addProduct()
       }
     } catch (error) {
       console.error('加载数据失败:', error)
@@ -808,7 +938,6 @@
 
   onMounted(() => {
     loadData()
-    addProduct() // 添加第一行
   })
 </script>
 

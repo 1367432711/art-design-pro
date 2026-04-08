@@ -390,7 +390,7 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 260,
+      width: 320,
       fixed: 'right' as const,
       align: 'center',
       formatter: (row: QuotationListItem) =>
@@ -399,6 +399,15 @@
             ElButton,
             {
               type: 'primary',
+              size: 'small',
+              onClick: () => handleViewQuotation(row)
+            },
+            () => [h(Icon, { icon: 'ri:eye-line' }), ' 查看']
+          ),
+          h(
+            ElButton,
+            {
+              type: 'info',
               size: 'small',
               onClick: () => handleEditQuotation(row)
             },
@@ -412,15 +421,6 @@
               onClick: () => handleDeleteQuotation(row)
             },
             () => [h(Icon, { icon: 'ri:delete-bin-line' }), ' 删除']
-          ),
-          h(
-            ElButton,
-            {
-              type: 'info',
-              size: 'small',
-              onClick: () => handleExportQuotation(row)
-            },
-            () => [h(Icon, { icon: 'ri:download-line' }), ' 导出']
           )
         ])
     }
@@ -652,6 +652,7 @@
   }
 
   // 导出报价单
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleExportQuotation = (row: Api.Trade.QuotationListItem) => {
     ElMessage.info(`导出报价单 ${row.quotationNo} 的 PDF 功能开发中...`)
     // TODO: 实现单个报价单 PDF 导出功能

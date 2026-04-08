@@ -5,10 +5,10 @@
     <div class="card-image-section">
       <!-- 角标/标签 -->
       <div class="image-badges">
-        <span v-if="product.badge" :class="['badge', product.badgeType || 'hot']">
-          {{ product.badge }}
+        <span v-if="badge" :class="['badge', badgeType || 'hot']">
+          {{ badge }}
         </span>
-        <span v-if="product.isNew" class="badge new">NEW</span>
+        <span v-if="isNew" class="badge new">NEW</span>
       </div>
 
       <!-- 收藏按钮 -->
@@ -18,13 +18,7 @@
 
       <!-- 产品图片 -->
       <div class="image-wrapper">
-        <ElImage
-          :src="product.image"
-          :alt="product.name"
-          fit="contain"
-          class="product-image"
-          lazy
-        />
+        <ElImage :src="image" :alt="name" fit="contain" class="product-image" lazy />
       </div>
 
       <!-- 快速操作栏（hover 显示） -->
@@ -44,30 +38,30 @@
     <!-- 卡片内容区域 -->
     <div class="card-content">
       <!-- 产品名称 -->
-      <h3 class="product-name" :title="product.name">
-        {{ product.name }}
+      <h3 class="product-name" :title="name">
+        {{ name }}
       </h3>
 
       <!-- 核心卖点标签 -->
       <div class="selling-points">
-        <span v-for="(point, index) in product.sellingPoints" :key="index" class="point-tag">
+        <span v-for="(point, index) in sellingPoints" :key="index" class="point-tag">
           {{ point }}
         </span>
       </div>
 
       <!-- 规格参数栏 -->
       <div class="specs-bar">
-        <div class="spec-item" v-if="product.spec">
+        <div class="spec-item" v-if="spec">
           <Icon icon="ri:ruler-line" class="spec-icon" />
-          <span class="spec-text">{{ product.spec }}</span>
+          <span class="spec-text">{{ spec }}</span>
         </div>
-        <div class="spec-item" v-if="product.material">
+        <div class="spec-item" v-if="material">
           <Icon icon="ri:stack-line" class="spec-icon" />
-          <span class="spec-text">{{ product.material }}</span>
+          <span class="spec-text">{{ material }}</span>
         </div>
-        <div class="spec-item" v-if="product.model">
+        <div class="spec-item" v-if="model">
           <Icon icon="ri:barcode-box-line" class="spec-icon" />
-          <span class="spec-text">{{ product.model }}</span>
+          <span class="spec-text">{{ model }}</span>
         </div>
       </div>
 
@@ -76,13 +70,13 @@
         <div class="price-row">
           <span class="current-price">
             <span class="currency-symbol">{{ currencySymbol }}</span>
-            <span class="price-value">{{ formatPrice(product.price) }}</span>
+            <span class="price-value">{{ formatPrice(price) }}</span>
           </span>
-          <span v-if="product.originalPrice" class="original-price">
-            {{ currencySymbol }}{{ formatPrice(product.originalPrice) }}
+          <span v-if="originalPrice" class="original-price">
+            {{ currencySymbol }}{{ formatPrice(originalPrice) }}
           </span>
         </div>
-        <div v-if="product.discount" class="discount-tag"> -{{ product.discount }}% </div>
+        <div v-if="discount" class="discount-tag"> -{{ discount }}% </div>
       </div>
 
       <!-- 操作按钮 -->
@@ -101,13 +95,13 @@
 
       <!-- 底部信息栏 -->
       <div class="card-footer">
-        <div class="footer-item" :title="product.shipFrom">
+        <div class="footer-item" :title="shipFrom">
           <Icon icon="ri:truck-line" class="footer-icon" />
-          <span class="footer-text">{{ product.shipFrom || '上海' }}</span>
+          <span class="footer-text">{{ shipFrom || '上海' }}</span>
         </div>
         <div class="footer-item" :title="warrantyText">
           <Icon icon="ri:shield-check-line" class="footer-icon" />
-          <span class="footer-text">{{ product.warranty || '1 年质保' }}</span>
+          <span class="footer-text">{{ warranty || '1 年质保' }}</span>
         </div>
         <div class="footer-item stock-status" :class="stockClass" :title="stockText">
           <Icon :icon="stockIcon" class="footer-icon" />

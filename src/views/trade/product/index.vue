@@ -56,11 +56,13 @@
   const selectedRows = ref<ProductListItem[]>([])
 
   // 搜索表单
-  const searchForm = ref({
+  const searchForm = ref<Api.Trade.ProductSearchParams>({
     keyword: undefined,
     type: undefined,
     grade: undefined,
-    material: undefined
+    material: undefined,
+    current: 1,
+    size: 10
   })
 
   // 产品类型配置
@@ -123,9 +125,9 @@
     core: {
       apiFn: fetchGetProductList,
       apiParams: {
+        ...searchForm.value,
         current: 1,
-        size: 20,
-        ...searchForm.value
+        size: 20
       },
       columnsFactory: () => {
         return [
@@ -227,7 +229,7 @@
   /**
    * 搜索处理
    */
-  const handleSearch = (params: Api.Trade.ProductSearchParams) => {
+  const handleSearch = (params: Record<string, any>) => {
     replaceSearchParams(params)
     getData()
   }
