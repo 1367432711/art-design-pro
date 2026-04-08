@@ -67,11 +67,22 @@
 
       <!-- 通用操作组 -->
       <div class="action-group">
-        <ElButton size="large" @click="handleEdit">
+        <ElButton
+          size="large"
+          @click="handleEdit"
+          :loading="loading"
+          :disabled="!quotationData.value.id"
+        >
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑
         </ElButton>
-        <ElButton type="primary" size="large" @click="handlePrint">
+        <ElButton
+          type="primary"
+          size="large"
+          @click="handlePrint"
+          :loading="loading"
+          :disabled="!quotationData.value.id"
+        >
           <Icon icon="ri:print-line" class="mr-1" />
           打印
         </ElButton>
@@ -480,6 +491,7 @@
 
   // 报价数据
   const quotationData = ref<any>({
+    id: '',
     products: [],
     costSummary: {
       freightCharges: 0,
@@ -491,6 +503,9 @@
       grandTotal: 0
     }
   })
+
+  // 数据加载中
+  const loading = ref(false)
 
   // 报价状态配置
   const QUOTATION_STATUS_CONFIG = {
@@ -711,6 +726,8 @@
       // 先填充报价数据
       quotationData.value = {
         ...quotationData.value,
+        // 基础信息
+        id: data.id || '',
         // 客户信息（先填充报价单中已保存的）
         customerId: data.customerId || '',
         customerName: data.customerName || '',
@@ -806,6 +823,7 @@
 
   // 加载数据
   const loadData = async () => {
+    loading.value = true
     try {
       // 先加载客户选项
       const customerRes = await fetchGetCustomerList({ current: 1, size: 100 })
@@ -815,6 +833,8 @@
       await loadQuotationDetail()
     } catch (error) {
       console.error('加载数据失败:', error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -832,7 +852,6 @@
 
   // 编辑报价
   const handleEdit = () => {
-    console.log('[QuotationDetail] 点击编辑，当前 quotationData.value.id:', quotationData.value.id)
     if (!quotationData.value.id) {
       ElMessage.error('数据未加载完成，请稍后再试')
       return
