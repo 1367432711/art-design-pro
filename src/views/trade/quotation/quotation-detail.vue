@@ -447,6 +447,15 @@
 
   defineOptions({ name: 'QuotationDetail' })
 
+  // 预加载产品图片（使用 Vite import.meta.glob）
+  const productImages = import.meta.glob('/src/assets/images/cover/*.webp', {
+    eager: true
+  }) as Record<string, any>
+  const getProductImagePath = (imageName: string) => {
+    const path = `/src/assets/images/cover/${imageName.split('/').pop()}`
+    return productImages[path]?.default || path
+  }
+
   const router = useRouter()
   const route = useRoute()
 
@@ -763,9 +772,10 @@
           product.blisterQuantity = sourceProduct.blisterQuantity
           product.innerBoxQuantity = sourceProduct.innerBoxQuantity
 
-          // 图片：如果报价单中没有，从产品库补充
-          if (!product.image && sourceProduct.mainImage) {
-            product.image = sourceProduct.mainImage
+          // 图片：从产品库覆盖（确保使用正确的图片路径）
+          if (sourceProduct.mainImage) {
+            // 使用 Vite 的图片导入方式
+            product.image = getProductImagePath(sourceProduct.mainImage)
           }
         } else {
           // 产品库中找不到，标记警告
