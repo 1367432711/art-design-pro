@@ -2,29 +2,22 @@
 <template>
   <div class="product-detail-page">
     <!-- 头部操作区 -->
-    <div class="mb-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <ElButton type="text" @click="handleBack">
-          <Icon icon="ri:arrow-left-line" class="mr-1" />
-          返回
-        </ElButton>
-        <h2 class="text-xl font-semibold">{{ productData.name || '产品详情' }}</h2>
-      </div>
+    <ArtPageHeader :title="productData.name || '产品详情'" @back="handleBack">
       <ElSpace>
-        <ElButton @click="handleShare">
+        <ElButton size="large" @click="handleShare">
           <Icon icon="ri:share-line" class="mr-1" />
           分享
         </ElButton>
-        <ElButton @click="handleEdit">
+        <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑产品
         </ElButton>
-        <ElButton type="danger" @click="handleDelete">
+        <ElButton size="large" type="danger" plain @click="handleDelete">
           <Icon icon="ri:delete-bin-line" class="mr-1" />
           删除产品
         </ElButton>
       </ElSpace>
-    </div>
+    </ArtPageHeader>
 
     <ElRow :gutter="16">
       <!-- 左侧：产品图片 -->
@@ -218,6 +211,7 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { fetchGetProductDetail, fetchDeleteProduct } from '@/api/trade-manage'
   import {
     ElMessageBox,

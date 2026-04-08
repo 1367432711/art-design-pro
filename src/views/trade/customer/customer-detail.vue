@@ -2,28 +2,23 @@
 <template>
   <div class="customer-detail-page">
     <!-- 头部操作区 -->
-    <div class="mb-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <ElButton type="text" @click="handleBack">
-          <Icon icon="ri:arrow-left-line" class="mr-1" />
-          返回
-        </ElButton>
-        <h2 class="text-xl font-semibold">{{ customerData.customerName || '客户详情' }}</h2>
-        <ElTag :type="getStatusType(customerData.status)">
-          {{ getStatusText(customerData.status) }}
-        </ElTag>
-      </div>
+    <ArtPageHeader
+      :title="customerData.customerName || '客户详情'"
+      :status-text="getStatusText(customerData.status)"
+      :status-type="getStatusType(customerData.status)"
+      @back="handleBack"
+    >
       <ElSpace>
-        <ElButton @click="handleEdit">
+        <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑客户
         </ElButton>
-        <ElButton @click="handleDelete">
+        <ElButton size="large" type="danger" plain @click="handleDelete">
           <Icon icon="ri:delete-bin-line" class="mr-1" />
           删除客户
         </ElButton>
       </ElSpace>
-    </div>
+    </ArtPageHeader>
 
     <!-- 客户基本信息 -->
     <ElCard class="art-card">
@@ -157,6 +152,7 @@
   import { Icon } from '@iconify/vue'
   import { useRouter, useRoute } from 'vue-router'
   import { h } from 'vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { fetchDeleteQuotation } from '@/api/trade-manage'
   import CustomerDialog from './modules/customer-dialog.vue'
   import FollowupDialog from './modules/followup-dialog.vue'

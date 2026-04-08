@@ -1,14 +1,20 @@
 <!-- PL 详情页面 -->
 <template>
   <div class="pl-detail-page art-full-height">
-    <ElCard class="art-card">
-      <template #header>
-        <ElSpace>
-          <ElButton @click="$router.back()">返回</ElButton>
-          <span class="text-lg font-medium">PL 详情</span>
-        </ElSpace>
-      </template>
+    <ArtPageHeader title="PL 详情" :status-text="plData.status" @back="$router.back()">
+      <ElSpace>
+        <ElButton size="large" @click="handleEdit">
+          <Icon icon="ri:pencil-line" class="mr-1" />
+          编辑
+        </ElButton>
+        <ElButton size="large" type="primary" @click="handlePrint">
+          <Icon icon="ri:print-line" class="mr-1" />
+          打印
+        </ElButton>
+      </ElSpace>
+    </ArtPageHeader>
 
+    <ElCard class="art-card">
       <ElDescriptions :column="2" border>
         <ElDescriptionsItem label="PL 编号">{{ plData.plNo }}</ElDescriptionsItem>
         <ElDescriptionsItem label="PL 日期">{{ plData.plDate }}</ElDescriptionsItem>
@@ -42,27 +48,33 @@
           <template #default="{ row }">{{ row.cbmPerCarton }} CBM</template>
         </ElTableColumn>
       </ElTable>
-
-      <ElSpace class="mt-4">
-        <ElButton type="primary" @click="$router.push(`/trade/pl/edit/${plData.id}`)"
-          >编辑</ElButton
-        >
-        <ElButton type="success">打印 PL</ElButton>
-        <ElButton type="warning" v-if="plData.status !== '已发货'">确认发货</ElButton>
-      </ElSpace>
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { ElTag } from 'element-plus'
+  import { onMounted, ref } from 'vue'
+  import { useRoute, useRouter } from 'vue-router'
+  import { Icon } from '@iconify/vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { fetchGetPLDetail } from '@/api/trade-manage'
 
   defineOptions({ name: 'PLDetail' })
 
   const route = useRoute()
+  const router = useRouter()
+
+  // 编辑 PL
+  const handleEdit = () => {
+    if (plData.value.id) {
+      router.push(`/trade/pl/form/${plData.value.id}`)
+    }
+  }
+
+  // 打印 PL
+  const handlePrint = () => {
+    // TODO: 实现打印功能
+  }
 
   const plData = ref<Api.Trade.PLListItem>({
     id: '',

@@ -1,14 +1,20 @@
 <!-- PI 详情页面 -->
 <template>
   <div class="pi-detail-page art-full-height">
-    <ElCard class="art-card">
-      <template #header>
-        <ElSpace>
-          <ElButton @click="$router.back()">返回</ElButton>
-          <span class="text-lg font-medium">PI 详情</span>
-        </ElSpace>
-      </template>
+    <ArtPageHeader title="PI 详情" :status-text="piData.status" @back="$router.back()">
+      <ElSpace>
+        <ElButton size="large" @click="handleEdit">
+          <Icon icon="ri:pencil-line" class="mr-1" />
+          编辑
+        </ElButton>
+        <ElButton size="large" type="primary" @click="handlePrint">
+          <Icon icon="ri:print-line" class="mr-1" />
+          打印
+        </ElButton>
+      </ElSpace>
+    </ArtPageHeader>
 
+    <ElCard class="art-card">
       <ElDescriptions :column="2" border>
         <ElDescriptionsItem label="发票号">{{ piData.invoiceNo }}</ElDescriptionsItem>
         <ElDescriptionsItem label="PI 日期">{{ piData.piDate }}</ElDescriptionsItem>
@@ -45,26 +51,33 @@
           </template>
         </ElTableColumn>
       </ElTable>
-
-      <ElSpace class="mt-4">
-        <ElButton type="primary" @click="$router.push(`/trade/pi/edit/${piData.id}`)"
-          >编辑</ElButton
-        >
-        <ElButton type="success">打印 PI</ElButton>
-      </ElSpace>
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { ElTag } from 'element-plus'
+  import { onMounted, ref } from 'vue'
+  import { useRoute, useRouter } from 'vue-router'
+  import { Icon } from '@iconify/vue'
+  import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import { fetchGetPIDetail } from '@/api/trade-manage'
 
   defineOptions({ name: 'PIDetail' })
 
   const route = useRoute()
+  const router = useRouter()
+
+  // 编辑 PI
+  const handleEdit = () => {
+    if (piData.value.id) {
+      router.push(`/trade/pi/form/${piData.value.id}`)
+    }
+  }
+
+  // 打印 PI
+  const handlePrint = () => {
+    // TODO: 实现打印功能
+  }
 
   const piData = ref<Api.Trade.PIListItem>({
     id: '',
