@@ -254,7 +254,16 @@
         </ElTableColumn>
 
         <!-- 产品名称 -->
-        <ElTableColumn prop="name" label="产品名称" min-width="150" />
+        <ElTableColumn prop="name" label="产品名称" min-width="150">
+          <template #default="{ row }">
+            <div class="flex items-center gap-1">
+              <span>{{ row.name }}</span>
+              <ElTag v-if="row._warning === 'product_not_found'" type="danger" size="small">
+                产品已下架
+              </ElTag>
+            </div>
+          </template>
+        </ElTableColumn>
 
         <!-- 规格型号 -->
         <ElTableColumn prop="spec" label="规格型号" min-width="120" />
@@ -734,34 +743,33 @@
     }
   }
 
-  // 补充产品规格型号数据（从产品库获取最新的 spec）
+  // 补充产品数据（从产品库获取最新的基础属性）
   const supplementProductSpecs = () => {
     const products = quotationData.value.products || []
     // 获取产品库数据
     const allProducts = getProductList()
 
     products.forEach((product: any) => {
-      // 如果有 selectedProductId，从产品库获取最新的 spec
+      // 如果有 selectedProductId，从产品库获取最新的基础属性
       if (product.selectedProductId) {
         const sourceProduct = allProducts.find((p) => p.id === product.selectedProductId)
         if (sourceProduct) {
-          // 只补充 spec 字段（如果当前为空或只有 sku）
-          if (!product.spec || (product.sku && !product.spec)) {
-            product.spec = sourceProduct.spec
-          }
-          // 补充其他可能缺失的字段
+          // 基础属性总是从产品库读取（确保数据最新）
+          product.spec = sourceProduct.spec
+          product.type = sourceProduct.type
+          product.grade = sourceProduct.grade
+          product.unit = sourceProduct.unit
+          product.cartonQuantity = sourceProduct.cartonQuantity
+          product.blisterQuantity = sourceProduct.blisterQuantity
+          product.innerBoxQuantity = sourceProduct.innerBoxQuantity
+
+          // 图片：如果报价单中没有，从产品库补充
           if (!product.image && sourceProduct.mainImage) {
             product.image = sourceProduct.mainImage
           }
-          if (!product.type && sourceProduct.type) {
-            product.type = sourceProduct.type
-          }
-          if (!product.grade && sourceProduct.grade) {
-            product.grade = sourceProduct.grade
-          }
-          if (!product.unit && sourceProduct.unit) {
-            product.unit = sourceProduct.unit
-          }
+        } else {
+          // 产品库中找不到，标记警告
+          product._warning = 'product_not_found'
         }
       }
     })
