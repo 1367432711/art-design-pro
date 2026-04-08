@@ -615,9 +615,16 @@
     })
   }
 
-  // 返回列表页
+  // 返回列表页或报价单详情页
   const handleBack = () => {
-    router.push('/trade/pi')
+    const fromQuotation = route.query.fromQuotation === 'true'
+    if (fromQuotation) {
+      // 从报价单详情页来，返回报价单详情页
+      router.back()
+    } else {
+      // 从 PI 列表来，返回 PI 列表
+      router.push('/trade/pi')
+    }
   }
 
   onMounted(async () => {

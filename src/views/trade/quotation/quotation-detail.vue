@@ -922,9 +922,8 @@
 
   // 查看 PI
   const viewPI = () => {
-    // TODO: PI 模块开发完成后实现
     if (quotationData.value.piId) {
-      router.push(`/trade/pi/detail/${quotationData.value.piId}`)
+      router.push(`/trade/pi/detail/${quotationData.value.piId}?fromQuotation=true`)
     }
   }
 

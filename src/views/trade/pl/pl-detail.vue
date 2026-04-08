@@ -64,9 +64,16 @@
   const route = useRoute()
   const router = useRouter()
 
-  // 返回 PL 列表
+  // 返回 PL 列表或 PI 详情页
   const handleBack = () => {
-    router.push('/trade/pl')
+    const fromPI = route.query.fromPI === 'true'
+    if (fromPI) {
+      // 从 PI 详情页来，返回 PI 详情页
+      router.back()
+    } else {
+      // 从 PL 列表来，返回 PL 列表
+      router.push('/trade/pl')
+    }
   }
 
   // 编辑 PL

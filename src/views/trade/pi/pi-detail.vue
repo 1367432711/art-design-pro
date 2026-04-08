@@ -3,6 +3,14 @@
   <div class="pi-detail-page art-full-height">
     <ArtPageHeader title="PI 详情" :status-text="piData.status" @back="handleBack">
       <ElSpace>
+        <ElButton type="primary" size="large" @click="handleCreatePL">
+          <Icon icon="ri:file-add-line" class="mr-1" />
+          生成 PL
+        </ElButton>
+        <ElButton v-if="piData.plId" size="large" @click="viewPL" class="view-pl-btn">
+          <Icon icon="ri:external-link-line" class="mr-1" />
+          查看 PL
+        </ElButton>
         <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑
@@ -67,15 +75,41 @@
   const route = useRoute()
   const router = useRouter()
 
-  // 返回 PI 列表
+  // 返回 PI 列表或报价单详情页
   const handleBack = () => {
-    router.push('/trade/pi')
+    const fromQuotation = route.query.fromQuotation === 'true'
+    if (fromQuotation) {
+      // 从报价单详情页来，返回报价单详情页
+      router.back()
+    } else {
+      // 从 PI 列表来，返回 PI 列表
+      router.push('/trade/pi')
+    }
   }
 
   // 编辑 PI
   const handleEdit = () => {
     if (piData.value.id) {
       router.push(`/trade/pi/form/${piData.value.id}`)
+    }
+  }
+
+  // 生成 PL
+  const handleCreatePL = () => {
+    if (!piData.value.id) return
+    router.push({
+      path: '/trade/pl/form',
+      query: {
+        fromPI: 'true',
+        piId: piData.value.id
+      }
+    })
+  }
+
+  // 查看 PL
+  const viewPL = () => {
+    if (piData.value.plId) {
+      router.push(`/trade/pl/detail/${piData.value.plId}?fromPI=true`)
     }
   }
 

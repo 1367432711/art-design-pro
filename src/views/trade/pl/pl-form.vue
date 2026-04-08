@@ -434,9 +434,16 @@
     })
   }
 
-  // 返回列表页
+  // 返回列表页或 PI 详情页
   const handleBack = () => {
-    router.push('/trade/pl')
+    const fromPI = route.query.fromPI === 'true'
+    if (fromPI) {
+      // 从 PI 详情页来，返回 PI 详情页
+      router.back()
+    } else {
+      // 从 PL 列表来，返回 PL 列表
+      router.push('/trade/pl')
+    }
   }
 
   onMounted(() => {
