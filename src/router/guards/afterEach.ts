@@ -1,17 +1,21 @@
 import { nextTick } from 'vue'
 import { useSettingStore } from '@/store/modules/setting'
-import { Router } from 'vue-router'
+import { Router, RouteLocationNormalized } from 'vue-router'
 import NProgress from 'nprogress'
 import { useCommon } from '@/hooks/core/useCommon'
 import { loadingService } from '@/utils/ui'
 import { getPendingLoading, resetPendingLoading } from './beforeEach'
+import { setWorktab } from '@/utils/navigation/worktab'
 
 /** 路由全局后置守卫 */
 export function setupAfterEachGuard(router: Router) {
   const { scrollToTop } = useCommon()
 
-  router.afterEach(() => {
+  router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     scrollToTop()
+
+    // 设置工作标签页（传入 from 用于自动删除标签）
+    setWorktab(to, from)
 
     // 关闭进度条
     const settingStore = useSettingStore()
