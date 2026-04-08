@@ -67,22 +67,11 @@
 
       <!-- 通用操作组 -->
       <div class="action-group">
-        <ElButton
-          size="large"
-          @click="handleEdit"
-          :loading="loading"
-          :disabled="!quotationData.value.id"
-        >
+        <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑
         </ElButton>
-        <ElButton
-          type="primary"
-          size="large"
-          @click="handlePrint"
-          :loading="loading"
-          :disabled="!quotationData.value.id"
-        >
+        <ElButton type="primary" size="large" @click="handlePrint">
           <Icon icon="ri:print-line" class="mr-1" />
           打印
         </ElButton>
@@ -853,7 +842,7 @@
   // 编辑报价
   const handleEdit = () => {
     if (!quotationData.value.id) {
-      ElMessage.error('数据未加载完成，请稍后再试')
+      ElMessage.warning('数据加载中，请稍后再试')
       return
     }
     router.push(`/trade/quotation/form/${quotationData.value.id}`)
