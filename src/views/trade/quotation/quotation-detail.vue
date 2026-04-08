@@ -254,11 +254,11 @@
         <ElTableColumn width="100" align="center" label="产品图">
           <template #default="{ row }">
             <ElImage
-              v-if="row.image"
-              :src="row.image"
+              v-if="row.image && getProductImageUrl(row.image)"
+              :src="getProductImageUrl(row.image)"
               class="product-image"
               fit="cover"
-              :preview-src-list="[row.image]"
+              :preview-src-list="[getProductImageUrl(row.image)]"
               preview-teleported
             />
             <div v-else class="no-image">No Image</div>
@@ -468,6 +468,30 @@
 
   // 客户列表
   const customerOptions = ref<Api.Trade.CustomerListItem[]>([])
+
+  // 预加载产品图片（使用 Vite import.meta.glob）
+  const productImages = import.meta.glob('/src/assets/images/cover/*.webp', {
+    eager: true
+  }) as Record<string, any>
+
+  // 获取产品图片真实 URL
+  const getProductImageUrl = (imagePath: string): string => {
+    if (!imagePath) return ''
+    // 如果已经是 http 开头的完整 URL，直接返回
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath
+    }
+    // 从 glob 导入的图片中查找
+    const fileName = imagePath.split('/').pop()
+    if (fileName) {
+      const matchPath = Object.keys(productImages).find((key) => key.includes(fileName))
+      if (matchPath) {
+        return productImages[matchPath]?.default || ''
+      }
+    }
+    // 如果找不到，尝试直接使用路径（可能是 public 目录或外部 URL）
+    return imagePath
+  }
 
   // 报价数据
   const quotationData = ref<any>({
@@ -796,6 +820,21 @@
           // 产品库中找不到，标记警告
           product._warning = 'product_not_found'
         }
+      } else {
+        // 没有 selectedProductId，尝试根据产品名称匹配
+        const matchedProduct = allProducts.find(
+          (p) => p.name === product.name && p.spec === product.spec
+        )
+        if (matchedProduct) {
+          product.selectedProductId = matchedProduct.id
+          product.spec = matchedProduct.spec
+          product.type = matchedProduct.type
+          product.grade = matchedProduct.grade
+          product.unit = matchedProduct.unit
+          if (matchedProduct.mainImage) {
+            product.image = matchedProduct.mainImage
+          }
+        }
       }
     })
   }
@@ -817,17 +856,9 @@
     }
   }
 
-  // 返回报价列表或客户详情页
+  // 返回报价列表
   const handleBack = () => {
-    // 优先根据 navigation 判断返回位置
-    if (route.query.fromCustomer === 'true') {
-      router.back()
-    } else if (route.query.fromPI === 'true') {
-      router.back()
-    } else {
-      // 默认返回报价列表
-      router.push('/trade/quotation')
-    }
+    router.push('/trade/quotation')
   }
 
   // 编辑报价
