@@ -8,6 +8,9 @@ import '@styles/index.scss'                         // 样式
 import '@utils/sys/console.ts'                      // 控制台输出内容
 import '@utils/ui/iconify-loader'                   // 图标加载器
 import '@mock/temp/userList'                        // 用户列表数据初始化
+import '@mock/temp/productList'                     // 产品列表数据初始化
+import '@mock/temp/customerList'                    // 客户列表数据初始化
+import '@mock/temp/quotationList'                   // 报价列表数据初始化
 import { setupGlobDirectives } from './directives'
 import { setupErrorHandle } from './utils/sys/error-handle'
 
