@@ -94,7 +94,7 @@ export const useWorktabStore = defineStore(
      */
     const safeRouterPush = (tab: Partial<WorkTab>): void => {
       if (!tab.path) {
-        console.warn('尝试跳转到无效路径的标签页')
+        console.warn('尝试跳转到无效的路径的标签页')
         return
       }
 
@@ -468,6 +468,7 @@ export const useWorktabStore = defineStore(
         if (!isCurrentValid && validTabs.length > 0) {
           console.warn('当前激活标签无效，已自动切换')
           current.value = validTabs[0]
+          safeRouterPush(current.value)
         } else if (!isCurrentValid) {
           current.value = {}
         }

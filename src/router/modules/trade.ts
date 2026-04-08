@@ -21,7 +21,7 @@ export const tradeRoutes: AppRouteRecord = {
       }
     },
     {
-      path: 'customer/detail/:id',
+      path: 'customer/detail/:id(\\d+)',
       name: 'CustomerDetail',
       component: '/trade/customer/customer-detail',
       meta: {
@@ -41,7 +41,7 @@ export const tradeRoutes: AppRouteRecord = {
       }
     },
     {
-      path: 'quotation/detail/:id',
+      path: 'quotation/detail/:id(\\d+)',
       name: 'QuotationDetail',
       component: '/trade/quotation/quotation-detail',
       meta: {
@@ -61,7 +61,7 @@ export const tradeRoutes: AppRouteRecord = {
       }
     },
     {
-      path: 'quotation/form/:id',
+      path: 'quotation/form/:id(\\d+)',
       name: 'QuotationFormEdit',
       component: '/trade/quotation/quotation-form',
       meta: {

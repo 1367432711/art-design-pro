@@ -37,17 +37,6 @@ export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNorm
   const worktabStore = useWorktabStore()
   const { meta, path, name, params, query } = to
 
-  // 自动删除标签逻辑：从表单页/详情页返回列表页时，删除表单页/详情页的标签
-  if (from) {
-    const fromPath = from.path
-    const toPath = to.path
-
-    // 判断是否是返回列表页（从详情/表单页返回）
-    if (isDetailOrFormPath(fromPath) && isListPath(toPath, fromPath)) {
-      worktabStore.removeTab(fromPath)
-    }
-  }
-
   if (!meta.isHideTab) {
     // 如果是 iframe 页面，则特殊处理工作标签页
     if (isIframe(path)) {
@@ -65,6 +54,7 @@ export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNorm
         })
       }
     } else if (useSettingStore().showWorkTab || path === useCommon().homePath.value) {
+      // 先打开新标签，再删除旧标签，避免删除时跳转到错误的页面
       worktabStore.openTab({
         title: meta.title as string,
         icon: meta.icon as string,
@@ -75,6 +65,17 @@ export const setWorktab = (to: RouteLocationNormalized, from?: RouteLocationNorm
         query,
         fixedTab: meta.fixedTab as boolean
       })
+
+      // 自动删除标签逻辑：从表单页/详情页返回列表页时，删除表单页/详情页的标签
+      if (from) {
+        const fromPath = from.path
+        const toPath = to.path
+
+        // 判断是否是返回列表页（从详情/表单页返回）
+        if (isDetailOrFormPath(fromPath) && isListPath(toPath, fromPath)) {
+          worktabStore.removeTab(fromPath)
+        }
+      }
     }
   }
 }

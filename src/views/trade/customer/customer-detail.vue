@@ -424,11 +424,9 @@
     try {
       // 导入模拟数据模块确保初始化
       const customerModule = await import('@/mock/temp/customerList')
-      console.log('[CustomerDetail] 模拟数据模块已加载，customerId:', customerId)
 
       // 直接调用模块中的函数获取数据
       const customer = customerModule.getCustomerDetailById(customerId)
-      console.log('[CustomerDetail] 获取到的客户数据:', customer)
 
       if (customer) {
         customerData.value = customer

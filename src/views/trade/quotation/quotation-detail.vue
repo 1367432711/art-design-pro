@@ -867,8 +867,9 @@
       ElMessage.warning('数据加载中，请稍后再试')
       return
     }
+    const targetPath = `/trade/quotation/form/${quotationData.value.id}`
     router.push({
-      path: `/trade/quotation/form/${quotationData.value.id}`,
+      path: targetPath,
       query: {
         fromDetail: 'true',
         quotationId: quotationData.value.id
