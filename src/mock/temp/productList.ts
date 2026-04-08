@@ -40,8 +40,27 @@ function initProductData() {
   }
 }
 
+// 开发环境下强制刷新数据（用于数据结构变更时）
+function forceRefreshData() {
+  if (import.meta.env.DEV && productData && productData.length > 0) {
+    const existing = getProductList()
+    // 检查是否有数据还包含 sku 字段（用于迁移旧数据）
+    const hasLegacySku = existing.some((item: any) => item.sku)
+    if (hasLegacySku) {
+      console.log('[ProductData] 检测到旧数据结构（含 sku 字段），强制刷新...')
+      existing.forEach((item) => deleteProduct(item.id))
+      productData.forEach((product) => {
+        addProduct(product as Api.Trade.ProductListItem)
+      })
+      console.log('[ProductData] 强制刷新完成')
+    }
+  }
+}
+
 // 自动初始化
 initProductData()
+// 开发环境下强制刷新数据（用于数据结构变更时）
+forceRefreshData()
 
 /**
  * 根据分页参数和搜索条件筛选数据
