@@ -2,7 +2,7 @@
 
 > 📝 本文档用于记录 Art Design Pro 外贸管理模块的开发内容、功能设计、API 接口及开发进度。
 
-**最后更新**: 2026-03-27 - v0.5 客户详情页优化
+**最后更新**: 2026-04-09 - v0.6 工作标签页优化 + 跨页面导航
 
 ---
 
@@ -331,6 +331,13 @@ interface ProductImage {
 | `/trade/quotation/form/:id`   | `/trade/quotation/form`   | 编辑报价 | ✅        | 改            |
 | `/trade/quotation/detail/:id` | `/trade/quotation/detail` | 报价详情 | ✅        | -             |
 
+**跨页面导航**:
+
+- 客户详情页 → 报价详情页：传递 `fromCustomer=true` 参数
+- 报价详情页 → 返回：根据来源自动判断（从客户详情来则返回客户详情，否则返回报价列表）
+- 报价详情页 → 编辑报价：传递 `fromDetail=true` 和 `quotationId` 参数
+- 编辑报价 → 返回：根据 `fromDetail` 参数判断返回详情页或列表页
+
 ### 什么是形式发票 (CI)
 
 **Commercial Invoice (CI)** - 形式发票，是外贸中重要的单据，用于：
@@ -642,7 +649,7 @@ interface QuotationSearchParams extends PaginationParams {
 | 数据统计页     | 数据统计 | 4h     | ⏳ 待开发 | 所有数据   |
 | Excel 导入导出 | 公共功能 | 3h     | ⏳ 待开发 | -          |
 
-**已完成**: 约 25 小时 (截至 2026-03-27)
+**已完成**: 约 28 小时 (截至 2026-04-09)
 
 ### 开发顺序建议
 
@@ -672,6 +679,12 @@ interface QuotationSearchParams extends PaginationParams {
 
 | 版本 | 日期       | 内容                                                           | 状态 |
 | ---- | ---------- | -------------------------------------------------------------- | ---- |
+| v0.6 | 2026-04-09 | 工作标签页优化 + 跨页面导航 + 路由正则约束                     | ✅   |
+|      |            | - 修复报价编辑页跳转后错误激活客户详情标签的问题               |
+|      |            | - 调整 worktab 执行顺序：先打开新标签，再删除旧标签            |
+|      |            | - 客户详情页不启用自动删除标签                                 |
+|      |            | - 为动态路由参数添加 `:id(\\d+)` 正则约束                      |
+|      |            | - 报价详情页支持智能返回（从客户详情来则返回客户详情）         |
 | v0.5 | 2026-03-27 | 客户详情页优化：按钮布局调整 + 报价表格优化 + 导出功能         | ✅   |
 |      |            | - 将快捷操作按钮移到对应标签页顶部（报价单/跟进记录/订单）     |
 |      |            | - 报价单表格删除币种列，调整列宽填满标签页                     |
@@ -689,6 +702,53 @@ interface QuotationSearchParams extends PaginationParams {
 ---
 
 ## 附录：开发问题记录
+
+### 2026-04-09 报价编辑页跳转错误问题
+
+**问题描述**: 从报价详情页点击编辑按钮，跳转到编辑页后，系统自动跳转到客户详情页。
+
+**原因分析**:
+
+1. worktab 的 `setWorktab` 函数执行顺序问题
+2. 先删除旧标签（报价详情），再打开新标签（报价编辑）
+3. 删除标签时，由于报价详情是当前标签，`removeTab` 激活了前一个标签（客户详情）
+4. 然后才打开报价编辑标签，但路由已经被跳转到客户详情
+
+**解决方案**:
+
+```typescript
+// src/utils/navigation/worktab.ts
+export const setWorktab = (to, from?) => {
+  // 先打开新标签，再删除旧标签
+  worktabStore.openTab({...})
+
+  // 自动删除标签逻辑（从表单页/详情页返回列表页时）
+  if (from) {
+    if (isDetailOrFormPath(fromPath) && isListPath(toPath, fromPath)) {
+      worktabStore.removeTab(fromPath)
+    }
+  }
+}
+```
+
+**经验教训**: 在多标签页管理中，执行顺序很重要。先创建再删除可以避免中间状态导致的错误跳转。
+
+### 2026-04-09 动态路由参数正则约束
+
+**问题**: `customer/detail/:id` 和 `quotation/form/:id` 都是动态参数路由，可能在某些情况下发生路由匹配冲突。
+
+**解决方案**:
+
+```typescript
+// src/router/modules/trade.ts
+{
+  path: 'customer/detail/:id(\\d+)',  // 只匹配数字 ID
+  name: 'CustomerDetail',
+  component: '/trade/customer/customer-detail'
+}
+```
+
+**经验教训**: 为动态路由参数添加正则约束，可以避免潜在的路由匹配问题。
 
 ### 2026-03-27 报价单编辑数据无法加载问题
 
