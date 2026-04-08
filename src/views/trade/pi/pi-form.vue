@@ -14,7 +14,7 @@
       </ElSpace>
     </ArtPageHeader>
 
-    <ElCard class="art-card">
+    <ElCard class="art-card mb-4">
       <ElForm
         ref="formRef"
         :model="formData"
@@ -22,15 +22,24 @@
         label-width="120px"
         label-position="left"
       >
-        <ElDivider content-position="left">基本信息</ElDivider>
+        <!-- 基本信息 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">基本信息 / Basic Information</span>
+        </ElDivider>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="发票号" prop="invoiceNo">
-              <ElInput v-model="formData.invoiceNo" placeholder="请输入发票号"></ElInput>
+              <ElInput v-model="formData.invoiceNo" placeholder="请输入发票号">
+                <template #append>
+                  <ElButton @click="generatePIInvoiceNo">
+                    <Icon icon="ri:refresh-line" />
+                  </ElButton>
+                </template>
+              </ElInput>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="PI 日期" prop="piDate">
               <ElDatePicker
                 v-model="formData.piDate"
@@ -38,7 +47,18 @@
                 placeholder="请选择日期"
                 value-format="YYYY-MM-DD"
                 style="width: 100%"
-              ></ElDatePicker>
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="关联报价单" prop="quotationId">
+              <ElInput v-model="formData.quotationId" placeholder="关联的报价单 ID" disabled>
+                <template #append>
+                  <ElButton v-if="formData.quotationId" @click="viewQuotation">
+                    <Icon icon="ri:eye-line" />
+                  </ElButton>
+                </template>
+              </ElInput>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -46,12 +66,12 @@
         <ElRow :gutter="24">
           <ElCol :span="12">
             <ElFormItem label="客户名称" prop="customerName">
-              <ElInput v-model="formData.customerName" placeholder="请输入客户名称"></ElInput>
+              <ElInput v-model="formData.customerName" placeholder="请输入客户名称" />
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
             <ElFormItem label="公司名称" prop="companyName">
-              <ElInput v-model="formData.companyName" placeholder="请输入公司名称"></ElInput>
+              <ElInput v-model="formData.companyName" placeholder="请输入公司名称" />
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -62,60 +82,84 @@
             type="textarea"
             :rows="2"
             placeholder="请输入公司地址"
-          ></ElInput>
+          />
         </ElFormItem>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
-            <ElFormItem label="收货人" prop="consignee">
-              <ElInput v-model="formData.consignee" placeholder="请输入收货人"></ElInput>
+          <ElCol :span="8">
+            <ElFormItem label="公司邮箱" prop="companyEmail">
+              <ElInput v-model="formData.companyEmail" placeholder="请输入公司邮箱" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="联系电话" prop="contactPhone">
-              <ElInput v-model="formData.contactPhone" placeholder="请输入联系电话"></ElInput>
+          <ElCol :span="8">
+            <ElFormItem label="公司电话" prop="companyPhone">
+              <ElInput v-model="formData.companyPhone" placeholder="请输入公司电话" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="客户邮箱" prop="contactEmail">
+              <ElInput v-model="formData.contactEmail" placeholder="请输入客户邮箱" />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
-        <ElDivider content-position="left">贸易信息</ElDivider>
+        <ElRow :gutter="24">
+          <ElCol :span="8">
+            <ElFormItem label="收货人" prop="consignee">
+              <ElInput v-model="formData.consignee" placeholder="请输入收货人" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="联系电话" prop="contactPhone">
+              <ElInput v-model="formData.contactPhone" placeholder="请输入联系电话" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="收货地址" prop="deliveryAddress">
+              <ElInput v-model="formData.deliveryAddress" placeholder="请输入收货地址" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <!-- 贸易信息 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">贸易信息 / Trade Information</span>
+        </ElDivider>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="贸易条款" prop="tradeTerms">
               <ElSelect
                 v-model="formData.tradeTerms"
                 placeholder="请选择贸易条款"
                 style="width: 100%"
               >
-                <ElOption label="FOB" value="FOB"></ElOption>
-                <ElOption label="CIF" value="CIF"></ElOption>
-                <ElOption label="EXW" value="EXW"></ElOption>
+                <ElOption label="FOB" value="FOB" />
+                <ElOption label="CIF" value="CIF" />
+                <ElOption label="EXW" value="EXW" />
+                <ElOption label="DDP" value="DDP" />
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="贸易国家" prop="tradeCountry">
-              <ElInput v-model="formData.tradeCountry" placeholder="请输入贸易国家"></ElInput>
+              <ElInput v-model="formData.tradeCountry" placeholder="请输入贸易国家" />
             </ElFormItem>
           </ElCol>
-        </ElRow>
-
-        <ElRow :gutter="24">
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="装运港" prop="portOfLoading">
-              <ElInput v-model="formData.portOfLoading" placeholder="请输入装运港"></ElInput>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="目的港" prop="portOfDestination">
-              <ElInput v-model="formData.portOfDestination" placeholder="请输入目的港"></ElInput>
+              <ElInput v-model="formData.portOfLoading" placeholder="请输入装运港" />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
+          <ElCol :span="8">
+            <ElFormItem label="目的港" prop="portOfDestination">
+              <ElInput v-model="formData.portOfDestination" placeholder="请输入目的港" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
             <ElFormItem label="交货期" prop="deliveryDate">
               <ElDatePicker
                 v-model="formData.deliveryDate"
@@ -123,63 +167,152 @@
                 placeholder="请选择交货期"
                 value-format="YYYY-MM-DD"
                 style="width: 100%"
-              ></ElDatePicker>
+              />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="状态" prop="status">
               <ElSelect v-model="formData.status" placeholder="请选择状态" style="width: 100%">
-                <ElOption label="待付款" value="待付款"></ElOption>
-                <ElOption label="部分付款" value="部分付款"></ElOption>
-                <ElOption label="已付款" value="已付款"></ElOption>
-                <ElOption label="已取消" value="已取消"></ElOption>
+                <ElOption label="待付款" value="待付款" />
+                <ElOption label="部分付款" value="部分付款" />
+                <ElOption label="已付款" value="已付款" />
+                <ElOption label="已取消" value="已取消" />
               </ElSelect>
             </ElFormItem>
           </ElCol>
         </ElRow>
 
-        <ElDivider content-position="left">付款信息</ElDivider>
+        <!-- 产品明细 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">产品明细 / Products</span>
+        </ElDivider>
+
+        <ElTable :data="formData.products" border class="products-table">
+          <ElTableColumn type="index" label="序号" width="60" align="center" />
+          <ElTableColumn prop="productName" label="产品名称" min-width="150" />
+          <ElTableColumn prop="spec" label="规格型号" width="120" />
+          <ElTableColumn prop="type" label="类型" width="100" />
+          <ElTableColumn prop="grade" label="等级" width="80" />
+          <ElTableColumn prop="quantity" label="数量" width="90" align="center" />
+          <ElTableColumn prop="unit" label="单位" width="70" align="center" />
+          <ElTableColumn prop="unitPrice" label="单价" width="110" align="right">
+            <template #default="{ row }">
+              {{ formData.currency }} {{ row.unitPrice?.toFixed(2) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="totalPrice" label="小计" width="110" align="right">
+            <template #default="{ row }">
+              {{ formData.currency }} {{ row.totalPrice?.toFixed(2) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="操作" width="80" align="center" fixed="right">
+            <template #default="{ $index }">
+              <ElButton type="danger" size="small" @click="removeProduct($index)">
+                <Icon icon="ri:delete-bin-line" />
+              </ElButton>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+
+        <!-- 物流信息 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">物流信息 / Logistics Information</span>
+        </ElDivider>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
+          <ElCol :span="6">
+            <ElFormItem label="总毛重 (kg)" prop="grossWeight">
+              <ElInputNumber v-model="formData.grossWeight" :precision="2" style="width: 100%" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="总净重 (kg)" prop="netWeight">
+              <ElInputNumber v-model="formData.netWeight" :precision="2" style="width: 100%" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="总体积 (CBM)" prop="totalVolume">
+              <ElInputNumber v-model="formData.totalVolume" :precision="3" style="width: 100%" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="6">
+            <ElFormItem label="总箱数" prop="totalCartons">
+              <ElInputNumber v-model="formData.totalCartons" style="width: 100%" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <!-- 付款信息 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">付款信息 / Payment Information</span>
+        </ElDivider>
+
+        <ElRow :gutter="24">
+          <ElCol :span="8">
             <ElFormItem label="币种" prop="currency">
               <ElSelect v-model="formData.currency" placeholder="请选择币种" style="width: 100%">
-                <ElOption label="USD" value="USD"></ElOption>
-                <ElOption label="EUR" value="EUR"></ElOption>
-                <ElOption label="RMB" value="RMB"></ElOption>
+                <ElOption label="USD" value="USD" />
+                <ElOption label="EUR" value="EUR" />
+                <ElOption label="RMB" value="RMB" />
+                <ElOption label="GBP" value="GBP" />
               </ElSelect>
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="总金额" prop="totalAmount">
               <ElInputNumber
                 v-model="formData.totalAmount"
                 :min="0"
                 :precision="2"
                 style="width: 100%"
+                @change="calculatePayment"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="状态" prop="paidAmount">
+              <ElInputNumber
+                v-model="formData.paidAmount"
+                :min="0"
+                :precision="2"
+                style="width: 100%"
+                placeholder="已付金额"
               />
             </ElFormItem>
           </ElCol>
         </ElRow>
 
         <ElRow :gutter="24">
-          <ElCol :span="12">
-            <ElFormItem label="定金比例" prop="depositPercent">
+          <ElCol :span="8">
+            <ElFormItem label="定金比例 (%)" prop="depositPercent">
               <ElInputNumber
                 v-model="formData.depositPercent"
                 :min="0"
                 :max="100"
                 style="width: 100%"
+                @change="calculatePayment"
               />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
+          <ElCol :span="8">
             <ElFormItem label="定金金额" prop="depositAmount">
               <ElInputNumber
                 v-model="formData.depositAmount"
                 :min="0"
                 :precision="2"
                 style="width: 100%"
+                readonly
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="尾款金额" prop="balanceAmount">
+              <ElInputNumber
+                v-model="formData.balanceAmount"
+                :min="0"
+                :precision="2"
+                style="width: 100%"
+                readonly
               />
             </ElFormItem>
           </ElCol>
@@ -187,11 +320,52 @@
 
         <ElRow :gutter="24">
           <ElCol :span="12">
-            <ElFormItem label="尾款金额" prop="balanceAmount">
-              <ElInputNumber
-                v-model="formData.balanceAmount"
-                :min="0"
-                :precision="2"
+            <ElFormItem label="付款方式" prop="paymentTerms">
+              <ElInput
+                v-model="formData.paymentTerms"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：30% 定金，70% 见提单副本"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="银行信息" prop="bankAccountId">
+              <ElSelect
+                v-model="formData.bankAccountId"
+                placeholder="请选择银行账户"
+                style="width: 100%"
+              >
+                <ElOption
+                  v-for="bank in bankOptions"
+                  :key="bank.id"
+                  :label="bank.bankName"
+                  :value="bank.id"
+                />
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="24">
+          <ElCol :span="8">
+            <ElFormItem label="定金截止日" prop="depositDueDate">
+              <ElDatePicker
+                v-model="formData.depositDueDate"
+                type="date"
+                placeholder="请选择日期"
+                value-format="YYYY-MM-DD"
+                style="width: 100%"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="8">
+            <ElFormItem label="尾款截止日" prop="balanceDueDate">
+              <ElDatePicker
+                v-model="formData.balanceDueDate"
+                type="date"
+                placeholder="请选择日期"
+                value-format="YYYY-MM-DD"
                 style="width: 100%"
               />
             </ElFormItem>
@@ -206,10 +380,14 @@
   import { onMounted, ref, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ElMessage } from 'element-plus'
+  import { ElMessage, ElMessageBox } from 'element-plus'
   import { Icon } from '@iconify/vue'
   import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
-  import { fetchGetPIDetail, fetchGetQuotationDetail } from '@/api/trade-manage'
+  import {
+    fetchGetPIDetail,
+    fetchGetQuotationDetail,
+    fetchGetBankAccountList
+  } from '@/api/trade-manage'
 
   defineOptions({ name: 'PIForm' })
 
@@ -222,14 +400,22 @@
   const formRef = ref<FormInstance>()
   const loading = ref(false)
 
+  // 银行账户选项
+  const bankOptions = ref<Api.Trade.BankAccount[]>([])
+
   const formData = ref<Partial<Api.Trade.PIListItem>>({
     invoiceNo: '',
     piDate: new Date().toISOString().slice(0, 10),
+    quotationId: '',
     customerName: '',
     companyName: '',
     companyAddress: '',
+    companyEmail: '',
+    companyPhone: '',
     consignee: '',
     contactPhone: '',
+    contactEmail: '',
+    deliveryAddress: '',
     tradeTerms: 'FOB',
     tradeCountry: '',
     portOfLoading: '',
@@ -237,10 +423,20 @@
     deliveryDate: '',
     currency: 'USD',
     totalAmount: 0,
+    paidAmount: 0,
     depositPercent: 30,
     depositAmount: 0,
     balanceAmount: 0,
-    status: '待付款'
+    paymentTerms: '',
+    bankAccountId: '',
+    depositDueDate: '',
+    balanceDueDate: '',
+    grossWeight: 0,
+    netWeight: 0,
+    totalVolume: 0,
+    totalCartons: 0,
+    status: '待付款',
+    products: []
   })
 
   const formRules: FormRules = {
@@ -257,7 +453,50 @@
     const date = new Date()
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '')
     const random = Math.floor(Math.random() * 900 + 100)
-    return `PI-${dateStr}-${random}`
+    formData.value.invoiceNo = `PI-${dateStr}-${random}`
+    ElMessage.success('发票号已生成')
+  }
+
+  // 计算付款金额
+  const calculatePayment = () => {
+    const total = formData.value.totalAmount || 0
+    const percent = formData.value.depositPercent || 0
+    formData.value.depositAmount = total * (percent / 100)
+    formData.value.balanceAmount = total - formData.value.depositAmount
+  }
+
+  // 移除产品
+  const removeProduct = (index: number) => {
+    ElMessageBox.confirm('确定要删除该产品吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      formData.value.products?.splice(index, 1)
+      ElMessage.success('删除成功')
+    })
+  }
+
+  // 查看报价单
+  const viewQuotation = () => {
+    if (formData.value.quotationId) {
+      router.push(`/trade/quotation/detail/${formData.value.quotationId}`)
+    }
+  }
+
+  // 加载银行账户列表
+  const loadBankAccounts = async () => {
+    try {
+      const res = await fetchGetBankAccountList({ current: 1, size: 100 })
+      bankOptions.value = res.data?.records || []
+      // 设置默认账户
+      const defaultAccount = bankOptions.value.find((bank) => bank.isDefault)
+      if (defaultAccount && !formData.value.bankAccountId) {
+        formData.value.bankAccountId = defaultAccount.id
+      }
+    } catch (error) {
+      console.error('加载银行账户失败:', error)
+    }
   }
 
   // 从报价单加载数据
@@ -269,8 +508,39 @@
       const res = await fetchGetQuotationDetail(quotationId)
       const quotation = res.data
 
-      // TODO: 获取产品库数据，用于计算物流信息
-      // const allProducts = getProductList()
+      // 转换报价单产品为 PI 产品格式
+      const piProducts: Api.Trade.PIProduct[] = []
+      quotation.products?.forEach((qp: any) => {
+        qp.variants?.forEach((variant: any) => {
+          piProducts.push({
+            id: variant.id || Math.random().toString(36).substr(2),
+            productId: qp.selectedProductId || '',
+            productName: variant.name || qp.name || '',
+            spec: variant.spec || qp.spec || '',
+            type: variant.type || qp.type || '',
+            grade: variant.grade || qp.grade || '',
+            material: '',
+            unit: variant.unit || qp.unit || 'PCS',
+            quantity: variant.qty || qp.qty || 0,
+            unitPrice: variant.price || qp.price || 0,
+            totalPrice: variant.total || qp.total || 0,
+            currency: qp.currency || quotation.currency || 'USD',
+            cartonQuantity: variant.cartonQuantity || 0,
+            singleWeight: variant.singleWeight || '',
+            blisterQuantity: variant.blisterQuantity || 0,
+            innerBoxQuantity: variant.innerBoxQuantity || 0,
+            cartonSize: variant.cartonSize || '',
+            grossWeight: variant.grossWeight || 0,
+            netWeight: variant.netWeight || 0,
+            totalCartons: 0,
+            totalGW: 0,
+            totalNW: 0,
+            totalCBM: 0,
+            mainImage: variant.image || '',
+            remark: variant.remark || ''
+          })
+        })
+      })
 
       // 填充 PI 表单数据
       formData.value = {
@@ -278,6 +548,7 @@
         // 基本信息
         invoiceNo: generatePIInvoiceNo(),
         quotationId: quotation.id,
+        piDate: new Date().toISOString().slice(0, 10),
 
         // 客户信息
         customerId: quotation.customerId,
@@ -285,24 +556,26 @@
         consignee: quotation.customerName,
         contactPhone: quotation.clientWhatsapp || '',
         contactEmail: quotation.clientEmail || '',
-        companyAddress: quotation.address || '',
+        deliveryAddress: quotation.address || '',
 
         // 贸易信息
         tradeTerms: quotation.tradeTerm || 'FOB',
         tradeCountry: quotation.country || '',
         portOfLoading: quotation.shipmentPort || '',
-        deliveryDate: '',
+        deliveryDate: quotation.leadTime || '',
 
         // 金额信息
         currency: quotation.currency || 'USD',
         totalAmount: quotation.costSummary?.grandTotal || 0,
         depositPercent: 30,
-        depositAmount: (quotation.costSummary?.grandTotal || 0) * 0.3,
-        balanceAmount: (quotation.costSummary?.grandTotal || 0) * 0.7,
+        status: '待付款',
 
-        // 状态
-        status: '待付款'
+        // 产品列表
+        products: piProducts
       }
+
+      // 计算付款金额
+      calculatePayment()
 
       ElMessage.success('已从报价单导入数据，请补充完整信息')
     } catch (error) {
@@ -331,6 +604,7 @@
 
       loading.value = true
       try {
+        // TODO: 调用保存 API
         ElMessage.success('保存成功')
         router.back()
       } catch {
@@ -341,11 +615,26 @@
     })
   }
 
-  onMounted(() => {
+  onMounted(async () => {
+    await loadBankAccounts()
     if (isFromQuotation.value) {
       loadQuotationData()
-    } else {
+    } else if (isEdit.value) {
       loadPIData()
+    } else {
+      generatePIInvoiceNo()
     }
   })
 </script>
+
+<style lang="scss" scoped>
+  .products-table {
+    margin-top: 16px;
+
+    :deep(.el-table__header th) {
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--el-fill-color);
+    }
+  }
+</style>

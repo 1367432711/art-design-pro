@@ -9,7 +9,18 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增 PL</ElButton>
+            <ElButton @click="handleCreate" v-ripple>新增 PL</ElButton>
+            <ElDropdown trigger="click" @command="handleCreateFrom">
+              <ElButton type="primary" v-ripple>
+                从 PI 生成
+                <Icon icon="ri:arrow-down-s-line" />
+              </ElButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="pi">从 PI 生成</ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -25,14 +36,6 @@
         @pagination:current-change="handleCurrentChange"
       >
       </ArtTable>
-
-      <!-- PL 弹窗 -->
-      <PLDialog
-        v-model:visible="dialogVisible"
-        :type="dialogType"
-        :pl-data="currentPLData || {}"
-        @submit="handleDialogSubmit"
-      />
     </ElCard>
   </div>
 </template>
@@ -42,9 +45,7 @@
   import { useTable } from '@/hooks/core/useTable'
   import { fetchGetPLList, fetchDeletePL } from '@/api/trade-manage'
   import PLSearch from './modules/pl-search.vue'
-  import PLDialog from './modules/pl-dialog.vue'
   import { ElTag, ElMessageBox, ElMessage } from 'element-plus'
-  import { DialogType } from '@/types'
   import { useRouter } from 'vue-router'
 
   defineOptions({ name: 'PL' })
@@ -53,15 +54,8 @@
 
   type PLListItem = Api.Trade.PLListItem
 
-  // 弹窗相关
-  const dialogType = ref<DialogType>('add')
-  const dialogVisible = ref(false)
-
   // 选中行
   const selectedRows = ref<PLListItem[]>([])
-
-  // 当前查看的 PL 详情
-  const currentPLData = ref<Partial<PLListItem> | null>(null)
 
   // 搜索表单
   const searchForm = ref<Api.Trade.PLSearchParams>({
@@ -106,7 +100,6 @@
     handleSizeChange,
     handleCurrentChange,
     refreshData,
-    refreshCreate,
     refreshRemove
   } = useTable({
     // 核心配置
@@ -199,7 +192,7 @@
                 }),
                 h(ArtButtonTable, {
                   type: 'edit',
-                  onClick: () => showDialog('edit', row)
+                  onClick: () => handleEdit(row)
                 }),
                 h(ArtButtonTable, {
                   type: 'delete',
@@ -221,14 +214,19 @@
   }
 
   /**
-   * 显示 PL 弹窗
+   * 新增 PL
    */
-  const showDialog = (type: DialogType, row?: PLListItem): void => {
-    dialogType.value = type
-    currentPLData.value = row || {}
-    nextTick(() => {
-      dialogVisible.value = true
-    })
+  const handleCreate = () => {
+    router.push('/trade/pl/form')
+  }
+
+  /**
+   * 从 PI 生成 PL
+   */
+  const handleCreateFrom = (command: string) => {
+    if (command === 'pi') {
+      router.push('/trade/pl/form?fromPI=true')
+    }
   }
 
   /**
@@ -236,6 +234,13 @@
    */
   const showDetail = (row: PLListItem): void => {
     router.push(`/trade/pl/detail/${row.id}`)
+  }
+
+  /**
+   * 编辑 PL
+   */
+  const handleEdit = (row: PLListItem): void => {
+    router.push(`/trade/pl/form/${row.id}`)
   }
 
   /**
@@ -255,15 +260,6 @@
         ElMessage.error('删除失败')
       }
     })
-  }
-
-  /**
-   * 处理弹窗提交事件
-   */
-  const handleDialogSubmit = async () => {
-    dialogVisible.value = false
-    currentPLData.value = {}
-    refreshCreate()
   }
 
   /**

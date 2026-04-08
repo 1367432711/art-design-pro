@@ -9,7 +9,18 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增 PI</ElButton>
+            <ElButton @click="handleCreate" v-ripple>新增 PI</ElButton>
+            <ElDropdown trigger="click" @command="handleCreateFrom">
+              <ElButton type="primary" v-ripple>
+                从报价单生成
+                <Icon icon="ri:arrow-down-s-line" />
+              </ElButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="quotation">从报价单生成</ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -25,14 +36,6 @@
         @pagination:current-change="handleCurrentChange"
       >
       </ArtTable>
-
-      <!-- PI 弹窗 -->
-      <PIDialog
-        v-model:visible="dialogVisible"
-        :type="dialogType"
-        :pi-data="currentPIData || {}"
-        @submit="handleDialogSubmit"
-      />
     </ElCard>
   </div>
 </template>
@@ -42,9 +45,7 @@
   import { useTable } from '@/hooks/core/useTable'
   import { fetchGetPIList, fetchDeletePI } from '@/api/trade-manage'
   import PISearch from './modules/pi-search.vue'
-  import PIDialog from './modules/pi-dialog.vue'
   import { ElTag, ElMessageBox, ElMessage } from 'element-plus'
-  import { DialogType } from '@/types'
   import { useRouter } from 'vue-router'
 
   defineOptions({ name: 'PI' })
@@ -53,15 +54,8 @@
 
   type PIListItem = Api.Trade.PIListItem
 
-  // 弹窗相关
-  const dialogType = ref<DialogType>('add')
-  const dialogVisible = ref(false)
-
   // 选中行
   const selectedRows = ref<PIListItem[]>([])
-
-  // 当前查看的 PI 详情
-  const currentPIData = ref<Partial<PIListItem> | null>(null)
 
   // 搜索表单
   const searchForm = ref<Api.Trade.PISearchParams>({
@@ -106,7 +100,6 @@
     handleSizeChange,
     handleCurrentChange,
     refreshData,
-    refreshCreate,
     refreshRemove
   } = useTable({
     // 核心配置
@@ -194,7 +187,7 @@
                 }),
                 h(ArtButtonTable, {
                   type: 'edit',
-                  onClick: () => showDialog('edit', row)
+                  onClick: () => handleEdit(row)
                 }),
                 h(ArtButtonTable, {
                   type: 'delete',
@@ -216,14 +209,19 @@
   }
 
   /**
-   * 显示 PI 弹窗
+   * 新增 PI
    */
-  const showDialog = (type: DialogType, row?: PIListItem): void => {
-    dialogType.value = type
-    currentPIData.value = row || {}
-    nextTick(() => {
-      dialogVisible.value = true
-    })
+  const handleCreate = () => {
+    router.push('/trade/pi/form')
+  }
+
+  /**
+   * 从报价单生成 PI
+   */
+  const handleCreateFrom = (command: string) => {
+    if (command === 'quotation') {
+      router.push('/trade/pi/form?fromQuotation=true')
+    }
   }
 
   /**
@@ -231,6 +229,13 @@
    */
   const showDetail = (row: PIListItem): void => {
     router.push(`/trade/pi/detail/${row.id}`)
+  }
+
+  /**
+   * 编辑 PI
+   */
+  const handleEdit = (row: PIListItem): void => {
+    router.push(`/trade/pi/form/${row.id}`)
   }
 
   /**
@@ -250,15 +255,6 @@
         ElMessage.error('删除失败')
       }
     })
-  }
-
-  /**
-   * 处理弹窗提交事件
-   */
-  const handleDialogSubmit = async () => {
-    dialogVisible.value = false
-    currentPIData.value = {}
-    refreshCreate()
   }
 
   /**
