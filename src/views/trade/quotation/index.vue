@@ -42,6 +42,7 @@
   import { QUOTATION_STATUS_CONFIG } from '@/mock/temp/quotationList'
   import { useRouter } from 'vue-router'
   import { h } from 'vue'
+  import { getProductList } from '@/utils/storage/db'
 
   defineOptions({ name: 'Quotation' })
 
@@ -88,9 +89,20 @@
   const getProductName = (row: QuotationListItem) => {
     if (!row.products || row.products.length === 0) return '-'
     const firstProduct = row.products[0] as Api.Trade.QuotationProduct
-    // 使用第一个 variant 的 spec 作为产品名称
-    const productName = firstProduct.variants?.[0]?.spec || firstProduct.selectedProductId || '产品'
-    return productName + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+
+    // 如果有 selectedProductId，从产品库获取产品名称
+    if (firstProduct.selectedProductId) {
+      const allProducts = getProductList()
+      const sourceProduct = allProducts.find((p) => p.id === firstProduct.selectedProductId)
+      if (sourceProduct) {
+        return (
+          sourceProduct.name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+        )
+      }
+    }
+
+    // 否则使用快照数据
+    return firstProduct.name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
   }
 
   const {
