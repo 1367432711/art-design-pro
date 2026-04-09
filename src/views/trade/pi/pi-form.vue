@@ -19,15 +19,16 @@
         ref="formRef"
         :model="formData"
         :rules="formRules"
-        label-width="120px"
+        label-width="110px"
         label-position="left"
+        size="default"
       >
         <!-- 基本信息 -->
         <ElDivider content-position="left">
           <span class="text-sm font-medium">基本信息 / Basic Information</span>
         </ElDivider>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="发票号" prop="invoiceNo">
               <ElInput v-model="formData.invoiceNo" placeholder="请输入发票号">
@@ -52,7 +53,7 @@
           </ElCol>
           <ElCol :span="8">
             <ElFormItem label="关联报价单" prop="quotationId">
-              <ElInput v-model="formData.quotationId" placeholder="关联的报价单 ID" disabled>
+              <ElInput v-model="formData.quotationId" placeholder="请输入关联报价单 ID" disabled>
                 <template #append>
                   <ElButton v-if="formData.quotationId" @click="viewQuotation">
                     <Icon icon="ri:eye-line" />
@@ -63,7 +64,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="12">
             <ElFormItem label="客户名称" prop="customerName">
               <ElInput v-model="formData.customerName" placeholder="请输入客户名称" />
@@ -85,7 +86,7 @@
           />
         </ElFormItem>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="公司邮箱" prop="companyEmail">
               <ElInput v-model="formData.companyEmail" placeholder="请输入公司邮箱" />
@@ -103,7 +104,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="收货人" prop="consignee">
               <ElInput v-model="formData.consignee" placeholder="请输入收货人" />
@@ -126,7 +127,7 @@
           <span class="text-sm font-medium">贸易信息 / Trade Information</span>
         </ElDivider>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="贸易条款" prop="tradeTerms">
               <ElSelect
@@ -153,7 +154,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="目的港" prop="portOfDestination">
               <ElInput v-model="formData.portOfDestination" placeholder="请输入目的港" />
@@ -182,15 +183,20 @@
           </ElCol>
         </ElRow>
 
-        <!-- 产品明细 -->
+        <!-- 产品明细（只读） -->
         <ElDivider content-position="left">
-          <span class="text-sm font-medium">产品明细 / Products</span>
+          <span class="text-sm font-medium">产品明细 / Products (只读)</span>
         </ElDivider>
 
-        <ElTable :data="formData.products" border class="products-table">
+        <ElTable :data="formData.products" border class="products-table" max-height="400">
           <ElTableColumn type="index" label="序号" width="60" align="center" />
-          <ElTableColumn prop="productName" label="产品名称" min-width="150" />
-          <ElTableColumn prop="spec" label="规格型号" width="120" />
+          <ElTableColumn
+            prop="productName"
+            label="产品名称"
+            min-width="150"
+            show-overflow-tooltip
+          />
+          <ElTableColumn prop="spec" label="规格型号" width="120" show-overflow-tooltip />
           <ElTableColumn prop="type" label="类型" width="100" />
           <ElTableColumn prop="grade" label="等级" width="80" />
           <ElTableColumn prop="quantity" label="数量" width="90" align="center" />
@@ -205,13 +211,6 @@
               {{ formData.currency }} {{ row.totalPrice?.toFixed(2) }}
             </template>
           </ElTableColumn>
-          <ElTableColumn label="操作" width="80" align="center" fixed="right">
-            <template #default="{ $index }">
-              <ElButton type="danger" size="small" @click="removeProduct($index)">
-                <Icon icon="ri:delete-bin-line" />
-              </ElButton>
-            </template>
-          </ElTableColumn>
         </ElTable>
 
         <!-- 物流信息 -->
@@ -219,7 +218,7 @@
           <span class="text-sm font-medium">物流信息 / Logistics Information</span>
         </ElDivider>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="6">
             <ElFormItem label="总毛重 (kg)" prop="grossWeight">
               <ElInputNumber v-model="formData.grossWeight" :precision="2" style="width: 100%" />
@@ -247,7 +246,7 @@
           <span class="text-sm font-medium">付款信息 / Payment Information</span>
         </ElDivider>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="币种" prop="currency">
               <ElSelect v-model="formData.currency" placeholder="请选择币种" style="width: 100%">
@@ -270,7 +269,7 @@
             </ElFormItem>
           </ElCol>
           <ElCol :span="8">
-            <ElFormItem label="状态" prop="paidAmount">
+            <ElFormItem label="已付金额" prop="paidAmount">
               <ElInputNumber
                 v-model="formData.paidAmount"
                 :min="0"
@@ -282,7 +281,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="定金比例 (%)" prop="depositPercent">
               <ElInputNumber
@@ -318,7 +317,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="12">
             <ElFormItem label="付款方式" prop="paymentTerms">
               <ElInput
@@ -330,7 +329,7 @@
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
-            <ElFormItem label="银行信息" prop="bankAccountId">
+            <ElFormItem label="银行账户" prop="bankAccountId">
               <ElSelect
                 v-model="formData.bankAccountId"
                 placeholder="请选择银行账户"
@@ -339,7 +338,7 @@
                 <ElOption
                   v-for="bank in bankOptions"
                   :key="bank.id"
-                  :label="bank.bankName"
+                  :label="bank.accountName"
                   :value="bank.id"
                 />
               </ElSelect>
@@ -347,7 +346,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="24">
+        <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="定金截止日" prop="depositDueDate">
               <ElDatePicker
@@ -380,7 +379,7 @@
   import { onMounted, ref, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ElMessage, ElMessageBox } from 'element-plus'
+  import { ElMessage } from 'element-plus'
   import { Icon } from '@iconify/vue'
   import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
   import {
@@ -465,18 +464,6 @@
     formData.value.balanceAmount = total - formData.value.depositAmount
   }
 
-  // 移除产品
-  const removeProduct = (index: number) => {
-    ElMessageBox.confirm('确定要删除该产品吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      formData.value.products?.splice(index, 1)
-      ElMessage.success('删除成功')
-    })
-  }
-
   // 查看报价单
   const viewQuotation = () => {
     if (formData.value.quotationId) {
@@ -488,7 +475,7 @@
   const loadBankAccounts = async () => {
     try {
       const res = await fetchGetBankAccountList({ current: 1, size: 100 })
-      bankOptions.value = res.data?.records || []
+      bankOptions.value = (res.data as any)?.records || []
       // 设置默认账户
       const defaultAccount = bankOptions.value.find((bank) => bank.isDefault)
       if (defaultAccount && !formData.value.bankAccountId) {
@@ -511,34 +498,32 @@
       // 转换报价单产品为 PI 产品格式
       const piProducts: Api.Trade.PIProduct[] = []
       quotation.products?.forEach((qp: any) => {
-        qp.variants?.forEach((variant: any) => {
-          piProducts.push({
-            id: variant.id || Math.random().toString(36).substr(2),
-            productId: qp.selectedProductId || '',
-            productName: variant.name || qp.name || '',
-            spec: variant.spec || qp.spec || '',
-            type: variant.type || qp.type || '',
-            grade: variant.grade || qp.grade || '',
-            material: '',
-            unit: variant.unit || qp.unit || 'PCS',
-            quantity: variant.qty || qp.qty || 0,
-            unitPrice: variant.price || qp.price || 0,
-            totalPrice: variant.total || qp.total || 0,
-            currency: qp.currency || quotation.currency || 'USD',
-            cartonQuantity: variant.cartonQuantity || 0,
-            singleWeight: variant.singleWeight || '',
-            blisterQuantity: variant.blisterQuantity || 0,
-            innerBoxQuantity: variant.innerBoxQuantity || 0,
-            cartonSize: variant.cartonSize || '',
-            grossWeight: variant.grossWeight || 0,
-            netWeight: variant.netWeight || 0,
-            totalCartons: 0,
-            totalGW: 0,
-            totalNW: 0,
-            totalCBM: 0,
-            mainImage: variant.image || '',
-            remark: variant.remark || ''
-          })
+        piProducts.push({
+          id: qp.id || Math.random().toString(36).substring(2),
+          productId: qp.selectedProductId || '',
+          productName: qp.name || '',
+          spec: qp.spec || '',
+          type: qp.type || '',
+          grade: qp.grade || '',
+          material: '',
+          unit: qp.unit || 'PCS',
+          quantity: qp.qty || 0,
+          unitPrice: qp.price || 0,
+          totalPrice: qp.total || 0,
+          currency: qp.currency || quotation.currency || 'USD',
+          cartonQuantity: qp.cartonQuantity || 0,
+          singleWeight: qp.singleWeight || '',
+          blisterQuantity: qp.blisterQuantity || 0,
+          innerBoxQuantity: qp.innerBoxQuantity || 0,
+          cartonSize: qp.cartonSize || '',
+          grossWeight: qp.grossWeight || 0,
+          netWeight: qp.netWeight || 0,
+          totalCartons: 0,
+          totalGW: 0,
+          totalNW: 0,
+          totalCBM: 0,
+          mainImage: qp.image || '',
+          remark: qp.remark || ''
         })
       })
 
@@ -546,7 +531,7 @@
       formData.value = {
         ...formData.value,
         // 基本信息
-        invoiceNo: generatePIInvoiceNo(),
+        invoiceNo: `PI-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(Math.random() * 900 + 100)}`,
         quotationId: quotation.id,
         piDate: new Date().toISOString().slice(0, 10),
 
@@ -555,7 +540,7 @@
         customerName: quotation.customerName,
         consignee: quotation.customerName,
         contactPhone: quotation.clientWhatsapp || '',
-        contactEmail: quotation.clientEmail || '',
+        contactEmail: quotation.contactEmail || '',
         deliveryAddress: quotation.address || '',
 
         // 贸易信息
