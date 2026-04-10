@@ -1,6 +1,6 @@
 <!-- PI 表单页面 -->
 <template>
-  <div class="pi-form-page art-full-height">
+  <div class="pi-form-page">
     <ArtPageHeader :title="isEdit ? '编辑 PI' : '新增 PI'" @back="handleBack">
       <ElSpace>
         <ElButton type="primary" :loading="loading" size="large" @click="handleSubmit">
@@ -625,6 +625,22 @@
 </script>
 
 <style lang="scss" scoped>
+  .pi-form-page {
+    min-height: 100%;
+    padding: 20px;
+    background-color: var(--el-bg-color-page);
+
+    :deep(.art-card) {
+      margin-bottom: 20px;
+    }
+
+    // 表单内容过多时允许滚动
+    :deep(.el-card__body) {
+      max-height: calc(100vh - 200px);
+      overflow: hidden auto;
+    }
+  }
+
   .products-table {
     margin-top: 16px;
 
