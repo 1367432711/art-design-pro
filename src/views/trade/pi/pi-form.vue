@@ -585,13 +585,13 @@
     status: '待付款',
     products: [],
     // 产品要求
-    productRequirement: '',
-    countryOfOrigin: 'China',
+    productRequirement: '例如：Use XIALONCUT brand',
+    countryOfOrigin: '例如：China',
     // 交易条款
-    packageInfo: '',
-    deliveryTerm: '',
-    paymentTerm: '',
-    validityPeriod: '',
+    packageInfo: '例如：XIALONCUT brand package',
+    deliveryTerm: '例如：3 days after receive 100% payment',
+    paymentTerm: '例如：100% T/T in advance',
+    validityPeriod: '例如：This price is available within 7 days',
     // 银行信息
     beneficiary: '',
     accountNumberUsd: '',
