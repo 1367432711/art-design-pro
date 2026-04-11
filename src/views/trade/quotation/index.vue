@@ -101,8 +101,12 @@
       }
     }
 
-    // 否则使用快照数据
-    return firstProduct.name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+    // 否则使用 variants 中的第一个产品名称
+    if (firstProduct.variants && firstProduct.variants.length > 0) {
+      return firstProduct.variants[0].name + (row.products.length > 1 ? ` 等${row.products.length}个产品` : '')
+    }
+
+    return '-'
   }
 
   const {

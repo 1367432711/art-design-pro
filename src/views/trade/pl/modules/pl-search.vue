@@ -89,10 +89,10 @@
     emit('reset')
   }
 
-  async function handleSearch(params: Api.Trade.PLSearchParams) {
+  async function handleSearch(params: Record<string, any>) {
     await searchBarRef.value.validate()
     // 将日期范围转换为 startTime 和 endTime
-    const searchParams = { ...params }
+    const searchParams = { ...params } as Api.Trade.PLSearchParams
     if (dateRange.value && dateRange.value.length === 2) {
       searchParams.startTime = dateRange.value[0]
       searchParams.endTime = dateRange.value[1]

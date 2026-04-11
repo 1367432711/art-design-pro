@@ -4,7 +4,7 @@
     <!-- 页头 -->
     <ArtPageHeader :title="isEdit ? '编辑产品' : '新增产品'" @back="handleBack">
       <ElSpace>
-        <ElButton type="primary" size="large" @click="handleSubmit" :loading="submitting">
+        <ElButton type="primary" size="large" @click="handleSubmit" :loading="submitLoading">
           <Icon icon="ri:save-line" class="mr-1" />
           保存
         </ElButton>

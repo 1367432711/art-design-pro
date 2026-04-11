@@ -301,8 +301,10 @@
     const date = new Date()
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '')
     const random = Math.floor(Math.random() * 900 + 100)
-    formData.value.plNo = `PL-${dateStr}-${random}`
+    const plNo = `PL-${dateStr}-${random}`
+    formData.value.plNo = plNo
     ElMessage.success('PL 编号已生成')
+    return plNo
   }
 
   // 计算产品总计

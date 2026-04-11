@@ -479,6 +479,26 @@ declare namespace Api {
       bankAccountId: string // 关联的银行账户 ID
       bankInfo?: BankInfo // 冗余存储银行信息
 
+      // 银行账户信息（冗余字段）
+      beneficiary?: string // 受益人
+      accountNumberUsd?: string // 美元账号
+      accountNumberRmb?: string // 人民币账号
+      bankName?: string // 银行名称
+      bankAddress?: string // 银行地址
+      swiftCode?: string // SWIFT 代码
+
+      // 贸易条款信息
+      productRequirement?: string // 产品要求
+      countryOfOrigin?: string // 原产地
+      packageInfo?: string // 包装信息
+      deliveryTerm?: string // 交货条款
+      paymentTerm?: string // 付款条款
+      validityPeriod?: string // 有效期
+
+      // 业务流程关联字段
+      plId?: string // 关联的 PL ID
+      plNo?: string // PL 编号
+
       // 状态
       status: '待付款' | '部分付款' | '已付款' | '已取消'
       paidAmount: number // 已付金额
