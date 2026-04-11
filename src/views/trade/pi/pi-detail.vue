@@ -1,13 +1,15 @@
 <!-- PI 详情页面 -->
 <template>
-  <div class="pi-detail-page art-full-height">
+  <div class="pi-detail-page">
+    <!-- 头部操作区 -->
     <ArtPageHeader
       title="PI 详情"
       :status-text="piData.status"
       :status-type="statusType"
       @back="handleBack"
     >
-      <ElSpace>
+      <!-- 业务操作组 -->
+      <div class="action-group">
         <ElButton type="primary" size="large" @click="handleCreatePL">
           <Icon icon="ri:file-add-line" class="mr-1" />
           生成 PL
@@ -16,22 +18,33 @@
           <Icon icon="ri:external-link-line" class="mr-1" />
           查看 PL
         </ElButton>
+      </div>
+
+      <!-- 通用操作组 -->
+      <div class="action-group">
         <ElButton size="large" @click="handleEdit">
           <Icon icon="ri:pencil-line" class="mr-1" />
           编辑
         </ElButton>
-        <ElButton size="large" type="primary" @click="handlePrint">
+        <ElButton type="primary" size="large" @click="handlePrint">
           <Icon icon="ri:print-line" class="mr-1" />
           打印
         </ElButton>
-      </ElSpace>
+      </div>
     </ArtPageHeader>
 
-    <ElCard class="art-card scroll-card">
-      <!-- 基本信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">基本信息 / Basic Information</span>
-      </ElDivider>
+    <!-- 基本信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:file-text-line" class="mr-2" />
+              基本信息 / Basic Information
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="3" border size="default">
         <ElDescriptionsItem label="发票号">{{ piData.invoiceNo }}</ElDescriptionsItem>
@@ -48,11 +61,20 @@
           <ElTag :type="statusType">{{ piData.status }}</ElTag>
         </ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 联系信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">联系信息 / Contact Information</span>
-      </ElDivider>
+    <!-- 联系信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:contacts-book-line" class="mr-2" />
+              联系信息 / Contact Information
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="3" border size="default">
         <ElDescriptionsItem label="公司地址" :span="3">
@@ -67,11 +89,20 @@
           {{ piData.deliveryAddress || '-' }}
         </ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 贸易信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">贸易信息 / Trade Information</span>
-      </ElDivider>
+    <!-- 贸易信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:exchange-dollar-line" class="mr-2" />
+              贸易信息 / Trade Information
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="3" border size="default">
         <ElDescriptionsItem label="贸易条款">{{ piData.tradeTerms }}</ElDescriptionsItem>
@@ -81,11 +112,20 @@
         <ElDescriptionsItem label="交货期">{{ piData.deliveryDate }}</ElDescriptionsItem>
         <ElDescriptionsItem label="原产地">{{ piData.countryOfOrigin || '-' }}</ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 物流信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">物流信息 / Logistics Information</span>
-      </ElDivider>
+    <!-- 物流信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:truck-line" class="mr-2" />
+              物流信息 / Logistics Information
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="4" border size="default">
         <ElDescriptionsItem label="总毛重">{{ piData.grossWeight }} kg</ElDescriptionsItem>
@@ -93,13 +133,22 @@
         <ElDescriptionsItem label="总体积">{{ piData.totalVolume }} CBM</ElDescriptionsItem>
         <ElDescriptionsItem label="总箱数">{{ piData.totalCartons }} 箱</ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 产品明细 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">产品明细 / Products</span>
-      </ElDivider>
+    <!-- 产品明细 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:shopping-bag-3-line" class="mr-2" />
+              产品明细 / Products
+            </h4>
+          </div>
+        </div>
+      </template>
 
-      <ElTable :data="piData.products" border style="margin-bottom: 20px">
+      <ElTable :data="piData.products" border>
         <ElTableColumn type="index" label="序号" width="60" align="center" />
         <ElTableColumn prop="productName" label="产品名称" min-width="150" />
         <ElTableColumn prop="spec" label="规格型号" width="120" />
@@ -119,11 +168,20 @@
           </template>
         </ElTableColumn>
       </ElTable>
+    </ElCard>
 
-      <!-- 付款信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">付款信息 / Payment Information</span>
-      </ElDivider>
+    <!-- 付款信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:money-cny-circle-line" class="mr-2" />
+              付款信息 / Payment Information
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="3" border size="default">
         <ElDescriptionsItem label="币种">{{ piData.currency }}</ElDescriptionsItem>
@@ -152,11 +210,20 @@
           piData.balanceDueDate || '-'
         }}</ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 银行信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">银行信息 / BANK INFORMATIONS</span>
-      </ElDivider>
+    <!-- 银行信息 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:bank-line" class="mr-2" />
+              银行信息 / BANK INFORMATIONS
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="2" border size="default">
         <ElDescriptionsItem label="受益人">{{
@@ -178,11 +245,20 @@
           piData.swiftCode || bankInfo?.swiftCode || '-'
         }}</ElDescriptionsItem>
       </ElDescriptions>
+    </ElCard>
 
-      <!-- 交易条款 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">交易条款 / Terms & Conditions</span>
-      </ElDivider>
+    <!-- 交易条款 -->
+    <ElCard class="art-card mb-4">
+      <template #header>
+        <div class="art-card-header">
+          <div class="title">
+            <h4>
+              <Icon icon="ri:file-list-3-line" class="mr-2" />
+              交易条款 / Terms & Conditions
+            </h4>
+          </div>
+        </div>
+      </template>
 
       <ElDescriptions :column="1" border size="default">
         <ElDescriptionsItem label="产品要求">
@@ -200,18 +276,6 @@
         <ElDescriptionsItem label="报价有效期">
           {{ piData.validityPeriod || '-' }}
         </ElDescriptionsItem>
-      </ElDescriptions>
-
-      <!-- 系统信息 -->
-      <ElDivider content-position="left">
-        <span class="text-sm font-medium">系统信息</span>
-      </ElDivider>
-
-      <ElDescriptions :column="4" border size="small">
-        <ElDescriptionsItem label="创建时间">{{ piData.createTime }}</ElDescriptionsItem>
-        <ElDescriptionsItem label="更新时间">{{ piData.updateTime }}</ElDescriptionsItem>
-        <ElDescriptionsItem label="创建人">{{ piData.createBy }}</ElDescriptionsItem>
-        <ElDescriptionsItem label="更新人">{{ piData.updateBy }}</ElDescriptionsItem>
       </ElDescriptions>
     </ElCard>
   </div>
@@ -378,29 +442,29 @@
 
 <style lang="scss" scoped>
   .pi-detail-page {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background-color: var(--el-bg-color-page);
+    padding-bottom: 20px;
 
-    :deep(.art-card) {
-      flex: 1;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
+    :deep(.art-card-header) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-    :deep(.scroll-card) {
-      max-height: calc(100vh - 160px);
-      overflow-y: auto;
+      .title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 600;
+
+        h4 {
+          display: flex;
+          align-items: center;
+          margin: 0;
+        }
+      }
     }
 
     :deep(.el-descriptions__label) {
       width: 120px;
-      font-weight: 600;
-    }
-
-    :deep(.el-divider__text) {
-      font-size: 14px;
       font-weight: 600;
     }
 
