@@ -398,7 +398,7 @@
                 v-model="formData.productRequirement"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：Use XIALONCUT brand"
+                placeholder="Use XIALONCUT brand"
               />
             </ElFormItem>
           </ElCol>
@@ -407,7 +407,7 @@
         <ElRow :gutter="20">
           <ElCol :span="8">
             <ElFormItem label="原产地" prop="countryOfOrigin">
-              <ElInput v-model="formData.countryOfOrigin" placeholder="例如：China" />
+              <ElInput v-model="formData.countryOfOrigin" placeholder="China" />
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -424,7 +424,7 @@
                 v-model="formData.packageInfo"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：XIALONCUT brand package"
+                placeholder="XIALONCUT brand package"
               />
             </ElFormItem>
           </ElCol>
@@ -437,7 +437,7 @@
                 v-model="formData.deliveryTerm"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：3 days after receive 100% payment"
+                placeholder="3 days after receive 100% payment"
               />
             </ElFormItem>
           </ElCol>
@@ -450,7 +450,7 @@
                 v-model="formData.paymentTerm"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：100% T/T in advance"
+                placeholder="100% T/T in advance"
               />
             </ElFormItem>
           </ElCol>
@@ -463,7 +463,7 @@
                 v-model="formData.validityPeriod"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：This price is available within 7 days"
+                placeholder="This price is available within 7 days"
               />
             </ElFormItem>
           </ElCol>
@@ -585,13 +585,13 @@
     status: '待付款',
     products: [],
     // 产品要求
-    productRequirement: '例如：Use XIALONCUT brand',
-    countryOfOrigin: '例如：China',
+    productRequirement: 'Use XIALONCUT brand',
+    countryOfOrigin: 'China',
     // 交易条款
-    packageInfo: '例如：XIALONCUT brand package',
-    deliveryTerm: '例如：3 days after receive 100% payment',
-    paymentTerm: '例如：100% T/T in advance',
-    validityPeriod: '例如：This price is available within 7 days',
+    packageInfo: 'XIALONCUT brand package',
+    deliveryTerm: '3 days after receive 100% payment',
+    paymentTerm: '100% T/T in advance',
+    validityPeriod: 'This price is available within 7 days',
     // 银行信息
     beneficiary: '',
     accountNumberUsd: '',
