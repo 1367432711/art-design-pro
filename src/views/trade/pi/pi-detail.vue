@@ -27,7 +27,7 @@
       </ElSpace>
     </ArtPageHeader>
 
-    <ElCard class="art-card">
+    <ElCard class="art-card scroll-card">
       <!-- 基本信息 -->
       <ElDivider content-position="left">
         <span class="text-sm font-medium">基本信息 / Basic Information</span>
@@ -378,11 +378,20 @@
 
 <style lang="scss" scoped>
   .pi-detail-page {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     background-color: var(--el-bg-color-page);
 
     :deep(.art-card) {
+      flex: 1;
       margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    :deep(.scroll-card) {
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
     }
 
     :deep(.el-descriptions__label) {
