@@ -36,7 +36,11 @@
         "remark": "标准款",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "50g",
+        "cartonSize": "52×32×28cm",
+        "grossWeight": 6.5,
+        "netWeight": 5.0
       },
       {
         "id": "p2",
@@ -54,7 +58,11 @@
         "remark": "加厚款",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "60g",
+        "cartonSize": "55×35×30cm",
+        "grossWeight": 7.5,
+        "netWeight": 6.0
       }
     ],
     "costSummary": {
@@ -107,7 +115,11 @@
         "remark": "",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "60g",
+        "cartonSize": "55×35×30cm",
+        "grossWeight": 7.5,
+        "netWeight": 6.0
       }
     ],
     "costSummary": {
@@ -160,7 +172,11 @@
         "remark": "高性能",
         "cartonQuantity": 50,
         "blisterQuantity": 5,
-        "innerBoxQuantity": 25
+        "innerBoxQuantity": 25,
+        "singleWeight": "80g",
+        "cartonSize": "60×40×30cm",
+        "grossWeight": 10,
+        "netWeight": 8
       },
       {
         "id": "p5",
@@ -178,7 +194,11 @@
         "remark": "",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "70g",
+        "cartonSize": "55×35×25cm",
+        "grossWeight": 8.5,
+        "netWeight": 7
       }
     ],
     "costSummary": {
@@ -187,8 +207,8 @@
       "discountType": "percent",
       "taxValue": 0,
       "otherCharges": 50,
-      "subtotal": 10800,
-      "grandTotal": 11150
+      "subtotal": 11150,
+      "grandTotal": 11500
     },
     "createTime": "2026-04-10 12:00:00",
     "updateBy": "admin",
@@ -231,7 +251,11 @@
         "remark": "精密打磨",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "60g",
+        "cartonSize": "50×30×25cm",
+        "grossWeight": 7.5,
+        "netWeight": 6
       }
     ],
     "costSummary": {
@@ -284,7 +308,11 @@
         "remark": "优质羊毛",
         "cartonQuantity": 50,
         "blisterQuantity": 5,
-        "innerBoxQuantity": 25
+        "innerBoxQuantity": 25,
+        "singleWeight": "30g",
+        "cartonSize": "45×35×20cm",
+        "grossWeight": 2,
+        "netWeight": 1.5
       },
       {
         "id": "p8",
@@ -302,7 +330,11 @@
         "remark": "",
         "cartonQuantity": 50,
         "blisterQuantity": 5,
-        "innerBoxQuantity": 25
+        "innerBoxQuantity": 25,
+        "singleWeight": "25g",
+        "cartonSize": "42×32×18cm",
+        "grossWeight": 1.7,
+        "netWeight": 1.4
       }
     ],
     "costSummary": {
@@ -355,7 +387,11 @@
         "remark": "高强度",
         "cartonQuantity": 40,
         "blisterQuantity": 4,
-        "innerBoxQuantity": 20
+        "innerBoxQuantity": 20,
+        "singleWeight": "90g",
+        "cartonSize": "55×40×30cm",
+        "grossWeight": 5,
+        "netWeight": 3.6
       }
     ],
     "costSummary": {
@@ -408,7 +444,11 @@
         "remark": "切割石材",
         "cartonQuantity": 50,
         "blisterQuantity": 5,
-        "innerBoxQuantity": 25
+        "innerBoxQuantity": 25,
+        "singleWeight": "150g",
+        "cartonSize": "65×45×35cm",
+        "grossWeight": 9,
+        "netWeight": 7.5
       }
     ],
     "costSummary": {
@@ -461,7 +501,11 @@
         "remark": "精密切割",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "22g",
+        "cartonSize": "42×28×20cm",
+        "grossWeight": 2.8,
+        "netWeight": 2.2
       }
     ],
     "costSummary": {
@@ -514,7 +558,11 @@
         "remark": "粗磨",
         "cartonQuantity": 100,
         "blisterQuantity": 10,
-        "innerBoxQuantity": 50
+        "innerBoxQuantity": 50,
+        "singleWeight": "55g",
+        "cartonSize": "52×34×28cm",
+        "grossWeight": 7,
+        "netWeight": 5.5
       }
     ],
     "costSummary": {
@@ -567,7 +615,11 @@
         "remark": "去毛刺",
         "cartonQuantity": 50,
         "blisterQuantity": 5,
-        "innerBoxQuantity": 25
+        "innerBoxQuantity": 25,
+        "singleWeight": "45g",
+        "cartonSize": "48×32×22cm",
+        "grossWeight": 3,
+        "netWeight": 2.25
       },
       {
         "id": "p14",
@@ -585,7 +637,11 @@
         "remark": "全套配件",
         "cartonQuantity": 20,
         "blisterQuantity": 2,
-        "innerBoxQuantity": 10
+        "innerBoxQuantity": 10,
+        "singleWeight": "500g",
+        "cartonSize": "60×40×35cm",
+        "grossWeight": 12,
+        "netWeight": 10
       }
     ],
     "costSummary": {
