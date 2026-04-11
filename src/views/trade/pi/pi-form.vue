@@ -221,22 +221,37 @@
         <ElRow :gutter="20">
           <ElCol :span="6">
             <ElFormItem label="总毛重 (kg)" prop="grossWeight">
-              <ElInputNumber v-model="formData.grossWeight" :precision="2" style="width: 100%" />
+              <ElInputNumber
+                v-model="formData.grossWeight"
+                :precision="2"
+                style="width: 100%"
+                readonly
+              />
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
             <ElFormItem label="总净重 (kg)" prop="netWeight">
-              <ElInputNumber v-model="formData.netWeight" :precision="2" style="width: 100%" />
+              <ElInputNumber
+                v-model="formData.netWeight"
+                :precision="2"
+                style="width: 100%"
+                readonly
+              />
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
             <ElFormItem label="总体积 (CBM)" prop="totalVolume">
-              <ElInputNumber v-model="formData.totalVolume" :precision="3" style="width: 100%" />
+              <ElInputNumber
+                v-model="formData.totalVolume"
+                :precision="3"
+                style="width: 100%"
+                readonly
+              />
             </ElFormItem>
           </ElCol>
           <ElCol :span="6">
             <ElFormItem label="总箱数" prop="totalCartons">
-              <ElInputNumber v-model="formData.totalCartons" style="width: 100%" />
+              <ElInputNumber v-model="formData.totalCartons" style="width: 100%" readonly />
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -370,13 +385,145 @@
             </ElFormItem>
           </ElCol>
         </ElRow>
+
+        <!-- 产品要求 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">产品要求 / Product Requirement</span>
+        </ElDivider>
+
+        <ElRow :gutter="20">
+          <ElCol :span="24">
+            <ElFormItem label="产品要求" prop="productRequirement">
+              <ElInput
+                v-model="formData.productRequirement"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：Use XIALONCUT brand"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="8">
+            <ElFormItem label="原产地" prop="countryOfOrigin">
+              <ElInput v-model="formData.countryOfOrigin" placeholder="例如：China" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <!-- 交易条款 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">交易条款 / Terms & Conditions</span>
+        </ElDivider>
+
+        <ElRow :gutter="20">
+          <ElCol :span="24">
+            <ElFormItem label="包装条款" prop="packageInfo">
+              <ElInput
+                v-model="formData.packageInfo"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：XIALONCUT brand package"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="24">
+            <ElFormItem label="交货条款" prop="deliveryTerm">
+              <ElInput
+                v-model="formData.deliveryTerm"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：3 days after receive 100% payment"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="24">
+            <ElFormItem label="付款条款" prop="paymentTerm">
+              <ElInput
+                v-model="formData.paymentTerm"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：100% T/T in advance"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="24">
+            <ElFormItem label="报价有效期" prop="validityPeriod">
+              <ElInput
+                v-model="formData.validityPeriod"
+                type="textarea"
+                :rows="2"
+                placeholder="例如：This price is available within 7 days"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <!-- 银行信息 -->
+        <ElDivider content-position="left">
+          <span class="text-sm font-medium">银行信息 / BANK INFORMATIONS</span>
+        </ElDivider>
+
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="受益人" prop="beneficiary">
+              <ElInput v-model="formData.beneficiary" placeholder="请输入受益人名称" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="USD 账号" prop="accountNumberUsd">
+              <ElInput v-model="formData.accountNumberUsd" placeholder="请输入 USD 账号" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="RMB 账号" prop="accountNumberRmb">
+              <ElInput v-model="formData.accountNumberRmb" placeholder="请输入 RMB 账号" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="开户行" prop="bankName">
+              <ElInput v-model="formData.bankName" placeholder="请输入开户行名称" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="银行地址" prop="bankAddress">
+              <ElInput
+                v-model="formData.bankAddress"
+                type="textarea"
+                :rows="2"
+                placeholder="请输入银行地址"
+              />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="SWIFT 代码" prop="swiftCode">
+              <ElInput v-model="formData.swiftCode" placeholder="请输入 SWIFT 代码" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
       </ElForm>
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, computed } from 'vue'
+  import { onMounted, ref, computed, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
@@ -387,6 +534,7 @@
     fetchGetQuotationDetail,
     fetchGetBankAccountList
   } from '@/api/trade-manage'
+  import { getProductList } from '@/utils/storage/db'
 
   defineOptions({ name: 'PIForm' })
 
@@ -435,7 +583,22 @@
     totalVolume: 0,
     totalCartons: 0,
     status: '待付款',
-    products: []
+    products: [],
+    // 产品要求
+    productRequirement: '',
+    countryOfOrigin: 'China',
+    // 交易条款
+    packageInfo: '',
+    deliveryTerm: '',
+    paymentTerm: '',
+    validityPeriod: '',
+    // 银行信息
+    beneficiary: '',
+    accountNumberUsd: '',
+    accountNumberRmb: '',
+    bankName: '',
+    bankAddress: '',
+    swiftCode: ''
   })
 
   const formRules: FormRules = {
@@ -462,6 +625,129 @@
     const percent = formData.value.depositPercent || 0
     formData.value.depositAmount = total * (percent / 100)
     formData.value.balanceAmount = total - formData.value.depositAmount
+  }
+
+  // 计算物流信息
+  const calculateLogistics = () => {
+    const products = formData.value.products || []
+    if (!products.length) return
+
+    let totalGrossWeight = 0
+    let totalNetWeight = 0
+    let totalVolume = 0
+    let totalCartons = 0
+
+    products.forEach((product) => {
+      // 计算该产品的总箱数
+      const quantity = product.quantity || 0
+      const cartonQty = product.cartonQuantity || 0
+      const productCartons = cartonQty > 0 ? Math.ceil(quantity / cartonQty) : 0
+
+      // 累加总箱数
+      totalCartons += productCartons
+
+      // 计算毛重和净重
+      // 优先使用每箱毛重/净重，否则用单片重量计算
+      if (product.grossWeight && product.grossWeight > 0) {
+        // 有每箱毛重数据
+        totalGrossWeight += product.grossWeight * productCartons
+      } else if (product.singleWeight) {
+        // 只有单片重量，尝试解析并计算
+        const weightMatch = String(product.singleWeight).match(/([\d.]+)/)
+        if (weightMatch) {
+          const singleWeight = parseFloat(weightMatch[1]) // 单片重量（克）
+          totalGrossWeight += (singleWeight * quantity) / 1000 // 转换为千克
+        }
+      }
+
+      if (product.netWeight && product.netWeight > 0) {
+        // 有每箱净重数据
+        totalNetWeight += product.netWeight * productCartons
+      } else if (product.singleWeight) {
+        // 只有单片重量，尝试解析并计算
+        const weightMatch = String(product.singleWeight).match(/([\d.]+)/)
+        if (weightMatch) {
+          const singleWeight = parseFloat(weightMatch[1]) // 单片重量（克）
+          totalNetWeight += (singleWeight * quantity) / 1000 // 转换为千克
+        }
+      }
+
+      // 计算体积
+      if (product.cartonSize && productCartons > 0) {
+        // 外箱尺寸格式如 "60x40x30cm" 或 "52×32×28cm"，计算体积
+        const sizeMatch = String(product.cartonSize).match(/([\d.]+)[xX×*]([\d.]+)[xX×*]([\d.]+)/)
+        if (sizeMatch) {
+          const length = parseFloat(sizeMatch[1])
+          const width = parseFloat(sizeMatch[2])
+          const height = parseFloat(sizeMatch[3])
+          // 计算单箱体积（立方米）
+          const singleCBM = (length * width * height) / 1000000 // cm³ 转 m³
+          totalVolume += singleCBM * productCartons
+          console.log(`产品 ${product.productName} 体积计算:`, {
+            cartonSize: product.cartonSize,
+            productCartons,
+            length,
+            width,
+            height,
+            singleCBM,
+            totalVolume
+          })
+        } else {
+          console.warn(`无法解析外箱尺寸：${product.cartonSize}`)
+        }
+      } else if (product.totalCBM) {
+        // 直接使用总 CBM
+        totalVolume += product.totalCBM
+      }
+    })
+
+    formData.value.grossWeight = parseFloat(totalGrossWeight.toFixed(2))
+    formData.value.netWeight = parseFloat(totalNetWeight.toFixed(2))
+    formData.value.totalVolume = parseFloat(totalVolume.toFixed(3))
+    formData.value.totalCartons = totalCartons
+  }
+
+  // 补充产品数据（从产品库获取物流相关字段）
+  const supplementProductSpecs = () => {
+    const products = formData.value.products || []
+    // 获取产品库数据
+    const allProducts = getProductList()
+
+    products.forEach((product: any) => {
+      let matchedProduct = null
+
+      // 1. 优先使用 productId/selectedProductId 匹配
+      const productId = product.selectedProductId || product.productId
+      if (productId) {
+        matchedProduct = allProducts.find((p) => p.id === productId)
+      }
+
+      // 2. 如果找不到，尝试根据产品名称和规格匹配
+      if (!matchedProduct) {
+        matchedProduct = allProducts.find(
+          (p) => p.name === product.productName && p.spec === product.spec
+        )
+      }
+
+      // 3. 如果还找不到，尝试只根据规格匹配（产品名称可能不一致）
+      if (!matchedProduct) {
+        matchedProduct = allProducts.find((p) => p.spec === product.spec)
+      }
+
+      // 找到匹配的产品，补充物流相关字段
+      if (matchedProduct) {
+        product.cartonQuantity = matchedProduct.cartonQuantity
+        product.blisterQuantity = matchedProduct.blisterQuantity
+        product.innerBoxQuantity = matchedProduct.innerBoxQuantity
+        product.singleWeight = matchedProduct.singleWeight
+        product.cartonSize = matchedProduct.cartonSize
+        product.grossWeight = matchedProduct.grossWeight
+        product.netWeight = matchedProduct.netWeight
+        console.log(`匹配到产品 ${product.productName}:`, matchedProduct)
+      } else {
+        console.warn(`未匹配到产品：${product.productName} (${product.spec})`)
+      }
+    })
   }
 
   // 查看报价单
@@ -556,11 +842,29 @@
         status: '待付款',
 
         // 产品列表
-        products: piProducts
+        products: piProducts,
+
+        // 产品要求
+        productRequirement: 'Use XIALONCUT brand',
+        countryOfOrigin: 'China'
       }
 
       // 计算付款金额
       calculatePayment()
+
+      // 补充产品数据（从产品库获取物流字段）
+      supplementProductSpecs()
+
+      // 计算物流信息
+      calculateLogistics()
+
+      console.log('产品数据:', JSON.stringify(piProducts, null, 2))
+      console.log('物流信息:', {
+        grossWeight: formData.value.grossWeight,
+        netWeight: formData.value.netWeight,
+        totalVolume: formData.value.totalVolume,
+        totalCartons: formData.value.totalCartons
+      })
 
       ElMessage.success('已从报价单导入数据，请补充完整信息')
     } catch (error) {
@@ -622,6 +926,15 @@
       generatePIInvoiceNo()
     }
   })
+
+  // 监听产品明细变化，自动计算物流信息
+  watch(
+    () => formData.value.products,
+    () => {
+      calculateLogistics()
+    },
+    { deep: true }
+  )
 </script>
 
 <style lang="scss" scoped>
