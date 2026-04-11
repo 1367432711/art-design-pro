@@ -339,7 +339,7 @@
                 v-model="formData.paymentTerms"
                 type="textarea"
                 :rows="2"
-                placeholder="例如：30% 定金，70% 见提单副本"
+                placeholder="30% 定金，70% 见提单副本"
               />
             </ElFormItem>
           </ElCol>
@@ -879,7 +879,19 @@
     const id = route.params.id as string
     try {
       const res = await fetchGetPIDetail(id)
-      formData.value = { ...res.data }
+      const data = res.data as Api.Trade.PIListItem
+
+      // 扁平化 bankInfo 对象到表单字段
+      formData.value = {
+        ...data,
+        // 从 bankInfo 对象中提取字段
+        beneficiary: data.bankInfo?.accountName || data.beneficiary,
+        accountNumberUsd: data.bankInfo?.accountNumberUSD || data.accountNumberUsd,
+        accountNumberRmb: data.bankInfo?.accountNumberRMB || data.accountNumberRmb,
+        bankName: data.bankInfo?.bankName || data.bankName,
+        bankAddress: data.bankInfo?.bankAddress || data.bankAddress,
+        swiftCode: data.bankInfo?.swiftCode || data.swiftCode
+      }
     } catch {
       ElMessage.error('加载 PI 数据失败')
     }

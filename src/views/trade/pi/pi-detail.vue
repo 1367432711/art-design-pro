@@ -166,7 +166,18 @@
     const id = route.params.id as string
     try {
       const res = await fetchGetPIDetail(id)
-      piData.value = res.data
+      const data = res.data
+
+      // 扁平化 bankInfo 对象到顶层字段
+      piData.value = {
+        ...data,
+        beneficiary: data.bankInfo?.accountName || data.beneficiary,
+        accountNumberUsd: data.bankInfo?.accountNumberUSD || data.accountNumberUsd,
+        accountNumberRmb: data.bankInfo?.accountNumberRMB || data.accountNumberRmb,
+        bankName: data.bankInfo?.bankName || data.bankName,
+        bankAddress: data.bankInfo?.bankAddress || data.bankAddress,
+        swiftCode: data.bankInfo?.swiftCode || data.swiftCode
+      }
       setStatusType()
     } catch (error) {
       console.error('加载 PI 详情失败:', error)
