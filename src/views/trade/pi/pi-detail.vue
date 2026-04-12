@@ -312,8 +312,11 @@
     eager: true
   }) as Record<string, any>
 
+  console.log('productImages:', productImages)
+
   // 获取产品图片真实 URL
   const getProductImageUrl = (imagePath: string): string => {
+    console.log('getProductImageUrl called with:', imagePath)
     if (!imagePath) return ''
     // 如果已经是 http 开头的完整 URL，直接返回
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
@@ -321,10 +324,14 @@
     }
     // 从 glob 导入的图片中查找
     const fileName = imagePath.split('/').pop()
+    console.log('fileName:', fileName)
     if (fileName) {
       const matchPath = Object.keys(productImages).find((key) => key.includes(fileName))
+      console.log('matchPath:', matchPath)
       if (matchPath) {
-        return productImages[matchPath]?.default || ''
+        const result = productImages[matchPath]?.default || ''
+        console.log('result:', result)
+        return result
       }
     }
     // 如果找不到，尝试直接使用路径（可能是 public 目录或外部 URL）
