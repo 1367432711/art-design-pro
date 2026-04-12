@@ -150,32 +150,32 @@
 
       <ElTable :data="piData.products" border>
         <ElTableColumn type="index" label="序号" width="60" align="center" />
-        <ElTableColumn prop="mainImage" label="图片" width="80" align="center">
+        <ElTableColumn prop="mainImage" label="图片" width="100" align="center">
           <template #default="{ row }">
             <ElImage
-              v-if="row.mainImage"
-              :src="row.mainImage"
-              :preview-src-list="[row.mainImage]"
+              v-if="row.mainImage && getProductImageUrl(row.mainImage)"
+              :src="getProductImageUrl(row.mainImage)"
+              :preview-src-list="[getProductImageUrl(row.mainImage)]"
               fit="cover"
-              style="width: 50px; height: 50px; border-radius: 4px"
+              style="width: 60px; height: 60px; border-radius: 4px"
               class="product-image"
             />
             <span v-else class="text-gray-400">-</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="productName" label="产品名称" min-width="150" />
-        <ElTableColumn prop="spec" label="规格型号" width="120" />
+        <ElTableColumn prop="productName" label="产品名称" min-width="180" />
+        <ElTableColumn prop="spec" label="规格型号" width="140" />
         <ElTableColumn prop="type" label="类型" width="100" />
         <ElTableColumn prop="grade" label="等级" width="80" />
-        <ElTableColumn prop="material" label="材质" width="100" />
+        <ElTableColumn prop="material" label="材质" width="120" />
         <ElTableColumn prop="quantity" label="数量" width="90" align="center" />
         <ElTableColumn prop="unit" label="单位" width="70" align="center" />
-        <ElTableColumn prop="unitPrice" label="单价" width="120" align="right">
+        <ElTableColumn prop="unitPrice" label="单价" width="130" align="right">
           <template #default="{ row }">
             {{ row.currency }} {{ row.unitPrice?.toFixed(2) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="totalPrice" label="总价" width="120" align="right">
+        <ElTableColumn prop="totalPrice" label="总价" width="130" align="right">
           <template #default="{ row }">
             {{ row.currency }} {{ row.totalPrice?.toFixed(2) }}
           </template>
@@ -306,6 +306,30 @@
 
   const route = useRoute()
   const router = useRouter()
+
+  // 预加载产品图片（使用 Vite import.meta.glob）
+  const productImages = import.meta.glob('/src/assets/images/cover/*.webp', {
+    eager: true
+  }) as Record<string, any>
+
+  // 获取产品图片真实 URL
+  const getProductImageUrl = (imagePath: string): string => {
+    if (!imagePath) return ''
+    // 如果已经是 http 开头的完整 URL，直接返回
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath
+    }
+    // 从 glob 导入的图片中查找
+    const fileName = imagePath.split('/').pop()
+    if (fileName) {
+      const matchPath = Object.keys(productImages).find((key) => key.includes(fileName))
+      if (matchPath) {
+        return productImages[matchPath]?.default || ''
+      }
+    }
+    // 如果找不到，尝试直接使用路径（可能是 public 目录或外部 URL）
+    return imagePath
+  }
 
   // 返回 PI 列表或报价单详情页
   const handleBack = () => {
