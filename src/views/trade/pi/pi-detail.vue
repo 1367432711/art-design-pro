@@ -150,6 +150,19 @@
 
       <ElTable :data="piData.products" border>
         <ElTableColumn type="index" label="序号" width="60" align="center" />
+        <ElTableColumn prop="mainImage" label="图片" width="80" align="center">
+          <template #default="{ row }">
+            <ElImage
+              v-if="row.mainImage"
+              :src="row.mainImage"
+              :preview-src-list="[row.mainImage]"
+              fit="cover"
+              style="width: 50px; height: 50px; border-radius: 4px"
+              class="product-image"
+            />
+            <span v-else class="text-gray-400">-</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="productName" label="产品名称" min-width="150" />
         <ElTableColumn prop="spec" label="规格型号" width="120" />
         <ElTableColumn prop="type" label="类型" width="100" />
@@ -286,6 +299,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Icon } from '@iconify/vue'
   import ArtPageHeader from '@/components/core/base/art-page-header/index.vue'
+  import { ElImage } from 'element-plus'
   import { fetchGetPIDetail } from '@/api/trade-manage'
 
   defineOptions({ name: 'PIDetail' })
@@ -474,6 +488,15 @@
       th {
         font-weight: 600;
         background: var(--el-fill-color);
+      }
+
+      .product-image {
+        cursor: pointer;
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+        }
       }
     }
   }
