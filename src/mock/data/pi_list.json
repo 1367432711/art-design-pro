@@ -86,7 +86,7 @@
         "totalGW": 65,
         "totalNW": 50,
         "totalCBM": 0.148,
-        "mainImage": "/src/assets/images/cover/img1.webp",
+        "mainImage": "src/assets/images/cover/img1.webp",
         "remark": "标准款"
       },
       {
@@ -113,7 +113,7 @@
         "totalGW": 45,
         "totalNW": 30,
         "totalCBM": 0.116,
-        "mainImage": "/src/assets/images/cover/img2.webp",
+        "mainImage": "src/assets/images/cover/img2.webp",
         "remark": "加厚款"
       }
     ]
@@ -205,7 +205,7 @@
         "totalGW": 160,
         "totalNW": 128,
         "totalCBM": 0.576,
-        "mainImage": "/src/assets/images/cover/img3.webp",
+        "mainImage": "src/assets/images/cover/img3.webp",
         "remark": "高性能"
       },
       {
@@ -232,7 +232,7 @@
         "totalGW": 127.5,
         "totalNW": 105,
         "totalCBM": 0.289,
-        "mainImage": "/src/assets/images/cover/img5.webp",
+        "mainImage": "src/assets/images/cover/img5.webp",
         "remark": ""
       }
     ]
@@ -324,7 +324,7 @@
         "totalGW": 75,
         "totalNW": 60,
         "totalCBM": 0.188,
-        "mainImage": "/src/assets/images/cover/img6.webp",
+        "mainImage": "src/assets/images/cover/img6.webp",
         "remark": "精密打磨"
       }
     ]
@@ -414,7 +414,7 @@
         "totalGW": 20,
         "totalNW": 15,
         "totalCBM": 0.063,
-        "mainImage": "/src/assets/images/cover/img7.webp",
+        "mainImage": "src/assets/images/cover/img7.webp",
         "remark": "优质羊毛"
       },
       {
@@ -441,7 +441,7 @@
         "totalGW": 10.2,
         "totalNW": 8.4,
         "totalCBM": 0.048,
-        "mainImage": "/src/assets/images/cover/img8.webp",
+        "mainImage": "src/assets/images/cover/img8.webp",
         "remark": ""
       }
     ]
@@ -531,7 +531,7 @@
         "totalGW": 50,
         "totalNW": 36,
         "totalCBM": 0.198,
-        "mainImage": "/src/assets/images/cover/img9.webp",
+        "mainImage": "src/assets/images/cover/img9.webp",
         "remark": "高强度"
       }
     ]
@@ -621,7 +621,7 @@
         "totalGW": 24,
         "totalNW": 18,
         "totalCBM": 0.072,
-        "mainImage": "/src/assets/images/cover/img10.webp",
+        "mainImage": "src/assets/images/cover/img10.webp",
         "remark": "经济款"
       }
     ]
